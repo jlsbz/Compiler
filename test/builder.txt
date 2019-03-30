@@ -1,0 +1,19 @@
+class string {
+
+    int length() {}
+    int ord(int pos) {}
+    string substring(int left, int right) {}
+    int parseInt() {}
+}
+
+void print(string str) {}
+
+string toString(int i) {}
+
+string addString__(string a, string b) {}
+
+void println(string str) {}
+
+int getInt() {}
+
+string getString() {}

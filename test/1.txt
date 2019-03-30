@@ -1,0 +1,26 @@
+//This is the most basic test.
+//基本测试，注释是中文应该要能搞吧
+
+int main()
+{
+	int[][] array = new int[3][3];
+	array[0] = null;
+	println(toString(array[0].size()));
+
+}
+
+
+
+/*!! metadata:
+=== comment ===
+5140309234-xietiancheng/basic.txt
+This is the most basic test.
+基本测试，注释是中文应该要能搞吧
+=== assert ===
+success_compile
+=== phase ===
+semantic pretest
+=== is_public ===
+True
+
+!!*/
