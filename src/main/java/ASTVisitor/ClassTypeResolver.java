@@ -6,10 +6,10 @@ import Scope.*;
 
 public class ClassTypeResolver extends ASTVisitor{
 
-    ToplevelScope toplevelScope;
+    Scope toplevelScope;
 
     public void resolveClassType(ProgramNode prog) throws SemanticError {
-        toplevelScope = (ToplevelScope)(prog.scope);
+        toplevelScope = (Scope)(prog.scope);
         visit(prog);
     }
 

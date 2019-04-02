@@ -1,3 +1,7 @@
+//string // /?
+
+
+
 package ASTnode;
 
 import ASTnode.*;
@@ -7,13 +11,13 @@ import Error.*;
 import org.antlr.v4.runtime.*;
 import org.antlr.v4.runtime.tree.*;
 
+import javax.xml.transform.ErrorListener;
 import java.lang.*;
 import java.io.*;
 
 public class ASTBuilder extends MStarTreeBaseVisitor<ASTNode> {
 
     SemanticError detectedError;
-
 
 
     @Override
@@ -27,7 +31,7 @@ public class ASTBuilder extends MStarTreeBaseVisitor<ASTNode> {
                 res.classDefinitionList.add((ClassDefinitionNode) node);
             else if (item instanceof MStarTreeParser.MethodDefinitionContext)
                 res.methodDefinitionList.add((MethodDefinitionNode) node);
-            else if(item instanceof MStarTreeParser.ExpressionDefinitionContext)
+            else if (item instanceof MStarTreeParser.ExpressionDefinitionContext)
                 res.variableDefinitionList.add((ExpressionDefinitionNode) node);
         }
         return res;
@@ -338,10 +342,10 @@ public class ASTBuilder extends MStarTreeBaseVisitor<ASTNode> {
                 res.op = BinaryExpressionNode.BinaryOp.GT;
                 break;
             case MStarTreeLexer.EQ:
-                res.op = BinaryExpressionNode.BinaryOp.EQUAL;
+                res.op = BinaryExpressionNode.BinaryOp.EQ;
                 break;
             case MStarTreeLexer.NEQ:
-                res.op = BinaryExpressionNode.BinaryOp.NOTEQUAL;
+                res.op = BinaryExpressionNode.BinaryOp.NEQ;
                 break;
             case MStarTreeLexer.AND:
                 res.op = BinaryExpressionNode.BinaryOp.AND;
@@ -353,10 +357,10 @@ public class ASTBuilder extends MStarTreeBaseVisitor<ASTNode> {
                 res.op = BinaryExpressionNode.BinaryOp.OR;
                 break;
             case MStarTreeLexer.LOGAND:
-                res.op = BinaryExpressionNode.BinaryOp.LAND;
+                res.op = BinaryExpressionNode.BinaryOp.LOGAND;
                 break;
             case MStarTreeLexer.LOGOR:
-                res.op = BinaryExpressionNode.BinaryOp.LOR;
+                res.op = BinaryExpressionNode.BinaryOp.LOGOR;
                 break;
             case MStarTreeLexer.ASSIGN:
                 res.op = BinaryExpressionNode.BinaryOp.ASSIGN;
@@ -428,11 +432,11 @@ public class ASTBuilder extends MStarTreeBaseVisitor<ASTNode> {
         while ((b = is.read()) != -1) {
             os.write(b);
         }
-        is = new FileInputStream(path);
+        is.close();
+        is = System.in;
         while ((b = is.read()) != -1) {
             os.write(b);
         }
-        is.close();
 
         is.close();
         os.close();
@@ -441,23 +445,23 @@ public class ASTBuilder extends MStarTreeBaseVisitor<ASTNode> {
 
     public ProgramNode buildAST(String path) throws IOException, SemanticError {
 
-            InputStream is = addBuiltInCode(path);
+        InputStream is = addBuiltInCode(path);
 
 
+        ANTLRInputStream input = new ANTLRInputStream(is);
 
+        // System.out.println(input);
 
-            ANTLRInputStream input = new ANTLRInputStream(is);
+        MStarTreeLexer lexer = new MStarTreeLexer(input);
 
-           // System.out.println(input);
+        CommonTokenStream tokens = new CommonTokenStream(lexer);
 
-            MStarTreeLexer lexer = new MStarTreeLexer(input);
-
-            CommonTokenStream tokens = new CommonTokenStream(lexer);
-
-           // lexer.removeErrorListener(MStarTreeListener);
-
-            MStarTreeParser parser = new MStarTreeParser(tokens);
-            ASTBuilder builder = new ASTBuilder();
+        MStarTreeParser parser = new MStarTreeParser(tokens);
+        //parser.removeErrorListener();
+        //parser.addErrorListener(new PaserErrorListener());
+        // parser.removeErrorListeners();
+        //parser.addErrorListener(new ErrorListener());
+        ASTBuilder builder = new ASTBuilder();
         ParseTree cst = parser.program();
         ProgramNode prog = (ProgramNode) builder.visit(cst);
         if (builder.detectedError != null)

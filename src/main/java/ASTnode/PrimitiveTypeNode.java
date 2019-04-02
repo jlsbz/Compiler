@@ -3,7 +3,7 @@ package ASTnode;
 public class PrimitiveTypeNode extends NonArrayTypeNode {
 
     public enum PriType {
-        BOOL, INT, VOID, NULL, //STRING
+        BOOL, INT, VOID, NULL//, STRING
     }
 
 
@@ -30,7 +30,6 @@ public class PrimitiveTypeNode extends NonArrayTypeNode {
                 return "void";
             case NULL:
                 return "null";
-
             default:
                 return "";
         }

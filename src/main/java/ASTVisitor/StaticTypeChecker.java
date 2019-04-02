@@ -8,10 +8,10 @@ import static ASTnode.PrimitiveTypeNode.PriType.*;
 
 public class StaticTypeChecker extends ASTVisitor {
 
-    ToplevelScope toplevelScope;
+    Scope toplevelScope;
 
     public void checkStaticType(ProgramNode prog) throws SemanticError {
-        toplevelScope = (ToplevelScope) (prog.scope);
+        toplevelScope = (Scope) (prog.scope);
         visit(prog);
     }
 
@@ -57,6 +57,7 @@ public class StaticTypeChecker extends ASTVisitor {
             if (memberVariableDefinition == null)
                 throw new SemanticError(node.line,
                         "class \"" + classDefinition.className + "\" does not has such a member");
+            member.definitionNode = memberVariableDefinition;
             node.exprType = memberVariableDefinition.variableType;
             node.leftValue = true;
         } else if (node.member instanceof MethodCallExpressionNode) {
@@ -65,6 +66,14 @@ public class StaticTypeChecker extends ASTVisitor {
             // if (member.referenceType != ReferenceNode.ReferenceType.METHOD)
             // throw new SemanticError(node.line, "member must be a variable reference
             // or method call");
+            if (node.caller.exprType instanceof ArrayTypeNode) {
+                if (member.referenceName.equals("size")) {
+                    node.exprType = new PrimitiveTypeNode("int");
+                    member.definitionNode = new MethodDefinitionNode();
+                    member.referenceName = "_array_size";
+                    return;
+                }
+            }
             MethodDefinitionNode memberMethodDefinition = classDefinition.scope.methodDefinitionMap
                     .get(member.referenceName);
             if (memberMethodDefinition == null)
@@ -116,7 +125,6 @@ public class StaticTypeChecker extends ASTVisitor {
     }
 
     @Override
-
     public void visit(NewExpressionNode node) throws SemanticError {
         super.visit(node);
         node.exprType = node.variableType;
@@ -187,15 +195,15 @@ public class StaticTypeChecker extends ASTVisitor {
                     throw new SemanticError(node.line, "value must be assigned to same type");
                 node.exprType = lhs.exprType;
                 break;
-            case EQUAL:
-            case NOTEQUAL:
+            case EQ:
+            case NEQ:
                 if (!lhs.exprType.isPrimitiveType(NULL) && !rhs.exprType.isPrimitiveType(NULL))
                     if (!lhs.exprType.getTypeName().equals(rhs.exprType.getTypeName()))
                         throw new SemanticError(node.line, "binary operator must operate on the same type");
                 node.exprType = new PrimitiveTypeNode("bool");
                 break;
-            case LAND:
-            case LOR:
+            case LOGAND:
+            case LOGOR:
                 if ((!lhs.exprType.isPrimitiveType(BOOL) && !lhs.exprType.isPrimitiveType(INT))
                         || (!rhs.exprType.isPrimitiveType(BOOL) && !rhs.exprType.isPrimitiveType(INT)))
                     throw new SemanticError(node.line, "lhs and rhs must be int or bool");

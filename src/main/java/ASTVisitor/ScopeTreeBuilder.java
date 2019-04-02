@@ -14,30 +14,30 @@ public class ScopeTreeBuilder extends ASTVisitor {
         this.scopeStack = new LinkedList<Scope>();
     }
 
-    public ToplevelScope buildScopeTree(ProgramNode prog) throws Exception {
+    public Scope buildScopeTree(ProgramNode prog) throws Exception {
         visit(prog);
         if (scopeStack.size() != 1) throw new Exception("size of scopeStack is not 1");
-        return (ToplevelScope) scopeStack.getFirst();
+        return (Scope) scopeStack.getFirst();
     }
 
     public Scope currentScope() {
         return scopeStack.getLast();
     }
 
-    public void pushScope(LocalScope scope) throws SemanticError {
+    public void pushScope(Scope scope) throws SemanticError {
         scope.parent = currentScope();
         scope.parent.childrenList.add(scope);
 //        scope.nameSet = (HashSet<String>) scope.parent.nameSet.clone();
         scopeStack.addLast(scope);
     }
 
-    public LocalScope popScope() {
-        return (LocalScope) scopeStack.removeLast();
+    public Scope popScope() {
+        return (Scope) scopeStack.removeLast();
     }
 
     @Override
     public void visit(ProgramNode node) throws SemanticError {
-        ToplevelScope toplevelScope = new ToplevelScope();
+        Scope toplevelScope = new Scope();
         for (ClassDefinitionNode item : node.classDefinitionList) {
             toplevelScope.define(item);
            // System.out.println(item.className+'\n');
@@ -63,7 +63,7 @@ public class ScopeTreeBuilder extends ASTVisitor {
 
     @Override
     public void visit(ClassDefinitionNode node) throws SemanticError {
-        LocalScope scope = new LocalScope();
+        Scope scope = new Scope();
         pushScope(scope);
         for (MethodDefinitionNode item : node.memberMethodList)
             scope.define(item);
@@ -76,7 +76,7 @@ public class ScopeTreeBuilder extends ASTVisitor {
 
     @Override
     public void visit(MethodDefinitionNode node) throws SemanticError {
-        LocalScope scope = new LocalScope();
+        Scope scope = new Scope();
         pushScope(scope);
         scope.astNode = node;
         super.visit(node);
@@ -85,7 +85,7 @@ public class ScopeTreeBuilder extends ASTVisitor {
 
     @Override
     public void visit(BlockNode node) throws SemanticError {
-        LocalScope scope = new LocalScope();
+        Scope scope = new Scope();
         pushScope(scope);
         scope.astNode = node;
         super.visit(node);

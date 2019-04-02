@@ -8,8 +8,8 @@ public class BinaryExpressionNode extends ExpressionStatementNode {
         MUL, DIV, MOD, ADD, SUB,
         LSHIFT, RSHIFT,
         LE, GE, LT, GT,
-        EQUAL, NOTEQUAL,
-        AND, XOR, OR, LAND, LOR,
+        EQ, NEQ,
+        AND, XOR, OR, LOGAND, LOGOR,
         ASSIGN
     }
 

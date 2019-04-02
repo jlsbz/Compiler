@@ -7,8 +7,8 @@ public class Main {
 
     public static void main(String args[]) throws Exception {
 
-        String path = "test/1.txt";
-//        String path = "code/new_failure.txt";
+        //String path = "program.txt";
+        String path = "";
         ASTBuilder astBuilder = new ASTBuilder();
         ParentLinker parentLinker = new ParentLinker();
         ScopeTreeBuilder scopeTreeBuilder = new ScopeTreeBuilder();
@@ -22,7 +22,7 @@ public class Main {
 
 
 
-        ToplevelScope toplevelScope = scopeTreeBuilder.buildScopeTree(prog);
+        Scope toplevelScope = scopeTreeBuilder.buildScopeTree(prog);
 
         typeDefinitionChecker.checkTypeDefinition(prog);
         staticTypeChecker.checkStaticType(prog);

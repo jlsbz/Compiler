@@ -5,7 +5,7 @@ import static Print.Print.*;
 public abstract class ExpressionStatementNode extends StatementNode {
 
     public VariableTypeNode exprType;
-    public boolean leftValue;
+    public boolean leftValue;               //true for right
 
     ExpressionStatementNode() {
         exprType = null;
