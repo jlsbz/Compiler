@@ -1,6 +1,7 @@
 package ASTnode;
 
-import Scope.*;
+import ASTVisitor.Scope;
+
 import static Print.Print.printDashAndStr;
 
 public abstract class ASTNode {

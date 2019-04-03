@@ -1,6 +1,5 @@
 // Generated from C:/Users/93739/IdeaProjects/Mx/src/main/resources\MStarTree.g4 by ANTLR 4.7.2
 package MStarTree;
-
 import org.antlr.v4.runtime.ParserRuleContext;
 import org.antlr.v4.runtime.tree.ErrorNode;
 import org.antlr.v4.runtime.tree.TerminalNode;

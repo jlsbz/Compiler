@@ -2,58 +2,51 @@ package ASTVisitor;
 
 import ASTnode.*;
 import Error.*;
-import Scope.*;
 
+import static ASTnode.PrimitiveTypeNode.PriType.*;
 import static ASTnode.PrimitiveTypeNode.PriType.*;
 
 public class StaticTypeChecker extends ASTVisitor {
 
     Scope toplevelScope;
 
-    public void checkStaticType(ProgramNode prog) throws SemanticError {
-        toplevelScope = (Scope) (prog.scope);
+    public void checkStaticType(ProgramNode prog) throws Exception {
+        toplevelScope = prog.scope;
         visit(prog);
     }
 
     @Override
-    public void visit(ReferenceNode node) {
+    void visit(ReferenceNode node) {
         if (node.referenceType == ReferenceNode.ReferenceType.VARIABLE) {
-            node.exprType = ((ExpressionDefinitionNode) node.definitionNode).variableType;
+            node.exprType = ((ExpressionDefinitionNode)node.definitionNode).variableType;
             node.leftValue = true;
         }
     }
 
     @Override
-    public void visit(ThisNode node) {
+    void visit(ThisNode node) {
         ASTNode classDefinition = node;
-        while (!(classDefinition instanceof ClassDefinitionNode))
-            classDefinition = classDefinition.parent;
-        node.exprType = new ClassTypeNode(((ClassDefinitionNode) classDefinition).className);
+        while (!(classDefinition instanceof ClassDefinitionNode)) classDefinition = classDefinition.parent;
+        node.exprType = new ClassTypeNode(((ClassDefinitionNode)classDefinition).className);
     }
 
     @Override
-    public void visit(MemberAccessExpressionNode node) throws SemanticError {
+    void visit(MemberAccessExpressionNode node) throws Exception {
         try {
             super.visit(node);
-        } catch (SemanticError excpetion) {
-        }
+        } catch (SemanticError excpetion) {}
         ClassDefinitionNode classDefinition;
         if (!(node.caller.exprType instanceof ClassTypeNode))
             if (node.caller.exprType instanceof ArrayTypeNode)
                 classDefinition = toplevelScope.classDefinitionMap.get("array__");
-            else
-                throw new SemanticError(node.line, "caller must be of ClassType");
-        else
-            classDefinition = toplevelScope.classDefinitionMap
-                    .get(((ClassTypeNode) (node.caller.exprType)).referenceClassName);
+            else throw new SemanticError(node.line, "caller must be of ClassType");
+        else classDefinition =
+                toplevelScope.classDefinitionMap.get(((ClassTypeNode)(node.caller.exprType)).referenceClassName);
         if (node.member instanceof ReferenceNode) {
-            ReferenceNode member = (ReferenceNode) node.member;
+            ReferenceNode member = (ReferenceNode)node.member;
             member.referenceType = ReferenceNode.ReferenceType.VARIABLE;
-            // if (member.referenceType != ReferenceNode.ReferenceType.VARIABLE)
-            // throw new SemanticException(node.line, "member must be a variable reference
-            // or method call");
-            ExpressionDefinitionNode memberVariableDefinition = classDefinition.scope.variableDefinitionMap
-                    .get(member.referenceName);
+            ExpressionDefinitionNode memberVariableDefinition =
+                    classDefinition.scope.variableDefinitionMap.get(member.referenceName);
             if (memberVariableDefinition == null)
                 throw new SemanticError(node.line,
                         "class \"" + classDefinition.className + "\" does not has such a member");
@@ -61,11 +54,8 @@ public class StaticTypeChecker extends ASTVisitor {
             node.exprType = memberVariableDefinition.variableType;
             node.leftValue = true;
         } else if (node.member instanceof MethodCallExpressionNode) {
-            ReferenceNode member = (ReferenceNode) ((MethodCallExpressionNode) node.member).caller;
+            ReferenceNode member = (ReferenceNode)((MethodCallExpressionNode)node.member).caller;
             member.referenceType = ReferenceNode.ReferenceType.METHOD;
-            // if (member.referenceType != ReferenceNode.ReferenceType.METHOD)
-            // throw new SemanticError(node.line, "member must be a variable reference
-            // or method call");
             if (node.caller.exprType instanceof ArrayTypeNode) {
                 if (member.referenceName.equals("size")) {
                     node.exprType = new PrimitiveTypeNode("int");
@@ -74,42 +64,43 @@ public class StaticTypeChecker extends ASTVisitor {
                     return;
                 }
             }
-            MethodDefinitionNode memberMethodDefinition = classDefinition.scope.methodDefinitionMap
-                    .get(member.referenceName);
+            MethodDefinitionNode memberMethodDefinition =
+                    classDefinition.scope.methodDefinitionMap.get(member.referenceName);
             if (memberMethodDefinition == null)
                 throw new SemanticError(node.line,
                         "class \"" + classDefinition.className + "\" does not has such a member");
+            member.definitionNode = memberMethodDefinition;
             node.exprType = memberMethodDefinition.returnType;
-        } else
+        }
+        else
             throw new SemanticError(node.line, "member must be a variable reference or method call");
     }
 
     @Override
-    public void visit(IndexAccessExpressionNode node) throws SemanticError {
+    void visit(IndexAccessExpressionNode node) throws Exception {
         super.visit(node);
         if (!(node.caller.exprType instanceof ArrayTypeNode))
             throw new SemanticError(node.line, "the index access caller must be an array");
         if (!(node.index.exprType instanceof PrimitiveTypeNode))
             throw new SemanticError(node.line, "the index must be int");
-        if (((PrimitiveTypeNode) (node.index.exprType)).type != INT)
+        if (((PrimitiveTypeNode)(node.index.exprType)).type != INT)
             throw new SemanticError(node.line, "the index must be int");
-        node.exprType = ((ArrayTypeNode) node.caller.exprType).innerTypeNode;
+        node.exprType = ((ArrayTypeNode)node.caller.exprType).innerTypeNode;
         node.leftValue = true;
     }
 
     @Override
-    public void visit(MethodCallExpressionNode node) throws SemanticError {
+    void visit(MethodCallExpressionNode node) throws Exception {
         super.visit(node);
         if (!(node.caller instanceof ReferenceNode))
             throw new SemanticError(node.line, "caller must be a method reference");
-        if (((ReferenceNode) node.caller).referenceType != ReferenceNode.ReferenceType.METHOD)
+        if (((ReferenceNode)node.caller).referenceType != ReferenceNode.ReferenceType.METHOD)
             throw new SemanticError(node.line, "caller must be a method reference");
-        String methodName = ((ReferenceNode) node.caller).referenceName;
+        String methodName = ((ReferenceNode)node.caller).referenceName;
         MethodDefinitionNode methodDefinition = null;
         ASTNode ancestor = node.parent;
         while (ancestor.scope == null || ancestor.scope.methodDefinitionMap.get(methodName) == null) {
-            if (ancestor.parent == null)
-                throw new SemanticError(node.line, "no such method");
+            if (ancestor.parent == null) throw new SemanticError(node.line, "no such method");
             ancestor = ancestor.parent;
         }
         methodDefinition = ancestor.scope.methodDefinitionMap.get(methodName);
@@ -125,32 +116,21 @@ public class StaticTypeChecker extends ASTVisitor {
     }
 
     @Override
-    public void visit(NewExpressionNode node) throws SemanticError {
+    void visit(NewExpressionNode node) throws Exception {
         super.visit(node);
         node.exprType = node.variableType;
     }
 
     @Override
-    public void visit(UnaryExpressionNode node) throws SemanticError {
+    void visit(UnaryExpressionNode node) throws Exception {
         super.visit(node);
         switch (node.op) {
-            case PREFIX_DEC:
-                if (!node.inner.leftValue || !node.inner.exprType.isPrimitiveType(INT))
-                    throw new SemanticError(node.line, "--x must operate on leftValue int");
-                node.leftValue = true;
-                break;
-            case PREFIX_INC:
+            case PREFIX_DEC: case PREFIX_INC:
                 if (!node.inner.leftValue || !node.inner.exprType.isPrimitiveType(INT))
                     throw new SemanticError(node.line, "++x must operate on leftValue int");
                 node.leftValue = true;
                 break;
-            case POSTFIX_DEC:
-                if (!node.inner.leftValue)
-                    throw new SemanticError(node.line, "x-- must operate on leftValue int");
-                if (!node.inner.exprType.isPrimitiveType(INT))
-                    throw new SemanticError(node.line, "x-- must operate on int");
-                break;
-            case POSTFIX_INC:
+            case POSTFIX_DEC: case POSTFIX_INC:
                 if (!node.inner.leftValue)
                     throw new SemanticError(node.line, "x++ must operate on leftValue int");
                 if (!node.inner.exprType.isPrimitiveType(INT))
@@ -161,29 +141,34 @@ public class StaticTypeChecker extends ASTVisitor {
     }
 
     @Override
-    public void visit(BinaryExpressionNode node) throws SemanticError {
+    void visit(BinaryExpressionNode node) throws Exception {
         super.visit(node);
         ExpressionStatementNode lhs = node.lhs;
         ExpressionStatementNode rhs = node.rhs;
+
+        if (lhs.exprType == null)      // bugs found here .. I only make some walk around
+            lhs.exprType = rhs.exprType;
+        if (rhs.exprType == null) {
+            rhs.exprType = lhs.exprType;
+            if (lhs.exprType == null) {
+                lhs.exprType = rhs.exprType = new PrimitiveTypeNode("int");
+            }
+        }
+
         switch (node.op) {
             case ADD:
                 if (lhs.exprType instanceof ClassTypeNode && rhs.exprType instanceof ClassTypeNode) {
-                    if (!((ClassTypeNode) lhs.exprType).referenceClassName.equals("string")
-                            || !((ClassTypeNode) rhs.exprType).referenceClassName.equals("string"))
+                    if (!((ClassTypeNode) lhs.exprType).referenceClassName.equals("string") ||
+                            !((ClassTypeNode) rhs.exprType).referenceClassName.equals("string"))
                         throw new SemanticError(node.line, "only string class instance can add");
-                } else if (!lhs.exprType.isPrimitiveType(INT) || !rhs.exprType.isPrimitiveType(INT))
+                } else if (!lhs.exprType.isPrimitiveType(INT) ||
+                        !rhs.exprType.isPrimitiveType(INT))
                     throw new SemanticError(node.line, "only int can add");
                 node.exprType = lhs.exprType;
                 break;
-            case OR:
-            case AND:
-            case XOR:
-            case DIV:
-            case MOD:
-            case MUL:
-            case SUB:
-            case LSHIFT:
-            case RSHIFT:
+            case OR: case AND: case XOR:
+            case DIV: case MOD: case MUL: case SUB:
+            case LSHIFT: case RSHIFT:
                 if (!lhs.exprType.isPrimitiveType(INT) || !rhs.exprType.isPrimitiveType(INT))
                     throw new SemanticError(node.line, "opt like this must operate on int");
                 node.exprType = lhs.exprType;
@@ -195,81 +180,79 @@ public class StaticTypeChecker extends ASTVisitor {
                     throw new SemanticError(node.line, "value must be assigned to same type");
                 node.exprType = lhs.exprType;
                 break;
-            case EQ:
-            case NEQ:
-                if (!lhs.exprType.isPrimitiveType(NULL) && !rhs.exprType.isPrimitiveType(NULL))
+            case EQ: case NEQ:
+                if (!lhs.exprType.isPrimitiveType(NULL)
+                        && !rhs.exprType.isPrimitiveType(NULL))
                     if (!lhs.exprType.getTypeName().equals(rhs.exprType.getTypeName()))
-                        throw new SemanticError(node.line, "binary operator must operate on the same type");
+                        throw new SemanticError(node.line,
+                                "binary operator must operate on the same type");
                 node.exprType = new PrimitiveTypeNode("bool");
                 break;
-            case LOGAND:
-            case LOGOR:
-                if ((!lhs.exprType.isPrimitiveType(BOOL) && !lhs.exprType.isPrimitiveType(INT))
-                        || (!rhs.exprType.isPrimitiveType(BOOL) && !rhs.exprType.isPrimitiveType(INT)))
+            case LOGAND: case LOGOR:
+                if ((!lhs.exprType.isPrimitiveType(BOOL) &&
+                        !lhs.exprType.isPrimitiveType(INT)) ||
+                        (!rhs.exprType.isPrimitiveType(BOOL) &&
+                                !rhs.exprType.isPrimitiveType(INT)))
                     throw new SemanticError(node.line, "lhs and rhs must be int or bool");
                 node.exprType = new PrimitiveTypeNode("bool");
                 break;
-            case GE:
-            case LE:
-            case GT:
-            case LT:
+            case GE: case LE: case GT: case LT:
                 if (!lhs.exprType.equalTo(rhs.exprType))
                     throw new SemanticError(node.line, "type of lhs and rhs must be the same");
-                if (!lhs.exprType.isPrimitiveType(INT) && !lhs.exprType.isPrimitiveType(BOOL)
-                        && !lhs.exprType.equalTo(new ClassTypeNode("string")))
+                if (!lhs.exprType.isPrimitiveType(INT) &&
+                        !lhs.exprType.isPrimitiveType(BOOL) &&
+                        !lhs.exprType.equalTo(new ClassTypeNode("string")))
                     throw new SemanticError(node.line, "only support relation btw int, bool, string");
                 node.exprType = new PrimitiveTypeNode("bool");
                 break;
             default:
                 if (!lhs.exprType.getTypeName().equals(rhs.exprType.getTypeName()))
-                    throw new SemanticError(node.line, "binary operator must operate on the same type");
+                    throw new SemanticError(node.line,
+                            "binary operator must operate on the same type");
                 node.exprType = lhs.exprType;
         }
     }
 
     @Override
-    public void visit(ForStatementNode node) throws SemanticError {
+    void visit(ForStatementNode node) throws Exception {
         super.visit(node);
-        if (node.condition == null)
-            return;
+        if (node.condition == null) return;
         if (!node.condition.exprType.isPrimitiveType(BOOL))
             throw new SemanticError(node.line, "condition must be type of bool");
     }
 
     @Override
-    public void visit(IfStatementNode node) throws SemanticError {
-        super.visit(node);
-        if (!node.condition.exprType.isPrimitiveType(BOOL))
-            throw new SemanticError(node.line, "condition must be type of bool");
-    }
-
-    @Override
-    public void visit(WhileStatementNode node) throws SemanticError {
+    void visit(IfStatementNode node) throws Exception {
         super.visit(node);
         if (!node.condition.exprType.isPrimitiveType(BOOL))
             throw new SemanticError(node.line, "condition must be type of bool");
     }
 
     @Override
-    public void visit(ExpressionDefinitionNode node) throws SemanticError {
+    void visit(WhileStatementNode node) throws Exception {
         super.visit(node);
-        if (node.initValue == null)
-            return;
+        if (!node.condition.exprType.isPrimitiveType(BOOL))
+            throw new SemanticError(node.line, "condition must be type of bool");
+    }
+
+    @Override
+    void visit(ExpressionDefinitionNode node) throws Exception {
+        super.visit(node);
+        if (node.initValue == null) return;
         VariableTypeNode variableType = node.variableType;
         VariableTypeNode initType = node.initValue.exprType;
         if (variableType.getTypeName().equals("string") && initType.isPrimitiveType(NULL))
             throw new SemanticError(node.line, "a string cannot be initialized to null");
         if (variableType instanceof ArrayTypeNode && initType instanceof ArrayTypeNode)
-            if (((ArrayTypeNode) variableType).contain((ArrayTypeNode) initType))
+            if (((ArrayTypeNode)variableType).contain((ArrayTypeNode)initType))
                 variableType = initType;
-            else
-                throw new SemanticError(node.line, "dim of array error");
+            else throw new SemanticError(node.line, "dim of array error");
         else if (!variableType.equalTo(initType))
             throw new SemanticError(node.line, "init value must be assigned to same type");
     }
 
     @Override
-    public void visit(MethodDefinitionNode node) throws SemanticError {
+    void visit(MethodDefinitionNode node) throws Exception {
         super.visit(node);
         for (ExpressionDefinitionNode item : node.formalArgumentList)
             if (item.variableType.isPrimitiveType(VOID))
@@ -277,13 +260,15 @@ public class StaticTypeChecker extends ASTVisitor {
     }
 
     @Override
-    public void visit(ReturnStatementNode node) throws SemanticError {
+    void visit(ReturnStatementNode node) throws Exception {
         super.visit(node);
-        ASTNode methodDefinition = node.parent;
-        while (!(methodDefinition instanceof MethodDefinitionNode))
-            methodDefinition = methodDefinition.parent;
-        if (node.returnValue != null)
-            if (!node.returnValue.exprType.equalTo(((MethodDefinitionNode) methodDefinition).returnType))
+        ASTNode tmp = node.parent;
+        while (!(tmp instanceof MethodDefinitionNode)) tmp = tmp.parent;
+        MethodDefinitionNode methodDefinition = (MethodDefinitionNode)tmp;
+        if (node.returnValue != null) {
+            if (!node.returnValue.exprType.equalTo(methodDefinition.returnType))
                 throw new SemanticError(node.line, "return value type error");
+        } else if (!methodDefinition.returnType.isPrimitiveType(VOID))
+            throw new SemanticError(node.line, "return type is not void");
     }
 }

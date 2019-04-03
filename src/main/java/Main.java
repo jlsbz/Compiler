@@ -1,13 +1,11 @@
 import ASTnode.*;
-import MStarTree.*;
 import ASTVisitor.*;
-import Scope.*;
 
 public class Main {
 
     public static void main(String args[]) throws Exception {
 
-        //String path = "program.txt";
+        //String path = "test/program.txt";
         String path = "";
         ASTBuilder astBuilder = new ASTBuilder();
         ParentLinker parentLinker = new ParentLinker();
