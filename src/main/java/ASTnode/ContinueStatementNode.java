@@ -1,4 +1,4 @@
 package ASTnode;
 
-public class ContinueStatementNode extends ExpressionStatementNode {
+public class ContinueStatementNode extends StatementNode {
 }

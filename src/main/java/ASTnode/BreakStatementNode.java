@@ -1,4 +1,4 @@
 package ASTnode;
 
-public class BreakStatementNode extends ExpressionStatementNode {
+public class BreakStatementNode extends StatementNode {
 }
