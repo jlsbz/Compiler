@@ -1,5 +1,3 @@
-# built-in functions
-
 default rel
 
 global __builtin_string_concat
@@ -27,6 +25,7 @@ extern puts
 extern printf
 extern strcmp
 extern malloc
+extern _GLOBAL_OFFSET_TABLE_
 
 
 SECTION .text   
@@ -65,15 +64,15 @@ __builtin_string_concat:
 L_001:  mov     eax, dword [rbp-18H]
         cmp     eax, dword [rbp-10H]
         jge     L_002
-        add     dword [rbp-1CH], 1
-        mov     eax, dword [rbp-1CH]
-        movsxd  rdx, eax
-        mov     rax, qword [rbp-8H]
-        add     rdx, rax
         mov     eax, dword [rbp-18H]
-        movsxd  rcx, eax
+        movsxd  rdx, eax
         mov     rax, qword [rbp-28H]
-        add     rax, rcx
+        add     rax, rdx
+        add     dword [rbp-1CH], 1
+        mov     edx, dword [rbp-1CH]
+        movsxd  rcx, edx
+        mov     rdx, qword [rbp-8H]
+        add     rdx, rcx
         movzx   eax, byte [rax]
         mov     byte [rdx], al
         add     dword [rbp-18H], 1
@@ -83,15 +82,15 @@ L_002:  mov     dword [rbp-14H], 0
 L_003:  mov     eax, dword [rbp-14H]
         cmp     eax, dword [rbp-0CH]
         jge     L_004
-        add     dword [rbp-1CH], 1
-        mov     eax, dword [rbp-1CH]
-        movsxd  rdx, eax
-        mov     rax, qword [rbp-8H]
-        add     rdx, rax
         mov     eax, dword [rbp-14H]
-        movsxd  rcx, eax
+        movsxd  rdx, eax
         mov     rax, qword [rbp-30H]
-        add     rax, rcx
+        add     rax, rdx
+        add     dword [rbp-1CH], 1
+        mov     edx, dword [rbp-1CH]
+        movsxd  rcx, edx
+        mov     rdx, qword [rbp-8H]
+        add     rdx, rcx
         movzx   eax, byte [rax]
         mov     byte [rdx], al
         add     dword [rbp-14H], 1
@@ -196,7 +195,7 @@ _Z5printPc:
         mov     rax, qword [rbp-8H]
         add     rax, 8
         mov     rsi, rax
-        mov     edi, L_043
+        lea     rdi, [rel L_043]
         mov     eax, 0
         call    printf
         nop
@@ -386,7 +385,7 @@ _Z9getStringv:
         mov     rax, qword [rbp-8H]
         add     rax, 8
         mov     rsi, rax
-        mov     edi, L_043
+        lea     rdi, [rel L_043]
         mov     eax, 0
         call    scanf
         mov     rax, qword [rbp-8H]
@@ -539,18 +538,19 @@ L_030:  mov     dword [rbp-3CH], 0
 L_031:  mov     eax, dword [rbp-3CH]
         cmp     eax, dword [rbp-40H]
         jge     L_032
+        mov     eax, dword [rbp-40H]
+        sub     eax, dword [rbp-3CH]
+        cdqe
+        mov     eax, dword [rbp+rax*4-30H]
+        lea     ecx, [rax+30H]
         mov     edx, dword [rbp-3CH]
         mov     eax, dword [rbp-44H]
         add     eax, edx
         movsxd  rdx, eax
         mov     rax, qword [rbp-38H]
-        add     rdx, rax
-        mov     eax, dword [rbp-40H]
-        sub     eax, dword [rbp-3CH]
-        cdqe
-        mov     eax, dword [rbp+rax*4-30H]
-        add     eax, 48
-        mov     byte [rdx], al
+        add     rax, rdx
+        mov     edx, ecx
+        mov     byte [rax], dl
         add     dword [rbp-3CH], 1
         jmp     L_031
 
@@ -588,8 +588,8 @@ _Z27__member___string_substringPcii:
         mov     rax, qword [rbp-8H]
         mov     qword [rax], rdx
         mov     eax, dword [rbp-1CH]
+        add     eax, 8
         cdqe
-        add     rax, 8
         add     qword [rbp-18H], rax
         add     qword [rbp-8H], 8
         mov     dword [rbp-10H], 0
@@ -598,12 +598,12 @@ L_034:  mov     eax, dword [rbp-10H]
         jge     L_035
         mov     eax, dword [rbp-10H]
         movsxd  rdx, eax
-        mov     rax, qword [rbp-8H]
-        add     rdx, rax
-        mov     eax, dword [rbp-10H]
-        movsxd  rcx, eax
         mov     rax, qword [rbp-18H]
-        add     rax, rcx
+        add     rax, rdx
+        mov     edx, dword [rbp-10H]
+        movsxd  rcx, edx
+        mov     rdx, qword [rbp-8H]
+        add     rdx, rcx
         movzx   eax, byte [rax]
         mov     byte [rdx], al
         add     dword [rbp-10H], 1
