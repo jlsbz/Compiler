@@ -19,6 +19,10 @@ global __builtin_string_less
 global __builtin_string_less_equal
 global main
 
+extern getchar
+extern strlen
+extern scanf
+extern putchar
 extern strcmp
 extern __sprintf_chk
 extern __stack_chk_fail
@@ -303,6 +307,20 @@ L_011:
 L_012:
         db 25H, 6CH, 64H, 00H
 
+_Z5printPc:
+        push    rbp
+        mov     rbp, rsp
+        sub     rsp, 16
+        mov     qword [rbp-8H], rdi
+        mov     rax, qword [rbp-8H]
+        add     rax, 8
+        mov     rsi, rax
+        mov     edi, L_043
+        mov     eax, 0
+        call    printf
+        nop
+        leave
+        ret
 
 _Z8printInti:
         push    rbp
