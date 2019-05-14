@@ -115,7 +115,7 @@ public class NASMPrinter implements IRVisitor
         for (IRFunction irFunction : node.getFunctions().values()) irFunction.accept(this);
         printf("\n");
         try {
-            BufferedReader bufferedReader = new BufferedReader(new FileReader("lib/builtin_functions.asm"));
+            BufferedReader bufferedReader = new BufferedReader(new FileReader("lib/lib.asm"));
             String line;
             while ((line = bufferedReader.readLine()) != null) printf("%s\n", line);
         }

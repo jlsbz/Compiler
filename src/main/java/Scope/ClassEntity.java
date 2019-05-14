@@ -24,7 +24,7 @@ public class ClassEntity extends Entity
             FuncEntity entity = new FuncEntity(funcDeclNode);
             entity.setClassName(node.getName());
             entity.setMember(true);
-            scope.put(funcDeclNode.getLocation(), name, "@F" + name, entity);
+            scope.put(funcDeclNode.loc, name, "@F" + name, entity);
         }
     }
 
