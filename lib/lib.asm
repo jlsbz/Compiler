@@ -289,10 +289,6 @@ __buffer.3340:
 
 SECTION .text.startup
 
-main:
-        xor     eax, eax
-        jmp     _global_init
-
 SECTION .rodata.str1.1
 
 L_011:
