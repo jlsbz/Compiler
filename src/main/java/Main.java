@@ -31,17 +31,15 @@ public class Main
     private static void compile() throws Exception
     {
         buildAST();
-        //printAST();
         semanticCheck();
         buildIR();
-        //printIR();
         generateCode();
     }
 
     private static void buildAST() throws Exception
     {
-        String inFile = "test/program.txt";
-        //inFile = null;
+        //String inFile = "test/program.txt";
+        String inFile = null;
         InputStream inS;
         if (inFile == null) inS = System.in;
         else inS = new FileInputStream(inFile);
@@ -56,10 +54,7 @@ public class Main
         ast = (ProgramNode) astBuilder.visit(tree);
     }
 
-    //private static void printAST()
-    //{
-     //   new ASTPrinter().visit(ast);
-    //}
+
     private static void semanticCheck()
     {
         ClassFunctionBuilder globalScopeBuilder = new ClassFunctionBuilder();
@@ -79,7 +74,7 @@ public class Main
 
     private static void generateCode() throws Exception
     {
-        String outFile = "1.asm";
+        String outFile = "test/1.asm";
         outFile = null;
         PrintStream outS;
         if (outFile == null) outS = System.out;
