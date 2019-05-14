@@ -1,13 +1,22 @@
-package ASTnode;
+package ASTNode;
 
-public class ReturnStatementNode extends StatementNode {
+import FrontEnd.ASTVisitor;
 
-    public ExpressionStatementNode returnValue;
+public class ReturnStatementNode extends StatementNode
+{
+    public ExpressionNode exp;
+
+    public ReturnStatementNode(ExpressionNode exp, Location config)
+    {
+        this.exp = exp;
+        this.loc = config;
+    }
+
+    //public ExpressionNode getExp(){return exp;}
 
     @Override
-    public void printInformation(int tab) {
-        super.printInformation(tab);
-        if (returnValue != null)
-            returnValue.printInformation(tab + 1);
+    public void accept(ASTVisitor visitor)
+    {
+        visitor.visit(this);
     }
 }

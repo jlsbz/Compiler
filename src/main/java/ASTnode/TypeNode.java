@@ -1,16 +1,32 @@
-package ASTnode;
+package ASTNode;
 
-import static Print.Print.*;
 
-public class TypeNode extends ExpressionStatementNode {
+import FrontEnd.ASTVisitor;
+import Type.Type;
 
-    public String getTypeName() {
-        return this.getClass().getName();
+public class TypeNode extends ASTNode
+{
+    private Type type;
+
+    public TypeNode(Type type, Location config)
+    {
+        this.type = type;
+        this.loc = config;
+    }
+
+    public Type getType()
+    {
+        return this.type;
+    }
+
+    public void setType(Type type)
+    {
+        this.type = type;
     }
 
     @Override
-    public void printInformation(int tab) {
-        super.printInformation(tab);
-        printSpaceAndStr(tab, "type: " + getTypeName());
+    public void accept(ASTVisitor visitor)
+    {
+        visitor.visit(this);
     }
 }

@@ -1,16 +1,17 @@
-package ASTnode;
+package ASTNode;
 
-import ASTVisitor.Scope;
+import FrontEnd.ASTVisitor;
 
-import static Print.Print.printDashAndStr;
+public abstract class ASTNode
+{
+    public Location loc;
+    public boolean outInfluence = false;
 
-public abstract class ASTNode {
-    public int line;
-    public ASTNode parent;
-    public Scope scope;
+    //public Location getLocation()
+    //{
+    //    return config;
+   // }
 
-    public void printInformation(int tab) {
-        printDashAndStr(tab, this.getClass().getName());
-    }
 
+    abstract public void accept(ASTVisitor visitor);
 }

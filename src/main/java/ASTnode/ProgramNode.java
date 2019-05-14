@@ -1,25 +1,29 @@
-package ASTnode;
+package ASTNode;
+import FrontEnd.ASTVisitor;
+
+import Scope.Scope;
 
 import java.util.*;
 
-public class ProgramNode extends ASTNode {
+public class ProgramNode extends ASTNode
+{
+    private List<DefinitionNode> def;
+    private Scope scope;
 
-    public List<ClassDefinitionNode> classDefinitionList;
-    public List<MethodDefinitionNode> methodDefinitionList;
-    public List<ExpressionDefinitionNode> variableDefinitionList;
-    public List<ASTNode> childrenList;
+    public ProgramNode(List<DefinitionNode> def, Location config)
+    {
+        this.def = def;
+        this.loc = config;
+    }
 
-    public ProgramNode() {
-        classDefinitionList = new LinkedList<ClassDefinitionNode>();
-        methodDefinitionList = new LinkedList<MethodDefinitionNode>();
-        variableDefinitionList = new LinkedList<ExpressionDefinitionNode>();
-        childrenList = new LinkedList<ASTNode>();
+    public List<DefinitionNode> getDecls()
+    {
+        return def;
     }
 
     @Override
-    public void printInformation(int tab) {
-        super.printInformation(tab);
-        for (ASTNode item : childrenList)
-            item.printInformation(tab + 1);
+    public void accept(ASTVisitor visitor)
+    {
+        visitor.visit(this);
     }
 }

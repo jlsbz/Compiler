@@ -1,17 +1,38 @@
-package ASTnode;
+package ASTNode;
+
+import FrontEnd.ASTVisitor;
+
 
 public class ForStatementNode extends StatementNode {
+    public ExpressionNode init, cond, update;
+    public StatementNode stmt;
 
-    public ExpressionStatementNode init;
-    public ExpressionStatementNode condition;
-    public ExpressionStatementNode afterBlock;
-    public BlockNode block;
+    public ForStatementNode(ExpressionNode init, ExpressionNode cond, ExpressionNode update, StatementNode stmt, Location config) {
+        this.init = init;
+        this.cond = cond;
+        this.update = update;
+        this.stmt = stmt;
+        this.loc = config;
+    }
 
-    @Override public void printInformation(int tab) {
-        super.printInformation(tab);
-        if (init != null) init.printInformation(tab + 1);
-        if (condition != null) condition.printInformation(tab + 1);
-        if (afterBlock != null) afterBlock.printInformation(tab + 1);
-        block.printInformation(tab + 1);
+    public ExpressionNode getInit() {
+        return init;
+    }
+
+    public ExpressionNode getCond() {
+        return cond;
+    }
+
+    public ExpressionNode getUpdate() {
+        return update;
+    }
+
+    public StatementNode getStmt() {
+        return stmt;
+    }
+
+    @Override
+    public void accept(ASTVisitor visitor) {
+        visitor.visit(this);
     }
 }

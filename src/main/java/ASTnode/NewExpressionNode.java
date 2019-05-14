@@ -1,23 +1,40 @@
-package ASTnode;
+package ASTNode;
 
-import static Print.Print.*;
+import FrontEnd.ASTVisitor;
 
 import java.util.*;
 
-public class NewExpressionNode extends ExpressionStatementNode {
+public class NewExpressionNode extends ExpressionNode
+{
+    private TypeNode newType;
+    private List<ExpressionNode> exprList;
+    private int dimNum;
 
-    public VariableTypeNode variableType;
-    public List<ExpressionStatementNode> actualParameterList;
+    public NewExpressionNode(TypeNode type, List<ExpressionNode> exprList, int dimNum, Location config)
+    {
+        this.newType = type;
+        this.exprList = exprList;
+        this.dimNum = dimNum;
+        this.loc = config;
+    }
 
-    public NewExpressionNode() {
-        actualParameterList = new LinkedList<ExpressionStatementNode>();
+    public TypeNode getNewType()
+    {
+        return newType;
+    }
+
+    public List<ExpressionNode> getExprList()
+    {
+        return exprList;
+    }
+
+    public int getDimNum() {
+        return dimNum;
     }
 
     @Override
-    public void printInformation(int tab) {
-        super.printInformation(tab);
-        if (variableType != null) variableType.printInformation(tab + 1);
-        for (ExpressionStatementNode item : actualParameterList)
-            item.printInformation(tab + 1);
+    public void accept(ASTVisitor visitor)
+    {
+        visitor.visit(this);
     }
 }

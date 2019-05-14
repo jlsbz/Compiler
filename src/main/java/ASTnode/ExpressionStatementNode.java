@@ -1,21 +1,22 @@
-package ASTnode;
+package ASTNode;
 
-import static Print.Print.*;
+import FrontEnd.ASTVisitor;
 
-public abstract class ExpressionStatementNode extends StatementNode {
+public class ExpressionStatementNode extends StatementNode
+{
+    public ExpressionNode exp;
 
-    public VariableTypeNode exprType;
-    public boolean leftValue;               //true for right
-
-    ExpressionStatementNode() {
-        exprType = null;
-        leftValue = false;
+    public ExpressionStatementNode(ExpressionNode exp, Location config)
+    {
+        this.exp = exp;
+        this.loc = config;
     }
 
+    //public ExpressionNode getExp(){return expr;}
+
     @Override
-    public void printInformation(int tab) {
-        super.printInformation(tab);
-        if (exprType != null) exprType.printInformation(tab + 1);
-        if (leftValue == true) printSpaceAndStr(tab, "leftValue: " + leftValue);
+    public void accept(ASTVisitor visitor)
+    {
+        visitor.visit(this);
     }
 }

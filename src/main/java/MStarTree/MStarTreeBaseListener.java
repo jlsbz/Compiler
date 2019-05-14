@@ -1,4 +1,4 @@
-// Generated from C:/Users/93739/IdeaProjects/Mx/src/main/resources\MStarTree.g4 by ANTLR 4.7.2
+// Generated from C:/Users/93739/IdeaProjects/MStar/src/main/resources\MStarTree.g4 by ANTLR 4.7.2
 package MStarTree;
 import org.antlr.v4.runtime.ParserRuleContext;
 import org.antlr.v4.runtime.tree.ErrorNode;
@@ -27,6 +27,30 @@ public class MStarTreeBaseListener implements MStarTreeListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
+	@Override public void enterProgramSection(MStarTreeParser.ProgramSectionContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitProgramSection(MStarTreeParser.ProgramSectionContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterFunctionDefinition(MStarTreeParser.FunctionDefinitionContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitFunctionDefinition(MStarTreeParser.FunctionDefinitionContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
 	@Override public void enterClassDefinition(MStarTreeParser.ClassDefinitionContext ctx) { }
 	/**
 	 * {@inheritDoc}
@@ -39,73 +63,193 @@ public class MStarTreeBaseListener implements MStarTreeListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterMemberVariable(MStarTreeParser.MemberVariableContext ctx) { }
+	@Override public void enterVariableDefinition(MStarTreeParser.VariableDefinitionContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitMemberVariable(MStarTreeParser.MemberVariableContext ctx) { }
+	@Override public void exitVariableDefinition(MStarTreeParser.VariableDefinitionContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterConstructionMethodDefinition(MStarTreeParser.ConstructionMethodDefinitionContext ctx) { }
+	@Override public void enterMemberDefinition(MStarTreeParser.MemberDefinitionContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitConstructionMethodDefinition(MStarTreeParser.ConstructionMethodDefinitionContext ctx) { }
+	@Override public void exitMemberDefinition(MStarTreeParser.MemberDefinitionContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterMethodDefinition(MStarTreeParser.MethodDefinitionContext ctx) { }
+	@Override public void enterParameterListDefinition(MStarTreeParser.ParameterListDefinitionContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitMethodDefinition(MStarTreeParser.MethodDefinitionContext ctx) { }
+	@Override public void exitParameterListDefinition(MStarTreeParser.ParameterListDefinitionContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterFormalParameterList(MStarTreeParser.FormalParameterListContext ctx) { }
+	@Override public void enterParameterDefinition(MStarTreeParser.ParameterDefinitionContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitFormalParameterList(MStarTreeParser.FormalParameterListContext ctx) { }
+	@Override public void exitParameterDefinition(MStarTreeParser.ParameterDefinitionContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterFormalParameter(MStarTreeParser.FormalParameterContext ctx) { }
+	@Override public void enterFunctionType(MStarTreeParser.FunctionTypeContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitFormalParameter(MStarTreeParser.FormalParameterContext ctx) { }
+	@Override public void exitFunctionType(MStarTreeParser.FunctionTypeContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterActualParameterList(MStarTreeParser.ActualParameterListContext ctx) { }
+	@Override public void enterArrayType(MStarTreeParser.ArrayTypeContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitActualParameterList(MStarTreeParser.ActualParameterListContext ctx) { }
+	@Override public void exitArrayType(MStarTreeParser.ArrayTypeContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterNonArrayType(MStarTreeParser.NonArrayTypeContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitNonArrayType(MStarTreeParser.NonArrayTypeContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterBasicType(MStarTreeParser.BasicTypeContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitBasicType(MStarTreeParser.BasicTypeContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterBlockStmt(MStarTreeParser.BlockStmtContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitBlockStmt(MStarTreeParser.BlockStmtContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterExpressionStmt(MStarTreeParser.ExpressionStmtContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitExpressionStmt(MStarTreeParser.ExpressionStmtContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterIfElseStmt(MStarTreeParser.IfElseStmtContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitIfElseStmt(MStarTreeParser.IfElseStmtContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterWhileStmt(MStarTreeParser.WhileStmtContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitWhileStmt(MStarTreeParser.WhileStmtContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterForStmt(MStarTreeParser.ForStmtContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitForStmt(MStarTreeParser.ForStmtContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterContinueStmt(MStarTreeParser.ContinueStmtContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitContinueStmt(MStarTreeParser.ContinueStmtContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterBreakStmt(MStarTreeParser.BreakStmtContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitBreakStmt(MStarTreeParser.BreakStmtContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterReturnStmt(MStarTreeParser.ReturnStmtContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitReturnStmt(MStarTreeParser.ReturnStmtContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
@@ -123,133 +267,25 @@ public class MStarTreeBaseListener implements MStarTreeListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterBlockOrStatement(MStarTreeParser.BlockOrStatementContext ctx) { }
+	@Override public void enterStmt(MStarTreeParser.StmtContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitBlockOrStatement(MStarTreeParser.BlockOrStatementContext ctx) { }
+	@Override public void exitStmt(MStarTreeParser.StmtContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterDefinitionStat(MStarTreeParser.DefinitionStatContext ctx) { }
+	@Override public void enterVarDeclStmt(MStarTreeParser.VarDeclStmtContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitDefinitionStat(MStarTreeParser.DefinitionStatContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void enterExpressionStat(MStarTreeParser.ExpressionStatContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void exitExpressionStat(MStarTreeParser.ExpressionStatContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void enterIfStat(MStarTreeParser.IfStatContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void exitIfStat(MStarTreeParser.IfStatContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void enterForStat(MStarTreeParser.ForStatContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void exitForStat(MStarTreeParser.ForStatContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void enterWhileStat(MStarTreeParser.WhileStatContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void exitWhileStat(MStarTreeParser.WhileStatContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void enterReturnStat(MStarTreeParser.ReturnStatContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void exitReturnStat(MStarTreeParser.ReturnStatContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void enterBreakStat(MStarTreeParser.BreakStatContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void exitBreakStat(MStarTreeParser.BreakStatContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void enterContinueStat(MStarTreeParser.ContinueStatContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void exitContinueStat(MStarTreeParser.ContinueStatContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void enterEmptyStat(MStarTreeParser.EmptyStatContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void exitEmptyStat(MStarTreeParser.EmptyStatContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void enterStatementDefinition(MStarTreeParser.StatementDefinitionContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void exitStatementDefinition(MStarTreeParser.StatementDefinitionContext ctx) { }
+	@Override public void exitVarDeclStmt(MStarTreeParser.VarDeclStmtContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
@@ -267,13 +303,13 @@ public class MStarTreeBaseListener implements MStarTreeListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterDefinitionExpr(MStarTreeParser.DefinitionExprContext ctx) { }
+	@Override public void enterStrExpr(MStarTreeParser.StrExprContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitDefinitionExpr(MStarTreeParser.DefinitionExprContext ctx) { }
+	@Override public void exitStrExpr(MStarTreeParser.StrExprContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
@@ -291,49 +327,37 @@ public class MStarTreeBaseListener implements MStarTreeListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterMethodCallExpr(MStarTreeParser.MethodCallExprContext ctx) { }
+	@Override public void enterNullExpr(MStarTreeParser.NullExprContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitMethodCallExpr(MStarTreeParser.MethodCallExprContext ctx) { }
+	@Override public void exitNullExpr(MStarTreeParser.NullExprContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterUnaryExpr(MStarTreeParser.UnaryExprContext ctx) { }
+	@Override public void enterArrayExpr(MStarTreeParser.ArrayExprContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitUnaryExpr(MStarTreeParser.UnaryExprContext ctx) { }
+	@Override public void exitArrayExpr(MStarTreeParser.ArrayExprContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterIndexAccessExpr(MStarTreeParser.IndexAccessExprContext ctx) { }
+	@Override public void enterSuffixExpr(MStarTreeParser.SuffixExprContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitIndexAccessExpr(MStarTreeParser.IndexAccessExprContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void enterMemberAccessExpr(MStarTreeParser.MemberAccessExprContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void exitMemberAccessExpr(MStarTreeParser.MemberAccessExprContext ctx) { }
+	@Override public void exitSuffixExpr(MStarTreeParser.SuffixExprContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
@@ -351,121 +375,157 @@ public class MStarTreeBaseListener implements MStarTreeListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterParensExpr(MStarTreeParser.ParensExprContext ctx) { }
+	@Override public void enterMemExpr(MStarTreeParser.MemExprContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitParensExpr(MStarTreeParser.ParensExprContext ctx) { }
+	@Override public void exitMemExpr(MStarTreeParser.MemExprContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterIdentifierExpr(MStarTreeParser.IdentifierExprContext ctx) { }
+	@Override public void enterFuncCallExpr(MStarTreeParser.FuncCallExprContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitIdentifierExpr(MStarTreeParser.IdentifierExprContext ctx) { }
+	@Override public void exitFuncCallExpr(MStarTreeParser.FuncCallExprContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterConstantExpr(MStarTreeParser.ConstantExprContext ctx) { }
+	@Override public void enterNumExpr(MStarTreeParser.NumExprContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitConstantExpr(MStarTreeParser.ConstantExprContext ctx) { }
+	@Override public void exitNumExpr(MStarTreeParser.NumExprContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterExpressionDefinition(MStarTreeParser.ExpressionDefinitionContext ctx) { }
+	@Override public void enterPrefixExpr(MStarTreeParser.PrefixExprContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitExpressionDefinition(MStarTreeParser.ExpressionDefinitionContext ctx) { }
+	@Override public void exitPrefixExpr(MStarTreeParser.PrefixExprContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterCreator(MStarTreeParser.CreatorContext ctx) { }
+	@Override public void enterBoolExpr(MStarTreeParser.BoolExprContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitCreator(MStarTreeParser.CreatorContext ctx) { }
+	@Override public void exitBoolExpr(MStarTreeParser.BoolExprContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterArrayVariableType(MStarTreeParser.ArrayVariableTypeContext ctx) { }
+	@Override public void enterAssignExpr(MStarTreeParser.AssignExprContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitArrayVariableType(MStarTreeParser.ArrayVariableTypeContext ctx) { }
+	@Override public void exitAssignExpr(MStarTreeParser.AssignExprContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterNonArrayVariableType(MStarTreeParser.NonArrayVariableTypeContext ctx) { }
+	@Override public void enterBracketsExpr(MStarTreeParser.BracketsExprContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitNonArrayVariableType(MStarTreeParser.NonArrayVariableTypeContext ctx) { }
+	@Override public void exitBracketsExpr(MStarTreeParser.BracketsExprContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterArrayCreatorRest(MStarTreeParser.ArrayCreatorRestContext ctx) { }
+	@Override public void enterIdExpr(MStarTreeParser.IdExprContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitArrayCreatorRest(MStarTreeParser.ArrayCreatorRestContext ctx) { }
+	@Override public void exitIdExpr(MStarTreeParser.IdExprContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterPrimitiveType(MStarTreeParser.PrimitiveTypeContext ctx) { }
+	@Override public void enterNonArrayTypeCreator(MStarTreeParser.NonArrayTypeCreatorContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitPrimitiveType(MStarTreeParser.PrimitiveTypeContext ctx) { }
+	@Override public void exitNonArrayTypeCreator(MStarTreeParser.NonArrayTypeCreatorContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterConstant(MStarTreeParser.ConstantContext ctx) { }
+	@Override public void enterErrorCreator(MStarTreeParser.ErrorCreatorContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitConstant(MStarTreeParser.ConstantContext ctx) { }
+	@Override public void exitErrorCreator(MStarTreeParser.ErrorCreatorContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterArrayCreator(MStarTreeParser.ArrayCreatorContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitArrayCreator(MStarTreeParser.ArrayCreatorContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterNonArrayCreator(MStarTreeParser.NonArrayCreatorContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitNonArrayCreator(MStarTreeParser.NonArrayCreatorContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterParameterList(MStarTreeParser.ParameterListContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitParameterList(MStarTreeParser.ParameterListContext ctx) { }
 
 	/**
 	 * {@inheritDoc}

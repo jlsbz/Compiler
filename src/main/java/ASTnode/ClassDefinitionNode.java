@@ -1,32 +1,35 @@
-package ASTnode;
+package ASTNode;
 
-import static Print.Print.*;
+import FrontEnd.ASTVisitor;
 
 import java.util.*;
 
+public class ClassDefinitionNode extends DefinitionNode
+{
+    private List<VariableDefinitionNode> varMember;
+    private List<FunctionDefinitionNode> funcMember;
 
-public class ClassDefinitionNode extends ASTNode {
+    public ClassDefinitionNode(String name, List<VariableDefinitionNode> varMember, List<FunctionDefinitionNode> funcMember, Location config)
+    {
+        this.name = name;
+        this.varMember = varMember;
+        this.funcMember = funcMember;
+        this.loc = config;
+    }
 
-    public String className;
-    public List<ExpressionDefinitionNode> memberVariableList;
-    public List<MethodDefinitionNode> memberMethodList;
-    public List<MethodDefinitionNode> memberConstructionMethodList;
+    public List<VariableDefinitionNode> getVarMember()
+    {
+        return varMember;
+    }
 
-    public ClassDefinitionNode() {
-        memberVariableList = new LinkedList<ExpressionDefinitionNode>();
-        memberMethodList = new LinkedList<MethodDefinitionNode>();
-        memberConstructionMethodList = new LinkedList<MethodDefinitionNode>();
+    public List<FunctionDefinitionNode> getFuncMember()
+    {
+        return funcMember;
     }
 
     @Override
-    public void printInformation(int tab) {
-        super.printInformation(tab);
-        printSpaceAndStr(tab, "name: " + className);
-        for (ExpressionDefinitionNode item : memberVariableList)
-            item.printInformation(tab + 1);
-        for (MethodDefinitionNode item : memberMethodList)
-            item.printInformation(tab + 1);
-        for (MethodDefinitionNode item : memberConstructionMethodList)
-            item.printInformation(tab + 1);
+    public void accept(ASTVisitor visitor)
+    {
+        visitor.visit(this);
     }
 }

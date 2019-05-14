@@ -1,7 +1,7 @@
-package ASTnode;
+package ASTNode;
+import FrontEnd.ASTVisitor;
 
-public abstract class StatementNode extends ASTNode
-{
+public abstract class StatementNode extends ASTNode {
 
 
 }

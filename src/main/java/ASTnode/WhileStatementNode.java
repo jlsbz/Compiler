@@ -1,13 +1,31 @@
-package ASTnode;
+package ASTNode;
+import FrontEnd.ASTVisitor;
 
-public class WhileStatementNode extends StatementNode {
+public class WhileStatementNode extends StatementNode
+{
+    public ExpressionNode condition;
+    public StatementNode stmt;
 
-    public ExpressionStatementNode condition;
-    public BlockNode block;
+    public WhileStatementNode(ExpressionNode condition, StatementNode stmt, Location config)
+    {
+        this.condition = condition;
+        this.stmt = stmt;
+        this.loc = config;
+    }
 
-    @Override public void printInformation(int tab) {
-        super.printInformation(tab);
-        condition.printInformation(tab + 1);
-        block.printInformation(tab + 1);
+    public ExpressionNode getCondition()
+    {
+        return condition;
+    }
+
+    public StatementNode getStmt()
+    {
+        return stmt;
+    }
+
+    @Override
+    public void accept(ASTVisitor visitor)
+    {
+        visitor.visit(this);
     }
 }

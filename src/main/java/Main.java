@@ -1,30 +1,93 @@
-import ASTnode.*;
-import ASTVisitor.*;
+import ASTNode.ProgramNode;
+import FrontEnd.*;
+import BackEnd.*;
+import MStarTree.*;
+import Scope.Scope;
+import org.antlr.v4.runtime.CharStream;
+import org.antlr.v4.runtime.CharStreams;
+import org.antlr.v4.runtime.CommonTokenStream;
+import org.antlr.v4.runtime.tree.ParseTree;
+import IR.*;
 
-public class Main {
+import java.io.*;
 
-    public static void main(String args[]) throws Exception {
+public class Main
+{
+    private static ProgramNode ast;
+    private static Scope globalScope;
+    private static IRRoot irRoot;
 
-        //String path = "test/program.txt";
-        String path = "";
+    public static void main(String[] args) throws Exception
+    {
+        try {
+            compile();
+        }
+        catch (Error e) {
+            System.err.println(e.getMessage());
+            System.exit(1);
+        }
+    }
+
+    private static void compile() throws Exception
+    {
+        buildAST();
+        //printAST();
+        semanticCheck();
+        buildIR();
+        //printIR();
+        generateCode();
+    }
+
+    private static void buildAST() throws Exception
+    {
+        String inFile = "test/program.txt";
+        //inFile = null;
+        InputStream inS;
+        if (inFile == null) inS = System.in;
+        else inS = new FileInputStream(inFile);
+        CharStream input = CharStreams.fromStream(inS);
+        MStarTreeLexer lexer = new MStarTreeLexer(input);
+        CommonTokenStream tokens = new CommonTokenStream(lexer);
+        MStarTreeParser parser = new MStarTreeParser(tokens);
+        parser.removeErrorListeners();
+        parser.addErrorListener(new SyntaxErrorListener());
+        ParseTree tree = parser.program();
         ASTBuilder astBuilder = new ASTBuilder();
-        ParentLinker parentLinker = new ParentLinker();
-        ScopeTreeBuilder scopeTreeBuilder = new ScopeTreeBuilder();
-        TypeDefinitionChecker typeDefinitionChecker = new TypeDefinitionChecker();
-        StaticTypeChecker staticTypeChecker = new StaticTypeChecker();
-        ClassTypeResolver classTypeResolver = new ClassTypeResolver();
+        ast = (ProgramNode) astBuilder.visit(tree);
+    }
 
-        ProgramNode prog = astBuilder.buildAST(path);
+    //private static void printAST()
+    //{
+     //   new ASTPrinter().visit(ast);
+    //}
+    private static void semanticCheck()
+    {
+        ClassFunctionBuilder globalScopeBuilder = new ClassFunctionBuilder();
+        globalScopeBuilder.visit(ast);
+        globalScope = globalScopeBuilder.getScope();
+        new ClassVarMemBuilder(globalScope).visit(ast);
+        new SemanticChecker(globalScope).visit(ast);
+    }
 
-        parentLinker.linkParent(prog);
+    private static void buildIR()
+    {
+        IRBuilder irBuilder = new IRBuilder(globalScope);
+        irBuilder.visit(ast);
+        irRoot = irBuilder.getIrRoot();
+        new BinaryOpTransformer(irRoot).run();
+    }
 
-
-
-        Scope toplevelScope = scopeTreeBuilder.buildScopeTree(prog);
-
-        typeDefinitionChecker.checkTypeDefinition(prog);
-        staticTypeChecker.checkStaticType(prog);
-        classTypeResolver.resolveClassType(prog);
-        //prog.printInformation(0);
+    private static void generateCode() throws Exception
+    {
+        String outFile = "1.asm";
+        outFile = null;
+        PrintStream outS;
+        if (outFile == null) outS = System.out;
+        else outS = new PrintStream(new FileOutputStream(outFile));
+        new FunctionInLineOptimizer(irRoot).run();
+        new GlobalVarProcessor(irRoot).run();
+        new RegisterAllocator(irRoot).run();
+        new NASMTransformer(irRoot).run();
+        new NASMPrinter(outS).visit(irRoot);
     }
 }
