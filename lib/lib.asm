@@ -1,16 +1,22 @@
 default rel
 
-global __print
-global __println
-global __getString
-global __getInt
-global __toString
+global _Z5printPc
+global _Z7printlnPc
+global _Z9getStringv
+global _Z6getIntv
+global _Z8toStringi
 global __string_length
-global __string_substring
-global __string_parseInt
-global __string_ord
-global __string_concat
+global _Z27__member___string_substringPcii
+global _Z26__member___string_parseIntPc
+global _Z21__member___string_ordPci
+global __builtin_string_concat
 global __string_compare
+global _Z8printInti
+global _Z10printlnInti
+global __builtin_string_equal
+global __builtin_string_unequal
+global __builtin_string_less
+global __builtin_string_less_equal
 global main
 
 extern strcmp
@@ -85,7 +91,7 @@ L_001:  mov     edx, dword [rbx]
         pop     rbp
         ret
 
-__getInt:
+_Z6getIntv:
         sub     rsp, 24
         mov     rdi, L_012
         mov     rax, qword [fs:abs 28H]
@@ -298,3 +304,239 @@ L_012:
         db 25H, 6CH, 64H, 00H
 
 
+_Z8printInti:
+        push    rbp
+        mov     rbp, rsp
+        sub     rsp, 80
+        mov     dword [rbp-44H], edi
+
+
+        mov     rax, qword [fs:abs 28H]
+        mov     qword [rbp-8H], rax
+        xor     eax, eax
+        cmp     dword [rbp-44H], 0
+        jnz     L_013
+        mov     edi, 48
+        call    putchar
+L_013:  cmp     dword [rbp-44H], 0
+        jns     L_014
+        neg     dword [rbp-44H]
+        mov     edi, 45
+        call    putchar
+L_014:  mov     dword [rbp-38H], 0
+L_015:  cmp     dword [rbp-44H], 0
+        jle     L_016
+        mov     esi, dword [rbp-38H]
+        lea     eax, [rsi+1H]
+        mov     dword [rbp-38H], eax
+        mov     ecx, dword [rbp-44H]
+        mov     edx, 1717986919
+        mov     eax, ecx
+        imul    edx
+        sar     edx, 2
+        mov     eax, ecx
+        sar     eax, 31
+        sub     edx, eax
+        mov     eax, edx
+        shl     eax, 2
+        add     eax, edx
+        add     eax, eax
+        sub     ecx, eax
+        mov     edx, ecx
+        movsxd  rax, esi
+        mov     dword [rbp+rax*4-30H], edx
+        mov     ecx, dword [rbp-44H]
+        mov     edx, 1717986919
+        mov     eax, ecx
+        imul    edx
+        sar     edx, 2
+        mov     eax, ecx
+        sar     eax, 31
+        sub     edx, eax
+        mov     eax, edx
+        mov     dword [rbp-44H], eax
+        jmp     L_015
+
+L_016:  mov     eax, dword [rbp-38H]
+        sub     eax, 1
+        mov     dword [rbp-34H], eax
+L_017:  cmp     dword [rbp-34H], 0
+        js      L_018
+        mov     eax, dword [rbp-34H]
+        cdqe
+        mov     eax, dword [rbp+rax*4-30H]
+        add     eax, 48
+        mov     edi, eax
+        call    putchar
+        sub     dword [rbp-34H], 1
+        jmp     L_017
+
+L_018:  nop
+        mov     rax, qword [rbp-8H]
+
+
+        xor     rax, qword [fs:abs 28H]
+        jz      L_019
+        call    __stack_chk_fail
+L_019:  leave
+        ret
+
+
+
+_Z10printlnInti:
+        push    rbp
+        mov     rbp, rsp
+        sub     rsp, 80
+        mov     dword [rbp-44H], edi
+
+
+        mov     rax, qword [fs:abs 28H]
+        mov     qword [rbp-8H], rax
+        xor     eax, eax
+        cmp     dword [rbp-44H], 0
+        jnz     L_020
+        mov     edi, 48
+        call    putchar
+L_020:  cmp     dword [rbp-44H], 0
+        jns     L_021
+        neg     dword [rbp-44H]
+        mov     edi, 45
+        call    putchar
+L_021:  mov     dword [rbp-38H], 0
+L_022:  cmp     dword [rbp-44H], 0
+        jle     L_023
+        mov     esi, dword [rbp-38H]
+        lea     eax, [rsi+1H]
+        mov     dword [rbp-38H], eax
+        mov     ecx, dword [rbp-44H]
+        mov     edx, 1717986919
+        mov     eax, ecx
+        imul    edx
+        sar     edx, 2
+        mov     eax, ecx
+        sar     eax, 31
+        sub     edx, eax
+        mov     eax, edx
+        shl     eax, 2
+        add     eax, edx
+        add     eax, eax
+        sub     ecx, eax
+        mov     edx, ecx
+        movsxd  rax, esi
+        mov     dword [rbp+rax*4-30H], edx
+        mov     ecx, dword [rbp-44H]
+        mov     edx, 1717986919
+        mov     eax, ecx
+        imul    edx
+        sar     edx, 2
+        mov     eax, ecx
+        sar     eax, 31
+        sub     edx, eax
+        mov     eax, edx
+        mov     dword [rbp-44H], eax
+        jmp     L_022
+
+L_023:  mov     eax, dword [rbp-38H]
+        sub     eax, 1
+        mov     dword [rbp-34H], eax
+L_024:  cmp     dword [rbp-34H], 0
+        js      L_025
+        mov     eax, dword [rbp-34H]
+        cdqe
+        mov     eax, dword [rbp+rax*4-30H]
+        add     eax, 48
+        mov     edi, eax
+        call    putchar
+        sub     dword [rbp-34H], 1
+        jmp     L_024
+
+L_025:  mov     edi, 10
+        call    putchar
+        nop
+        mov     rax, qword [rbp-8H]
+
+
+        xor     rax, qword [fs:abs 28H]
+        jz      L_026
+        call    __stack_chk_fail
+L_026:  leave
+        ret
+
+
+__builtin_string_equal:
+        push    rbp
+        mov     rbp, rsp
+        sub     rsp, 16
+        mov     qword [rbp-8H], rdi
+        mov     qword [rbp-10H], rsi
+        mov     rax, qword [rbp-10H]
+        lea     rdx, [rax+8H]
+        mov     rax, qword [rbp-8H]
+        add     rax, 8
+        mov     rsi, rdx
+        mov     rdi, rax
+        call    strcmp
+        test    eax, eax
+        sete    al
+        movzx   eax, al
+        leave
+        ret
+
+
+__builtin_string_unequal:
+        push    rbp
+        mov     rbp, rsp
+        sub     rsp, 16
+        mov     qword [rbp-8H], rdi
+        mov     qword [rbp-10H], rsi
+        mov     rax, qword [rbp-10H]
+        lea     rdx, [rax+8H]
+        mov     rax, qword [rbp-8H]
+        add     rax, 8
+        mov     rsi, rdx
+        mov     rdi, rax
+        call    strcmp
+        test    eax, eax
+        setne   al
+        movzx   eax, al
+        leave
+        ret
+
+
+__builtin_string_less:
+        push    rbp
+        mov     rbp, rsp
+        sub     rsp, 16
+        mov     qword [rbp-8H], rdi
+        mov     qword [rbp-10H], rsi
+        mov     rax, qword [rbp-10H]
+        lea     rdx, [rax+8H]
+        mov     rax, qword [rbp-8H]
+        add     rax, 8
+        mov     rsi, rdx
+        mov     rdi, rax
+        call    strcmp
+        shr     eax, 31
+        movzx   eax, al
+        leave
+        ret
+
+
+__builtin_string_less_equal:
+        push    rbp
+        mov     rbp, rsp
+        sub     rsp, 16
+        mov     qword [rbp-8H], rdi
+        mov     qword [rbp-10H], rsi
+        mov     rax, qword [rbp-10H]
+        lea     rdx, [rax+8H]
+        mov     rax, qword [rbp-8H]
+        add     rax, 8
+        mov     rsi, rdx
+        mov     rdi, rax
+        call    strcmp
+        test    eax, eax
+        setle   al
+        movzx   eax, al
+        leave
+        ret
