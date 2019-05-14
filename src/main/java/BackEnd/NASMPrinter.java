@@ -95,8 +95,16 @@ public class NASMPrinter implements IRVisitor
     {
         pr = node.getPr();
         idMap.put(node.getFunctions().get("main").getStartBB(), "main");
-        printf("\t\tglobal\tmain\n\n");
-        printf("\t\textern\tmalloc\n\n");
+        //printf("\t\tglobal\tmain\n\n");
+        try {
+            BufferedReader bufferedReader = new BufferedReader(new FileReader("lib/lib.asm"));
+            String line;
+            while ((line = bufferedReader.readLine()) != null) printf("%s\n", line);
+        }
+        catch (IOException e) {
+            throw new CompilerError("IO exception when reading builtin functions from file");
+        }
+        // printf("\t\textern\tmalloc\n\n");
         if (node.getStaticDataList().size() > 0) {
             isBssSection = true;
             printf("\t\tsection\t.bss\n");
@@ -114,14 +122,7 @@ public class NASMPrinter implements IRVisitor
         printf("\t\tsection\t.text\n\n");
         for (IRFunction irFunction : node.getFunctions().values()) irFunction.accept(this);
         printf("\n");
-        try {
-            BufferedReader bufferedReader = new BufferedReader(new FileReader("lib/lib.asm"));
-            String line;
-            while ((line = bufferedReader.readLine()) != null) printf("%s\n", line);
-        }
-        catch (IOException e) {
-            throw new CompilerError("IO exception when reading builtin functions from file");
-        }
+
     }
 
     @Override
