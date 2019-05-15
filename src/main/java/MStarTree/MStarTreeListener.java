@@ -18,6 +18,16 @@ public interface MStarTreeListener extends ParseTreeListener {
 	 */
 	void exitProgram(MStarTreeParser.ProgramContext ctx);
 	/**
+	 * Enter a parse tree produced by {@link MStarTreeParser#programSection}.
+	 * @param ctx the parse tree
+	 */
+	void enterProgramSection(MStarTreeParser.ProgramSectionContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link MStarTreeParser#programSection}.
+	 * @param ctx the parse tree
+	 */
+	void exitProgramSection(MStarTreeParser.ProgramSectionContext ctx);
+	/**
 	 * Enter a parse tree produced by {@link MStarTreeParser#functionDefinition}.
 	 * @param ctx the parse tree
 	 */

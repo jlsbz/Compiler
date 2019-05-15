@@ -7,20 +7,16 @@ import java.util.*;
 
 public class ProgramNode extends ASTNode
 {
-    public List<DefinitionNode> def;
-    public Scope scope;
+    private List<DefinitionNode> def;
+    private Scope scope;
 
-    public ProgramNode(List<DefinitionNode> def, int line)
+    public ProgramNode(List<DefinitionNode> def, Location config)
     {
         this.def = def;
-        this.line = line;
+        this.loc = config;
     }
 
-    public ProgramNode()
-    {}
-
-
-    public List<DefinitionNode> getDefs()
+    public List<DefinitionNode> getDecls()
     {
         return def;
     }
@@ -30,12 +26,4 @@ public class ProgramNode extends ASTNode
     {
         visitor.visit(this);
     }
-
-    @Override
-    public void printInformation(int tab) {
-        super.printInformation(line);
-        for (DefinitionNode item : def)
-            item.printInformation(line + 1);
-    }
-
 }

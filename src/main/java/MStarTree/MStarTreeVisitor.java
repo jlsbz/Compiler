@@ -17,6 +17,12 @@ public interface MStarTreeVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitProgram(MStarTreeParser.ProgramContext ctx);
 	/**
+	 * Visit a parse tree produced by {@link MStarTreeParser#programSection}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitProgramSection(MStarTreeParser.ProgramSectionContext ctx);
+	/**
 	 * Visit a parse tree produced by {@link MStarTreeParser#functionDefinition}.
 	 * @param ctx the parse tree
 	 * @return the visitor result

@@ -2,7 +2,7 @@ package Type;
 
 public class ArrayType extends Type
 {
-    public Type baseType;
+    private Type baseType;
 
     public ArrayType(Type baseType)
     {

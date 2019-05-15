@@ -50,7 +50,7 @@ abstract public class ScopeBuilder implements ASTVisitor
     public void visit(ArrayExpressionNode node) {}
 
     @Override
-    public void visit(MemberExpressionNode node) {}
+    public void visit(MethodExpressionNode node) {}
 
     @Override
     public void visit(PrefixExpressionNode node) {}

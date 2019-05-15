@@ -8,23 +8,18 @@ import java.util.*;
 
 public class FunctionCallExpressionNode extends ExpressionNode {
     public ExpressionNode exp;
-    public LinkedList<ExpressionNode> paraList;
-    public FuncEntity funcEntity;
+    private List<ExpressionNode> paraList;
+    private FuncEntity funcEntity;
 
-    public FunctionCallExpressionNode(int line) {
-        this.exp = null;
-        this.paraList = new LinkedList<ExpressionNode>();
-        this.line = line;
-    }
-
-    public FunctionCallExpressionNode(ExpressionNode exp, LinkedList<ExpressionNode> paraList, int line) {
+    public FunctionCallExpressionNode(ExpressionNode exp, List<ExpressionNode> paraList, Location config) {
         this.exp = exp;
         this.paraList = paraList;
-        this.line = line;
+        this.loc = config;
     }
 
+    //public ExpressionNode getExp() {return exp;}
 
-    public LinkedList<ExpressionNode> getParaList() {
+    public List<ExpressionNode> getParaList() {
         return paraList;
     }
 
@@ -51,15 +46,4 @@ public class FunctionCallExpressionNode extends ExpressionNode {
                 && funcEntity.getClassName().equals(((FunctionCallExpressionNode) obj).getFuncEntity().getClassName())
                 && funcEntity.getName() == ((FunctionCallExpressionNode) obj).getFuncEntity().getName();
     }
-
-    @Override
-    public void printInformation(int line) {
-        super.printInformation(line);
-        if (exp != null) exp.printInformation(line + 1);
-        for(ExpressionNode item: paraList)
-        {
-            item.printInformation(line + 1);
-        }
-    }
-
 }

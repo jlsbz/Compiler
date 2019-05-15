@@ -1,9 +1,11 @@
 package Util;
 
+import ASTNode.Location;
+
 public class SyntaxError extends Error
 {
-    public SyntaxError(int line, String msg)
+    public SyntaxError(Location loc, String msg)
     {
-        super(String.format("Syntax Error at %s: %s", line, msg));
+        super(String.format("Syntax Error at %s: %s", loc.toString(), msg));
     }
 }

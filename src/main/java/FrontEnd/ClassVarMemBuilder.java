@@ -18,7 +18,7 @@ public class ClassVarMemBuilder extends ScopeBuilder
     @Override
     public void visit(ProgramNode node)
     {
-        for (DefinitionNode declNode : node.getDefs()){
+        for (DefinitionNode declNode : node.getDecls()){
             if (declNode instanceof ClassDefinitionNode) declNode.accept(this);
         }
     }
@@ -26,7 +26,7 @@ public class ClassVarMemBuilder extends ScopeBuilder
     @Override
     public void visit(ClassDefinitionNode node)
     {
-        ClassEntity entity = (ClassEntity) globalScope.get(node.line, node.getName(), "@C" + node.getName());
+        ClassEntity entity = (ClassEntity) globalScope.get(node.loc, node.getName(), "@C" + node.getName());
         currentScope = entity.getScope();
         offset = 0;
         for (VariableDefinitionNode varDeclNode : node.getVarMember()) varDeclNode.accept(this);
@@ -38,12 +38,12 @@ public class ClassVarMemBuilder extends ScopeBuilder
     {
         if (node.getType().getType() instanceof ClassType) {
             String className = ((ClassType) node.getType().getType()).getName();
-            currentScope.get(node.line, className, "@C" + className);
+            currentScope.get(node.loc, className, "@C" + className);
         }
-        if (node.getExp() != null) throw new CompilerError(node.line, String.format("Variable \"%s\" should have no initialization", node.getName()));
+        if (node.getExp() != null) throw new CompilerError(node.loc, String.format("Variable \"%s\" should have no initialization", node.getName()));
         VarEntity entity = new VarEntity(node.getName(), node.getType().getType());
         entity.setAddrOffset(offset);
         offset += node.getType().getType().getVarSize();
-        currentScope.put(node.line, node.getName(), "@V" + node.getName(), entity);
+        currentScope.put(node.loc, node.getName(), "@V" + node.getName(), entity);
     }
 }

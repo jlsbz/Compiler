@@ -1,5 +1,6 @@
 package Scope;
 
+import ASTNode.Location;
 import Util.SemanticError;
 
 import java.util.HashMap;
@@ -9,8 +10,7 @@ public class Scope
 {
     private Map<String, Entity> map = new HashMap<String, Entity>();
     private Scope parent;
-    private boolean isTop = false;
-    private boolean isClass;
+    private boolean isTop = false, isClass;
 
     public Scope() {}
 
@@ -42,10 +42,10 @@ public class Scope
         map.put(key, entity);
     }
 
-    public void put(int line, String name, String key, Entity entity)
+    public void put(Location location, String name, String key, Entity entity)
     {
-        if (!key.startsWith("@")) throw new SemanticError(line, String.format("Entity key Should start with \'@\' but get \"%s\"", key));
-        if (map.containsKey(key)) throw new SemanticError(line, String.format("Name \"%s\" has been already defined", name));
+        if (!key.startsWith("@")) throw new SemanticError(location, String.format("Entity key Should start with \'@\' but get \"%s\"", key));
+        if (map.containsKey(key)) throw new SemanticError(location, String.format("Name \"%s\" has been already defined", name));
         map.put(key, entity);
     }
 
@@ -56,27 +56,27 @@ public class Scope
         return parent.get(key);
     }
 
-    public Entity get(int line, String name, String key)
+    public Entity get(Location location, String name, String key)
     {
         Entity entity = map.get(key);
         if (entity != null) return entity;
-        if (isTop) throw new SemanticError(line, String.format("Entity \"%s\" not found", name));
-        else return parent.get(line, name, key);
+        if (isTop) throw new SemanticError(location, String.format("Entity \"%s\" not found", name));
+        else return parent.get(location, name, key);
     }
 
-    public Entity selfGetVarFunc(int line, String name)
+    public Entity selfGetVarFunc(Location location, String name)
     {
         if (map.containsKey("@V" + name)) return map.get("@V" + name);
         if (map.containsKey("@F" + name)) return map.get("@F" + name);
-        throw new SemanticError(line, String.format("Entity \"%s\" not found", name));
+        throw new SemanticError(location, String.format("Entity \"%s\" not found", name));
     }
 
-    public Entity getVarFunc(int line, String name)
+    public Entity getVarFunc(Location location, String name)
     {
         if (map.containsKey("@V" + name)) return map.get("@V" + name);
         if (map.containsKey("@F" + name)) return map.get("@F" + name);
-        if (isTop) throw new SemanticError(line, String.format("Entity \"%s\" not found", name));
-        return parent.getVarFunc(line, name);
+        if (isTop) throw new SemanticError(location, String.format("Entity \"%s\" not found", name));
+        return parent.getVarFunc(location, name);
     }
 
     public Entity selfGet(String key)

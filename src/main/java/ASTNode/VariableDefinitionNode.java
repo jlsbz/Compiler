@@ -7,20 +7,12 @@ public class VariableDefinitionNode extends DefinitionNode
     public TypeNode type;
     public ExpressionNode exp;
 
-    public VariableDefinitionNode(TypeNode type, String name, ExpressionNode exp, int line)
+    public VariableDefinitionNode(TypeNode type, String name, ExpressionNode exp, Location config)
     {
         this.type = type;
         this.name = name;
         this.exp = exp;
-        this.line = line;
-    }
-
-    public VariableDefinitionNode(int line)
-    {
-        this.line = line;
-        this.type = null;
-        this.exp = null;
-        this.name = null;
+        this.loc = config;
     }
 
     public TypeNode getType()

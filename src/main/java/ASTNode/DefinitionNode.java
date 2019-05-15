@@ -3,7 +3,7 @@ import FrontEnd.ASTVisitor;
 
 abstract public class DefinitionNode extends ASTNode
 {
-    public String name;
+    protected String name;
 
     public String getName()
     {
