@@ -8,10 +8,10 @@ public class TypeNode extends ASTNode
 {
     private Type type;
 
-    public TypeNode(Type type, Location config)
+    public TypeNode(Type type, int line)
     {
         this.type = type;
-        this.loc = config;
+        this.line = line;
     }
 
     public Type getType()

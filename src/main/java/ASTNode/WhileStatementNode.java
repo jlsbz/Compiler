@@ -6,11 +6,11 @@ public class WhileStatementNode extends StatementNode
     public ExpressionNode condition;
     public StatementNode stmt;
 
-    public WhileStatementNode(ExpressionNode condition, StatementNode stmt, Location config)
+    public WhileStatementNode(ExpressionNode condition, StatementNode stmt, int line)
     {
         this.condition = condition;
         this.stmt = stmt;
-        this.loc = config;
+        this.line = line;
     }
 
     public ExpressionNode getCondition()

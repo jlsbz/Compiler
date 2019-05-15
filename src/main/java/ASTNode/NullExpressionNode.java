@@ -4,9 +4,9 @@ import FrontEnd.ASTVisitor;
 
 public class NullExpressionNode extends ExpressionNode
 {
-    public NullExpressionNode(Location config)
+    public NullExpressionNode(int line)
     {
-        this.loc = config;
+        this.line = line;
     }
 
     @Override

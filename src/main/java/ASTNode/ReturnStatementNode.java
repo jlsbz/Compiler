@@ -6,10 +6,10 @@ public class ReturnStatementNode extends StatementNode
 {
     public ExpressionNode exp;
 
-    public ReturnStatementNode(ExpressionNode exp, Location config)
+    public ReturnStatementNode(ExpressionNode exp, int line)
     {
         this.exp = exp;
-        this.loc = config;
+        this.line = line;
     }
 
     //public ExpressionNode getExp(){return exp;}

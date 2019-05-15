@@ -3,9 +3,9 @@ import FrontEnd.ASTVisitor;
 
 public class BreakStatementNode extends StatementNode
 {
-    public BreakStatementNode(Location config)
+    public BreakStatementNode(int line)
     {
-        this.loc = config;
+        this.line = line;
     }
 
     @Override

@@ -1,12 +1,10 @@
 package Util;
 
-import ASTNode.Location;
-
 public class SemanticError extends Error
 {
-    public SemanticError(Location config, String msg)
+    public SemanticError(int line, String msg)
     {
-        super(String.format("Semantic Error at %s: %s", config.toString(), msg));
+        super(String.format("Semantic Error at %s: %s", line, msg));
     }
 
     public SemanticError(String msg)

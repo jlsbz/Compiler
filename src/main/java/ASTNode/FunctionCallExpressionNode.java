@@ -11,13 +11,17 @@ public class FunctionCallExpressionNode extends ExpressionNode {
     private List<ExpressionNode> paraList;
     private FuncEntity funcEntity;
 
-    public FunctionCallExpressionNode(ExpressionNode exp, List<ExpressionNode> paraList, Location config) {
+    public FunctionCallExpressionNode(ExpressionNode exp, List<ExpressionNode> paraList, int line) {
         this.exp = exp;
         this.paraList = paraList;
-        this.loc = config;
+        this.line = line;
     }
 
-    //public ExpressionNode getExp() {return exp;}
+    public FunctionCallExpressionNode(int line)
+    {
+        this.line = line;
+    }
+
 
     public List<ExpressionNode> getParaList() {
         return paraList;

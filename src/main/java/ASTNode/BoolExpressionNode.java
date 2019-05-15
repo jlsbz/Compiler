@@ -5,10 +5,10 @@ public class BoolExpressionNode extends ConstantExpressionNode
 {
     public boolean value;
 
-    public BoolExpressionNode(boolean value, Location config)
+    public BoolExpressionNode(boolean value, int line)
     {
         this.value = value;
-        this.loc = config;
+        this.line = line;
     }
 
     //public boolean getValue(){return value;}

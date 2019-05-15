@@ -1,7 +1,6 @@
 package MStarTree;
 
 
-import ASTNode.Location;
 import Util.SyntaxError;
 import org.antlr.v4.runtime.BaseErrorListener;
 import org.antlr.v4.runtime.RecognitionException;
@@ -12,6 +11,6 @@ public class SyntaxErrorListener extends BaseErrorListener
     @Override
     public void syntaxError(Recognizer<?, ?> recognizer, Object offendingSymbol, int line, int charPositionInLine, String msg, RecognitionException e)
     {
-        throw new SyntaxError(new Location(line, charPositionInLine), msg);
+        throw new SyntaxError(line, msg);
     }
 }

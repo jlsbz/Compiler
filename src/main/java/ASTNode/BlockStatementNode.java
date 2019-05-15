@@ -12,10 +12,10 @@ public class BlockStatementNode extends StatementNode
     private boolean isInit = false;
 
 
-    public BlockStatementNode(List<ASTNode> stmtsAndVarDecls, Location config)
+    public BlockStatementNode(List<ASTNode> stmtsAndVarDecls, int line)
     {
         this.stmtsAndVarDecls = stmtsAndVarDecls;
-        this.loc = config;
+        this.line = line;
     }
 
     public List<ASTNode> getStmtsAndVarDecls()

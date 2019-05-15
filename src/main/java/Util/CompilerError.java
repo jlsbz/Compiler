@@ -1,12 +1,10 @@
 package Util;
 
-import ASTNode.Location;
-
 public class CompilerError extends Error
 {
-    public CompilerError(Location config, String msg)
+    public CompilerError(int line, String msg)
     {
-        super(String.format("Compiler Error at %s: %s", config.toString(), msg));
+        super(String.format("Compiler Error at %s: %s", line, msg));
     }
 
     public CompilerError(String msg)

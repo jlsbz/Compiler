@@ -12,12 +12,12 @@ public class BinaryExpressionNode extends ExpressionNode
     private binaryOp op;
     private ExpressionNode lhs, rhs;
 
-    public BinaryExpressionNode(binaryOp op, ExpressionNode lhs, ExpressionNode rhs, Location config)
+    public BinaryExpressionNode(binaryOp op, ExpressionNode lhs, ExpressionNode rhs, int line)
     {
         this.op = op;
         this.lhs = lhs;
         this.rhs = rhs;
-        this.loc = config;
+        this.line = line;
     }
 
     public binaryOp getOp()

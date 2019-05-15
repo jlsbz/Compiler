@@ -7,11 +7,11 @@ public class ArrayExpressionNode extends ExpressionNode
 {
     private ExpressionNode arr, sub;
 
-    public ArrayExpressionNode(ExpressionNode arr, ExpressionNode sub, Location loc)
+    public ArrayExpressionNode(ExpressionNode arr, ExpressionNode sub, int line)
     {
         this.arr = arr;
         this.sub = sub;
-        this.loc = loc;
+        this.line = line;
     }
 
     public ExpressionNode getArr()

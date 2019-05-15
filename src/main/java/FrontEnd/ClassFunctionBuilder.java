@@ -28,14 +28,14 @@ public class ClassFunctionBuilder extends ScopeBuilder
     public void visit(FunctionDefinitionNode node)
     {
         String name = node.getName();
-        scope.put(node.loc, name, "@F" + name, new FuncEntity(node));
+        scope.put(node.line, name, "@F" + name, new FuncEntity(node));
     }
 
     @Override
     public void visit(ClassDefinitionNode node)
     {
         String name = node.getName();
-        scope.put(node.loc, name, "@C" + name, new ClassEntity(node, scope));
+        scope.put(node.line, name, "@C" + name, new ClassEntity(node, scope));
     }
 
     private void init()

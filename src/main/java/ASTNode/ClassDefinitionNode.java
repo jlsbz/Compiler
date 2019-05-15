@@ -9,12 +9,12 @@ public class ClassDefinitionNode extends DefinitionNode
     private List<VariableDefinitionNode> varMember;
     private List<FunctionDefinitionNode> funcMember;
 
-    public ClassDefinitionNode(String name, List<VariableDefinitionNode> varMember, List<FunctionDefinitionNode> funcMember, Location config)
+    public ClassDefinitionNode(String name, List<VariableDefinitionNode> varMember, List<FunctionDefinitionNode> funcMember, int line)
     {
         this.name = name;
         this.varMember = varMember;
         this.funcMember = funcMember;
-        this.loc = config;
+        this.line = line;
     }
 
     public List<VariableDefinitionNode> getVarMember()

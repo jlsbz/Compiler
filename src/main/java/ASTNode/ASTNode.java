@@ -4,7 +4,7 @@ import FrontEnd.ASTVisitor;
 
 public abstract class ASTNode
 {
-    public Location loc;
+    public int line;
     public boolean outInfluence = false;
 
     //public Location getLocation()

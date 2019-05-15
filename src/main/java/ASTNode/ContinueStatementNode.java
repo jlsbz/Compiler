@@ -3,9 +3,9 @@ import FrontEnd.ASTVisitor;
 
 public class ContinueStatementNode extends StatementNode{
 
-    public ContinueStatementNode(Location config)
+    public ContinueStatementNode(int line)
     {
-        this.loc = config;
+        this.line = line;
     }
 
     @Override

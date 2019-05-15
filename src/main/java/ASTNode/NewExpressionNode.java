@@ -10,12 +10,12 @@ public class NewExpressionNode extends ExpressionNode
     private List<ExpressionNode> exprList;
     private int dimNum;
 
-    public NewExpressionNode(TypeNode type, List<ExpressionNode> exprList, int dimNum, Location config)
+    public NewExpressionNode(TypeNode type, List<ExpressionNode> exprList, int dimNum, int line)
     {
         this.newType = type;
         this.exprList = exprList;
         this.dimNum = dimNum;
-        this.loc = config;
+        this.line = line;
     }
 
     public TypeNode getNewType()

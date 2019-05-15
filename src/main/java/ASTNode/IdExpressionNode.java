@@ -9,10 +9,10 @@ public class IdExpressionNode extends ExpressionNode
     private boolean isChecked = false;
     private boolean needMemOp;
 
-    public IdExpressionNode(String name, Location config)
+    public IdExpressionNode(String name, int line)
     {
         this.name = name;
-        this.loc = config;
+        this.line = line;
     }
 
     public String getName()

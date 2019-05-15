@@ -6,10 +6,10 @@ public class StringExpressionNode extends ExpressionNode
 {
     public String str;
 
-    public StringExpressionNode(String str, Location config)
+    public StringExpressionNode(String str, int line)
     {
         this.str = str;
-        this.loc = config;
+        this.line = line;
     }
 
     //public String getStr(){return str;}

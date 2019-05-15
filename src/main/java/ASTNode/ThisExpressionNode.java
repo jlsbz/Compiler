@@ -3,9 +3,9 @@ import FrontEnd.ASTVisitor;
 
 public class ThisExpressionNode extends ExpressionNode
 {
-    public ThisExpressionNode(Location config)
+    public ThisExpressionNode(int line)
     {
-        this.loc = config;
+        this.line = line;
     }
 
     @Override

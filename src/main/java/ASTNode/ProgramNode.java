@@ -7,14 +7,20 @@ import java.util.*;
 
 public class ProgramNode extends ASTNode
 {
-    private List<DefinitionNode> def;
-    private Scope scope;
+    public List<DefinitionNode> def;
+    public Scope scope;
 
-    public ProgramNode(List<DefinitionNode> def, Location config)
+    public ProgramNode(List<DefinitionNode> def, int line)
     {
         this.def = def;
-        this.loc = config;
+        this.line = line;
     }
+
+    public ProgramNode()
+    {
+
+    }
+
 
     public List<DefinitionNode> getDecls()
     {

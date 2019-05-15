@@ -6,11 +6,11 @@ public class AssignExpressionNode extends ExpressionNode
 {
     private ExpressionNode lhs, rhs;
 
-    public AssignExpressionNode(ExpressionNode lhs, ExpressionNode rhs, Location loc)
+    public AssignExpressionNode(ExpressionNode lhs, ExpressionNode rhs, int line)
     {
         this.lhs = lhs;
         this.rhs = rhs;
-        this.loc = loc;
+        this.line = line;
     }
 
     public ExpressionNode getLhs()

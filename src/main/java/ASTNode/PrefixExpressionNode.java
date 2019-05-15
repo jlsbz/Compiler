@@ -10,11 +10,11 @@ public class PrefixExpressionNode extends ExpressionNode
     private prefixOp op;
     public ExpressionNode exp;
 
-    public PrefixExpressionNode(prefixOp op, ExpressionNode exp, Location config)
+    public PrefixExpressionNode(prefixOp op, ExpressionNode exp, int line)
     {
         this.op = op;
         this.exp = exp;
-        this.loc = config;
+        this.line = line;
     }
 
     public prefixOp getOp()

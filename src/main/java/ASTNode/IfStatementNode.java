@@ -6,12 +6,12 @@ public class IfStatementNode extends StatementNode
     private ExpressionNode condition;
     private StatementNode thenStmt, elseStmt;
 
-    public IfStatementNode(ExpressionNode condition, StatementNode thenStmt, StatementNode elseStmt, Location config)
+    public IfStatementNode(ExpressionNode condition, StatementNode thenStmt, StatementNode elseStmt, int line)
     {
         this.condition = condition;
         this.thenStmt = thenStmt;
         this.elseStmt = elseStmt;
-        this.loc = config;
+        this.line = line;
     }
 
     public ExpressionNode getCondition()

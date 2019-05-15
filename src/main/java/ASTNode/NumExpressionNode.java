@@ -5,10 +5,10 @@ public class NumExpressionNode extends ExpressionNode
 {
     public int value;
 
-    public NumExpressionNode(int value, Location config)
+    public NumExpressionNode(int value, int line)
     {
         this.value = value;
-        this.loc = config;
+        this.line = line;
     }
 
     //public int getValue(){return value;}

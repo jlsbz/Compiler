@@ -51,9 +51,9 @@ public class IRBuilder extends ScopeBuilder {
             }
         }
 
-        BlockStatementNode blockStmtNode = new BlockStatementNode(initFuncStmts, null);
+        BlockStatementNode blockStmtNode = new BlockStatementNode(initFuncStmts, -1);
         blockStmtNode.setScope(globalScope);
-        FunctionDefinitionNode funcDeclNode = new FunctionDefinitionNode(new TypeNode(VoidType.getVoidType(), null), "__init_func", new ArrayList<>(), blockStmtNode, null);
+        FunctionDefinitionNode funcDeclNode = new FunctionDefinitionNode(new TypeNode(VoidType.getVoidType(), -1), "__init_func", new ArrayList<>(), blockStmtNode, -1);
         FuncEntity funcEntity = new FuncEntity(funcDeclNode);
         globalScope.put("__init_func", "@F__init_func", funcEntity);
         IRFunction irFunction = new IRFunction(funcEntity);
@@ -75,10 +75,10 @@ public class IRBuilder extends ScopeBuilder {
             irRoot.getStaticDataList().add(staticData);
             varEntity.setRegister(staticData);
             if (node.getExp() != null) {
-                IdExpressionNode lhs = new IdExpressionNode(node.getName(), null);
+                IdExpressionNode lhs = new IdExpressionNode(node.getName(), -1);
                 lhs.setEntity(varEntity);
-                AssignExpressionNode assignExprNode = new AssignExpressionNode(lhs, node.getExp(), null);
-                initFuncStmts.add(new ExpressionStatementNode(assignExprNode, null));
+                AssignExpressionNode assignExprNode = new AssignExpressionNode(lhs, node.getExp(), -1);
+                initFuncStmts.add(new ExpressionStatementNode(assignExprNode, -1));
             }
         } else {
             VirtualRegister vr = new VirtualRegister(node.getName());
@@ -300,7 +300,6 @@ public class IRBuilder extends ScopeBuilder {
         --isInForStmt;
         if (isInForStmt == 0) {
             forVarNum.clear();
-            forVarNum.clear();
         }
     }
 
@@ -391,7 +390,7 @@ public class IRBuilder extends ScopeBuilder {
         IRFunction calleeFunc;
         List<RegValue> vArgs = new ArrayList<>();
         if (arg instanceof FunctionCallExpressionNode
-                && ((FunctionCallExpressionNode) arg).getFuncEntity().getName() == "toString") {
+                && ((FunctionCallExpressionNode) arg).getFuncEntity().getName().equals("toString")) {
             ExpressionNode intExpr = ((FunctionCallExpressionNode) arg).getParaList().get(0);
             intExpr.accept(this);
             calleeFunc = irRoot.getBuiltInFunctions().get(funcName + "Int");
@@ -405,7 +404,8 @@ public class IRBuilder extends ScopeBuilder {
     }
 
     @Override
-    public void visit(FunctionCallExpressionNode node) {
+    public void visit(FunctionCallExpressionNode node)
+    {
         FuncEntity funcEntity = node.getFuncEntity();
         String funcName = funcEntity.getName();
         List<RegValue> argList = new ArrayList<>();
@@ -415,7 +415,7 @@ public class IRBuilder extends ScopeBuilder {
                     = ((MethodExpressionNode) node.exp).exp;
             else {
                 if (currentClassName == null) throw new CompilerError("Invalid function call");
-                thisExpr = new ThisExpressionNode(null);
+                thisExpr = new ThisExpressionNode(-1);
                 thisExpr.setType(new ClassType(currentClassName));
             }
             thisExpr.accept(this);
@@ -931,9 +931,9 @@ public class IRBuilder extends ScopeBuilder {
             if (node.getTrueBB() != null)
                 currentBB.setJumpInst(new Branch(currentBB, node.getRegValue(), node.getTrueBB(), node.getFalseBB()));
         } else {
-            ThisExpressionNode thisExprNode = new ThisExpressionNode(null);
+            ThisExpressionNode thisExprNode = new ThisExpressionNode(-1);
             thisExprNode.setType(new ClassType(currentClassName));
-            MethodExpressionNode memExprNode = new MethodExpressionNode(thisExprNode, node.getName(), null);
+            MethodExpressionNode memExprNode = new MethodExpressionNode(thisExprNode, node.getName(), -1);
             memExprNode.accept(this);
             if (wantAddr) {
                 node.setAddrValue(memExprNode.getAddrValue());
