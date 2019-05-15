@@ -16,22 +16,27 @@ public class ASTBuilder extends MStarTreeBaseVisitor<ASTNode> {
         ProgramNode node = new ProgramNode();
         node.line = ctx.start.getLine();
         List<DefinitionNode> defs = new ArrayList<DefinitionNode>();
-        if (ctx.programSection() != null) {
-            for (ParserRuleContext programSec : ctx.programSection()) {
-                ASTNode def = visit(programSec);
+        if (ctx.variableDefinition() != null) {
+            for (ParserRuleContext varDef : ctx.variableDefinition()) {
+                ASTNode def = visit(varDef);
                 defs.add((DefinitionNode) def);
             }
         }
+        if (ctx.functionDefinition() != null) {
+            for (ParserRuleContext funDef : ctx.functionDefinition()) {
+                ASTNode def = visit(funDef);
+                defs.add((DefinitionNode) def);
+            }
+        }
+        if (ctx.classDefinition() != null) {
+            for (ParserRuleContext classDef : ctx.classDefinition()) {
+                ASTNode def = visit(classDef);
+                defs.add((DefinitionNode) def);
+            }
+        }
+
         node.def = defs;
         return node;
-    }
-
-    @Override
-    public ASTNode visitProgramSection(MStarTreeParser.ProgramSectionContext ctx) {
-        if (ctx.variableDefinition() != null) return visit(ctx.variableDefinition());
-        else if (ctx.functionDefinition() != null) return visit(ctx.functionDefinition());
-        else if (ctx.classDefinition() != null) return visit(ctx.classDefinition());
-        else throw new CompilerError(ctx.start.getLine(), "Invalid program section");
     }
 
     @Override
@@ -518,7 +523,7 @@ public class ASTBuilder extends MStarTreeBaseVisitor<ASTNode> {
 
     @Override
     public ASTNode visitStrExpr(MStarTreeParser.StrExprContext ctx) {
-        StringExpressionNode node =new StringExpressionNode(ctx.start.getLine());
+        StringExpressionNode node = new StringExpressionNode(ctx.start.getLine());
         commonExprOptimize = false;
         String str = ctx.getText();
         StringBuffer sb = new StringBuffer();

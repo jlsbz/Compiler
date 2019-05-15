@@ -2,6 +2,7 @@
 package MStarTree;
 import org.antlr.v4.runtime.tree.AbstractParseTreeVisitor;
 
+
 /**
  * This class provides an empty implementation of {@link MStarTreeVisitor},
  * which can be extended to create a visitor which only needs to handle a subset
@@ -18,13 +19,6 @@ public class MStarTreeBaseVisitor<T> extends AbstractParseTreeVisitor<T> impleme
 	 * {@link #visitChildren} on {@code ctx}.</p>
 	 */
 	@Override public T visitProgram(MStarTreeParser.ProgramContext ctx) { return visitChildren(ctx); }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation returns the result of calling
-	 * {@link #visitChildren} on {@code ctx}.</p>
-	 */
-	@Override public T visitProgramSection(MStarTreeParser.ProgramSectionContext ctx) { return visitChildren(ctx); }
 	/**
 	 * {@inheritDoc}
 	 *

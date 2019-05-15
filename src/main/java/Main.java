@@ -47,8 +47,6 @@ public class Main
         MStarTreeLexer lexer = new MStarTreeLexer(input);
         CommonTokenStream tokens = new CommonTokenStream(lexer);
         MStarTreeParser parser = new MStarTreeParser(tokens);
-        parser.removeErrorListeners();
-        parser.addErrorListener(new SyntaxErrorListener());
         ParseTree tree = parser.program();
         ASTBuilder astBuilder = new ASTBuilder();
         prog = (ProgramNode) astBuilder.visit(tree);
@@ -73,7 +71,7 @@ public class Main
 
     private static void generateCode() throws Exception
     {
-        String outFile = "test/1.asm";
+        String outFile = "test/2.asm";
         //outFile = null;
         PrintStream outS;
         if (outFile == null) outS = System.out;
