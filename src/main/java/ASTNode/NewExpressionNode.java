@@ -6,11 +6,20 @@ import java.util.*;
 
 public class NewExpressionNode extends ExpressionNode
 {
-    private TypeNode newType;
-    private List<ExpressionNode> exprList;
-    private int dimNum;
+    public TypeNode newType;
+    public LinkedList<ExpressionNode> exprList;
+    public int dimNum;
 
-    public NewExpressionNode(TypeNode type, List<ExpressionNode> exprList, int dimNum, int line)
+    public NewExpressionNode(int line)
+    {
+        this.newType = null;
+        this.exprList = null;
+        this.dimNum = 0;
+        this.line = line;
+    }
+
+
+    public NewExpressionNode(TypeNode type, LinkedList<ExpressionNode> exprList, int dimNum, int line)
     {
         this.newType = type;
         this.exprList = exprList;

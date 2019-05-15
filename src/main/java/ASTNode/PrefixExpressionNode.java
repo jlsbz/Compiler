@@ -7,8 +7,15 @@ public class PrefixExpressionNode extends ExpressionNode
         INC, DEC, POS, NEG, LOGIC_NOT, BITWISE_NOT
     }
 
-    private prefixOp op;
+    public prefixOp op;
     public ExpressionNode exp;
+
+    public PrefixExpressionNode(int line)
+    {
+        this.op = null;
+        this.exp = null;
+        this.line = line;
+    }
 
     public PrefixExpressionNode(prefixOp op, ExpressionNode exp, int line)
     {
@@ -21,8 +28,6 @@ public class PrefixExpressionNode extends ExpressionNode
     {
         return op;
     }
-
-    //public ExpressionNode getExp(){return exp;}
 
     @Override
     public void accept(ASTVisitor visitor)

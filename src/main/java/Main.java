@@ -39,7 +39,7 @@ public class Main
     private static void buildAST() throws Exception
     {
         String inFile = "test/program.txt";
-        inFile = null;
+        //inFile = null;
         InputStream inS;
         if (inFile == null) inS = System.in;
         else inS = new FileInputStream(inFile);
@@ -74,7 +74,7 @@ public class Main
     private static void generateCode() throws Exception
     {
         String outFile = "test/1.asm";
-        outFile = null;
+        //outFile = null;
         PrintStream outS;
         if (outFile == null) outS = System.out;
         else outS = new PrintStream(new FileOutputStream(outFile));

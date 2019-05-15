@@ -9,8 +9,17 @@ public class BinaryExpressionNode extends ExpressionNode
         BITWISE_AND, BITWISE_XOR, BITWISE_OR, LOGIC_AND, LOGIC_OR
     }
 
-    private binaryOp op;
-    private ExpressionNode lhs, rhs;
+    public binaryOp op;
+    public ExpressionNode lhs, rhs;
+
+    public BinaryExpressionNode(int line)
+    {
+        this.op = null;
+        this.lhs = null;
+        this.rhs = null;
+        this.line = line;
+    }
+
 
     public BinaryExpressionNode(binaryOp op, ExpressionNode lhs, ExpressionNode rhs, int line)
     {
@@ -20,30 +29,30 @@ public class BinaryExpressionNode extends ExpressionNode
         this.line = line;
     }
 
-    public binaryOp getOp()
-    {
-        return op;
-    }
+    //public binaryOp getOp()
+    //{
+    //    return op;
+    //}
 
-    public ExpressionNode getLhs()
-    {
-        return lhs;
-    }
+    //public ExpressionNode getLhs()
+    //{
+    //    return lhs;
+    //}
 
-    public ExpressionNode getRhs()
-    {
-        return rhs;
-    }
+    //public ExpressionNode getRhs()
+    //{
+    //    return rhs;
+    //}
 
-    public void setLhs(ExpressionNode lhs)
-    {
-        this.lhs = lhs;
-    }
+    //public void setLhs(ExpressionNode lhs)
+    //{
+    //    this.lhs = lhs;
+    //}
 
-    public void setRhs(ExpressionNode rhs)
-    {
-        this.rhs = rhs;
-    }
+    //public void setRhs(ExpressionNode rhs)
+    //{
+    //    this.rhs = rhs;
+    //}
 
     @Override
     public void accept(ASTVisitor visitor)
@@ -55,6 +64,6 @@ public class BinaryExpressionNode extends ExpressionNode
     public boolean equals(Object obj)
     {
         if (!(obj instanceof BinaryExpressionNode)) return false;
-        return op == ((BinaryExpressionNode) obj).getOp() && lhs.equals(((BinaryExpressionNode) obj).getLhs()) && rhs.equals(((BinaryExpressionNode) obj).getRhs());
+        return op == ((BinaryExpressionNode) obj).op && lhs.equals(((BinaryExpressionNode) obj).lhs) && rhs.equals(((BinaryExpressionNode) obj).rhs);
     }
 }

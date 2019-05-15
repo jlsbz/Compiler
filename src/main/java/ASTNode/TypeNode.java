@@ -6,13 +6,22 @@ import Type.Type;
 
 public class TypeNode extends ASTNode
 {
-    private Type type;
+    public Type type;
+
+    public TypeNode(int line)
+    {
+        this.type = null;
+        this.line = line;
+    }
+
 
     public TypeNode(Type type, int line)
     {
         this.type = type;
         this.line = line;
     }
+
+
 
     public Type getType()
     {

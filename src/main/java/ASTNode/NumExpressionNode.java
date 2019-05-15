@@ -5,13 +5,16 @@ public class NumExpressionNode extends ExpressionNode
 {
     public int value;
 
+    public NumExpressionNode(int line)
+    {
+        this.line = line;
+    }
+
     public NumExpressionNode(int value, int line)
     {
         this.value = value;
         this.line = line;
     }
-
-    //public int getValue(){return value;}
 
     @Override
     public void accept(ASTVisitor visitor)

@@ -7,6 +7,14 @@ public class ForStatementNode extends StatementNode {
     public ExpressionNode init, cond, update;
     public StatementNode stmt;
 
+    public ForStatementNode(int line) {
+        this.init = null;
+        this.cond = null;
+        this.update = null;
+        this.stmt = null;
+        this.line = line;
+    }
+
     public ForStatementNode(ExpressionNode init, ExpressionNode cond, ExpressionNode update, StatementNode stmt, int line) {
         this.init = init;
         this.cond = cond;

@@ -8,13 +8,11 @@ import Util.CompilerError;
 
 import java.util.*;
 
-public class ASTBuilder extends MStarTreeBaseVisitor<ASTNode>
-{
+public class ASTBuilder extends MStarTreeBaseVisitor<ASTNode> {
     private boolean commonExprOptimize = true;
 
     @Override
-    public ASTNode visitProgram(MStarTreeParser.ProgramContext ctx)
-    {
+    public ASTNode visitProgram(MStarTreeParser.ProgramContext ctx) {
         ProgramNode node = new ProgramNode();
         node.line = ctx.start.getLine();
         List<DefinitionNode> defs = new ArrayList<DefinitionNode>();
@@ -29,8 +27,7 @@ public class ASTBuilder extends MStarTreeBaseVisitor<ASTNode>
     }
 
     @Override
-    public ASTNode visitProgramSection(MStarTreeParser.ProgramSectionContext ctx)
-    {
+    public ASTNode visitProgramSection(MStarTreeParser.ProgramSectionContext ctx) {
         if (ctx.variableDefinition() != null) return visit(ctx.variableDefinition());
         else if (ctx.functionDefinition() != null) return visit(ctx.functionDefinition());
         else if (ctx.classDefinition() != null) return visit(ctx.classDefinition());
@@ -38,10 +35,9 @@ public class ASTBuilder extends MStarTreeBaseVisitor<ASTNode>
     }
 
     @Override
-    public ASTNode visitFunctionDefinition(MStarTreeParser.FunctionDefinitionContext ctx)
-    {
+    public ASTNode visitFunctionDefinition(MStarTreeParser.FunctionDefinitionContext ctx) {
         FunctionDefinitionNode node = new FunctionDefinitionNode(ctx.start.getLine());
-        node.returnType =  ctx.functionType() == null ? null : (TypeNode) visit(ctx.functionType());
+        node.returnType = ctx.functionType() == null ? null : (TypeNode) visit(ctx.functionType());
         node.name = ctx.ID().getText();
         node.body = (BlockStatementNode) visit(ctx.block());
         List<VariableDefinitionNode> parameterList = new ArrayList<>();
@@ -56,182 +52,181 @@ public class ASTBuilder extends MStarTreeBaseVisitor<ASTNode>
     }
 
     @Override
-    public ASTNode visitClassDefinition(MStarTreeParser.ClassDefinitionContext ctx)
-    {
-        String name = ctx.ID().getText();
+    public ASTNode visitClassDefinition(MStarTreeParser.ClassDefinitionContext ctx) {
+        ClassDefinitionNode node = new ClassDefinitionNode(ctx.start.getLine());
+        node.name = ctx.ID().getText();
         List<VariableDefinitionNode> varMember = new ArrayList<>();
         List<FunctionDefinitionNode> funMember = new ArrayList<>();
         if (ctx.memberDefinition() != null) {
             for (ParserRuleContext memberDefinition : ctx.memberDefinition()) {
                 ASTNode memberDefinitionaration = visit(memberDefinition);
-                if (memberDefinitionaration instanceof VariableDefinitionNode) varMember.add((VariableDefinitionNode) memberDefinitionaration);
-                else if (memberDefinitionaration instanceof FunctionDefinitionNode) funMember.add((FunctionDefinitionNode) memberDefinitionaration);
+                if (memberDefinitionaration instanceof VariableDefinitionNode)
+                    varMember.add((VariableDefinitionNode) memberDefinitionaration);
+                else if (memberDefinitionaration instanceof FunctionDefinitionNode)
+                    funMember.add((FunctionDefinitionNode) memberDefinitionaration);
                 else throw new CompilerError(ctx.start.getLine(), "Invalid member Definitionaration");
             }
         }
-        return new ClassDefinitionNode(name, varMember, funMember, ctx.start.getLine());
+        node.funcMember = funMember;
+        node.varMember = varMember;
+        return node;
     }
 
     @Override
-    public ASTNode visitVariableDefinition(MStarTreeParser.VariableDefinitionContext ctx)
-    {
-        TypeNode type = (TypeNode) visit(ctx.typeType());
-        String name = ctx.ID().getText();
-        ExpressionNode expr = ctx.expression() == null ? null : (ExpressionNode) visit(ctx.expression());
-        return new VariableDefinitionNode(type, name, expr, ctx.start.getLine());
+    public ASTNode visitVariableDefinition(MStarTreeParser.VariableDefinitionContext ctx) {
+        VariableDefinitionNode node = new VariableDefinitionNode(ctx.start.getLine());
+        node.name = ctx.ID().getText();
+        node.type = (TypeNode) visit(ctx.typeType());
+        node.exp = ctx.expression() == null ? null : (ExpressionNode) visit(ctx.expression());
+        return node;
     }
 
     @Override
-    public ASTNode visitMemberDefinition(MStarTreeParser.MemberDefinitionContext ctx)
-    {
+    public ASTNode visitMemberDefinition(MStarTreeParser.MemberDefinitionContext ctx) {
         if (ctx.variableDefinition() != null) return visit(ctx.variableDefinition());
         else if (ctx.functionDefinition() != null) return visit(ctx.functionDefinition());
         else throw new CompilerError(ctx.start.getLine(), "Invalid member Definitionaration");
     }
 
     @Override
-    public ASTNode visitParameterDefinition(MStarTreeParser.ParameterDefinitionContext ctx)
-    {
-        TypeNode type = (TypeNode) visit(ctx.typeType());
-        String name = ctx.ID().getText();
-        return new VariableDefinitionNode(type, name, null, ctx.start.getLine());
+    public ASTNode visitParameterDefinition(MStarTreeParser.ParameterDefinitionContext ctx) {
+        VariableDefinitionNode node = new VariableDefinitionNode(ctx.start.getLine());
+        node.type = (TypeNode) visit(ctx.typeType());
+        node.name = ctx.ID().getText();
+        node.exp = null;
+        return node;
     }
 
     @Override
-    public ASTNode visitFunctionType(MStarTreeParser.FunctionTypeContext ctx)
-    {
+    public ASTNode visitFunctionType(MStarTreeParser.FunctionTypeContext ctx) {
         if (ctx.typeType() != null) return visit(ctx.typeType());
         else return new TypeNode(VoidType.getVoidType(), ctx.start.getLine());
     }
 
     @Override
-    public ASTNode visitArrayType(MStarTreeParser.ArrayTypeContext ctx)
-    {
+    public ASTNode visitArrayType(MStarTreeParser.ArrayTypeContext ctx) {
+        TypeNode node = new TypeNode(ctx.start.getLine());
         TypeNode baseType = (TypeNode) visit(ctx.typeType());
-        return new TypeNode(new ArrayType(baseType.getType()), ctx.start.getLine());
+        node.type = new ArrayType(baseType.getType());
+
+        return node;
     }
 
     @Override
-    public ASTNode visitNonArrayType(MStarTreeParser.NonArrayTypeContext ctx)
-    {
+    public ASTNode visitNonArrayType(MStarTreeParser.NonArrayTypeContext ctx) {
         return visit(ctx.basicType());
     }
 
     @Override
-    public ASTNode visitBasicType(MStarTreeParser.BasicTypeContext ctx)
-    {
-        if (ctx.INT() != null) return new TypeNode(IntType.getIntType(), ctx.start.getLine());
-        else if (ctx.BOOL() != null) return new TypeNode(BoolType.getBoolType(), ctx.start.getLine());
-        else if (ctx.STRING() != null) return new TypeNode(StringType.getStringType(), ctx.start.getLine());
-        else if (ctx.ID() != null) return new TypeNode(new ClassType(ctx.ID().getText()), ctx.start.getLine());
+    public ASTNode visitBasicType(MStarTreeParser.BasicTypeContext ctx) {
+        int line = ctx.start.getLine();
+        if (ctx.INT() != null) return new TypeNode(IntType.getIntType(), line);
+        else if (ctx.BOOL() != null) return new TypeNode(BoolType.getBoolType(), line);
+        else if (ctx.STRING() != null) return new TypeNode(StringType.getStringType(), line);
+        else if (ctx.ID() != null) return new TypeNode(new ClassType(ctx.ID().getText()), line);
         else throw new CompilerError(ctx.start.getLine(), "Invalid type");
     }
 
     @Override
-    public ASTNode visitNonArrayTypeCreator(MStarTreeParser.NonArrayTypeCreatorContext ctx)
-    {
-        if (ctx.INT() != null) return new TypeNode(IntType.getIntType(), ctx.start.getLine());
-        else if (ctx.BOOL() != null) return new TypeNode(BoolType.getBoolType(), ctx.start.getLine());
-        else if (ctx.STRING() != null) return new TypeNode(StringType.getStringType(), ctx.start.getLine());
-        else if (ctx.ID() != null) return new TypeNode(new ClassType(ctx.ID().getText()), ctx.start.getLine());
+    public ASTNode visitNonArrayTypeCreator(MStarTreeParser.NonArrayTypeCreatorContext ctx) {
+        int line = ctx.start.getLine();
+        if (ctx.INT() != null) return new TypeNode(IntType.getIntType(), line);
+        else if (ctx.BOOL() != null) return new TypeNode(BoolType.getBoolType(), line);
+        else if (ctx.STRING() != null) return new TypeNode(StringType.getStringType(), line);
+        else if (ctx.ID() != null) return new TypeNode(new ClassType(ctx.ID().getText()), line);
         else throw new CompilerError(ctx.start.getLine(), "Invalid type");
     }
 
     @Override
-    public ASTNode visitBlockStmt(MStarTreeParser.BlockStmtContext ctx)
-    {
+    public ASTNode visitBlockStmt(MStarTreeParser.BlockStmtContext ctx) {
         return visit(ctx.block());
     }
 
     @Override
-    public ASTNode visitExpressionStmt(MStarTreeParser.ExpressionStmtContext ctx)
-    {
+    public ASTNode visitExpressionStmt(MStarTreeParser.ExpressionStmtContext ctx) {
         if (ctx.expression() == null) return null;
-        ExpressionNode expr = (ExpressionNode) visit(ctx.expression());
-        return new ExpressionStatementNode(expr, ctx.start.getLine());
+        ExpressionStatementNode node = new ExpressionStatementNode(ctx.start.getLine());
+        node.exp = (ExpressionNode) visit(ctx.expression());
+        return node;
     }
 
     @Override
-    public ASTNode visitBlock(MStarTreeParser.BlockContext ctx)
-    {
-        List<ASTNode> stmtsAndVarDefinitions = new ArrayList<>();
+    public ASTNode visitBlock(MStarTreeParser.BlockContext ctx) {
+        BlockStatementNode node = new BlockStatementNode(ctx.start.getLine());
+        LinkedList<ASTNode> stmtsAndVarDefinitions = new LinkedList<>();
         if (ctx.blockStatement() != null) {
             for (ParserRuleContext blockStmt : ctx.blockStatement()) {
                 ASTNode stmtAndVarDefinition = visit(blockStmt);
                 if (stmtAndVarDefinition != null) stmtsAndVarDefinitions.add(stmtAndVarDefinition);
             }
         }
-        return new BlockStatementNode(stmtsAndVarDefinitions, ctx.start.getLine());
+        node.stmtsAndVarDecls = stmtsAndVarDefinitions;
+        return node;
     }
 
     @Override
-    public ASTNode visitStmt(MStarTreeParser.StmtContext ctx)
-    {
+    public ASTNode visitStmt(MStarTreeParser.StmtContext ctx) {
         return visit(ctx.statement());
     }
 
     @Override
-    public ASTNode visitVarDeclStmt(MStarTreeParser.VarDeclStmtContext ctx)
-    {
+    public ASTNode visitVarDeclStmt(MStarTreeParser.VarDeclStmtContext ctx) {
         return visit(ctx.variableDefinition());
     }
 
     @Override
-    public ASTNode visitIfElseStmt(MStarTreeParser.IfElseStmtContext ctx)
-    {
-        ExpressionNode condition = (ExpressionNode) visit(ctx.expression());
-        StatementNode thenStmt = (StatementNode) visit(ctx.thenStmt);
-        StatementNode elseStmt = ctx.elseStmt == null ? null : (StatementNode) visit(ctx.elseStmt);
-        return new IfStatementNode(condition, thenStmt, elseStmt, ctx.start.getLine());
+    public ASTNode visitIfElseStmt(MStarTreeParser.IfElseStmtContext ctx) {
+        IfStatementNode node = new IfStatementNode(ctx.start.getLine());
+        node.condition = (ExpressionNode) visit(ctx.expression());
+        node.thenStmt = (StatementNode) visit(ctx.thenStmt);
+        if (ctx.elseStmt == null) node.elseStmt = null;
+        else node.elseStmt = (StatementNode) visit(ctx.elseStmt);
+        return node;
     }
 
     @Override
-    public ASTNode visitWhileStmt(MStarTreeParser.WhileStmtContext ctx)
-    {
-        ExpressionNode condition = (ExpressionNode) visit(ctx.expression());
-        StatementNode stmt = (StatementNode) visit(ctx.statement());
-        return new WhileStatementNode(condition, stmt, ctx.start.getLine());
+    public ASTNode visitWhileStmt(MStarTreeParser.WhileStmtContext ctx) {
+        WhileStatementNode node = new WhileStatementNode(ctx.start.getLine());
+        node.condition = (ExpressionNode) visit(ctx.expression());
+        node.stmt = (StatementNode) visit(ctx.statement());
+        return node;
     }
 
     @Override
-    public ASTNode visitForStmt(MStarTreeParser.ForStmtContext ctx)
-    {
-        ExpressionNode init = ctx.init == null ? null : (ExpressionNode) visit(ctx.init);
-        ExpressionNode cond = ctx.cond == null ? null : (ExpressionNode) visit(ctx.cond);
-        ExpressionNode update = ctx.update == null ? null : (ExpressionNode) visit(ctx.update);
-        StatementNode stmt = (StatementNode) visit(ctx.statement());
-        return new ForStatementNode(init, cond, update, stmt, ctx.start.getLine());
+    public ASTNode visitForStmt(MStarTreeParser.ForStmtContext ctx) {
+        ForStatementNode node = new ForStatementNode(ctx.start.getLine());
+        if (ctx.init != null) node.init = (ExpressionNode) visit(ctx.init);
+        if (ctx.cond != null) node.cond = (ExpressionNode) visit(ctx.cond);
+        if (ctx.update != null) node.update = (ExpressionNode) visit(ctx.update);
+        node.stmt = (StatementNode) visit(ctx.statement());
+        return node;
     }
 
     @Override
-    public ASTNode visitContinueStmt(MStarTreeParser.ContinueStmtContext ctx)
-    {
+    public ASTNode visitContinueStmt(MStarTreeParser.ContinueStmtContext ctx) {
         return new ContinueStatementNode(ctx.start.getLine());
     }
 
     @Override
-    public ASTNode visitBreakStmt(MStarTreeParser.BreakStmtContext ctx)
-    {
+    public ASTNode visitBreakStmt(MStarTreeParser.BreakStmtContext ctx) {
         return new BreakStatementNode(ctx.start.getLine());
     }
 
     @Override
-    public ASTNode visitReturnStmt(MStarTreeParser.ReturnStmtContext ctx)
-    {
-        ExpressionNode expr = ctx.expression() == null ? null : (ExpressionNode) visit(ctx.expression());
-        return new ReturnStatementNode(expr, ctx.start.getLine());
+    public ASTNode visitReturnStmt(MStarTreeParser.ReturnStmtContext ctx) {
+        ReturnStatementNode node = new ReturnStatementNode(ctx.start.getLine());
+        if (ctx.expression() != null) node.exp = (ExpressionNode) visit(ctx.expression());
+        return node;
     }
 
     @Override
-    public ASTNode visitNewExpr(MStarTreeParser.NewExprContext ctx)
-    {
+    public ASTNode visitNewExpr(MStarTreeParser.NewExprContext ctx) {
         return visit(ctx.creator());
     }
 
     @Override
-    public ASTNode visitPrefixExpr(MStarTreeParser.PrefixExprContext ctx)
-    {
-        ExpressionNode expr = (ExpressionNode) visit(ctx.expression());
+    public ASTNode visitPrefixExpr(MStarTreeParser.PrefixExprContext ctx) {
+        PrefixExpressionNode node = new PrefixExpressionNode(ctx.start.getLine());
         PrefixExpressionNode.prefixOp op;
         if (ctx.op.getText().equals("++")) op = PrefixExpressionNode.prefixOp.INC;
         else if (ctx.op.getText().equals("--")) op = PrefixExpressionNode.prefixOp.DEC;
@@ -240,30 +235,33 @@ public class ASTBuilder extends MStarTreeBaseVisitor<ASTNode>
         else if (ctx.op.getText().equals("!")) op = PrefixExpressionNode.prefixOp.LOGIC_NOT;
         else if (ctx.op.getText().equals("~")) op = PrefixExpressionNode.prefixOp.BITWISE_NOT;
         else throw new CompilerError(ctx.start.getLine(), "Invalid prefix operator");
-        return new PrefixExpressionNode(op, expr, ctx.start.getLine());
+        node.exp = (ExpressionNode) visit(ctx.expression());
+        node.op = op;
+        return node;
     }
 
     @Override
-    public ASTNode visitArrayExpr(MStarTreeParser.ArrayExprContext ctx)
-    {
-        ExpressionNode arr = (ExpressionNode) visit(ctx.arr), sub = (ExpressionNode) visit(ctx.sub);
-        return new ArrayExpressionNode(arr, sub, ctx.start.getLine());
+    public ASTNode visitArrayExpr(MStarTreeParser.ArrayExprContext ctx) {
+        ArrayExpressionNode node = new ArrayExpressionNode(ctx.start.getLine());
+        node.arr = (ExpressionNode) visit(ctx.arr);
+        node.sub = (ExpressionNode) visit(ctx.sub);
+        return node;
     }
 
     @Override
-    public ASTNode visitSuffixExpr(MStarTreeParser.SuffixExprContext ctx)
-    {
-        ExpressionNode expr = (ExpressionNode) visit(ctx.expression());
+    public ASTNode visitSuffixExpr(MStarTreeParser.SuffixExprContext ctx) {
+        SuffixExpressionNode node = new SuffixExpressionNode(ctx.start.getLine());
+        node.exp = (ExpressionNode) visit(ctx.expression());
         SuffixExpressionNode.suffixOp op;
         if (ctx.op.getText().equals("++")) op = SuffixExpressionNode.suffixOp.INC;
         else if (ctx.op.getText().equals("--")) op = SuffixExpressionNode.suffixOp.DEC;
         else throw new CompilerError(ctx.start.getLine(), "Invalid suffix operator");
-        return new SuffixExpressionNode(op, expr, ctx.start.getLine());
+        node.op = op;
+        return node;
     }
 
     @Override
-    public ASTNode visitBinaryExpr(MStarTreeParser.BinaryExprContext ctx)
-    {
+    public ASTNode visitBinaryExpr(MStarTreeParser.BinaryExprContext ctx) {
         ExpressionNode lhs = (ExpressionNode) visit(ctx.lhs), rhs = (ExpressionNode) visit(ctx.rhs);
         BinaryExpressionNode.binaryOp op;
         switch (ctx.op.getText()) {
@@ -328,7 +326,8 @@ public class ASTBuilder extends MStarTreeBaseVisitor<ASTNode>
         if (lhs instanceof PrefixExpressionNode || rhs instanceof PrefixExpressionNode) commonExprOptimize = false;
         if (lhs instanceof SuffixExpressionNode || rhs instanceof SuffixExpressionNode) commonExprOptimize = false;
         if (lhs instanceof AssignExpressionNode || rhs instanceof AssignExpressionNode) commonExprOptimize = false;
-        if (lhs instanceof FunctionCallExpressionNode || rhs instanceof FunctionCallExpressionNode) commonExprOptimize = false;
+        if (lhs instanceof FunctionCallExpressionNode || rhs instanceof FunctionCallExpressionNode)
+            commonExprOptimize = false;
         if (commonExprOptimize && lhs.equals(rhs)) {
             if (op == BinaryExpressionNode.binaryOp.ADD)
                 return new BinaryExpressionNode(BinaryExpressionNode.binaryOp.MUL, lhs,
@@ -339,225 +338,232 @@ public class ASTBuilder extends MStarTreeBaseVisitor<ASTNode>
         }
         if (commonExprOptimize && (op == BinaryExpressionNode.binaryOp.ADD || op == BinaryExpressionNode.binaryOp.SUB)) {
             if (lhs instanceof BinaryExpressionNode
-                    && ((BinaryExpressionNode) lhs).getOp() == BinaryExpressionNode.binaryOp.MUL) {
-                if (((BinaryExpressionNode) lhs).getLhs().equals(rhs)
-                        && ((BinaryExpressionNode) lhs).getRhs() instanceof NumExpressionNode) {
+                    && ((BinaryExpressionNode) lhs).op == BinaryExpressionNode.binaryOp.MUL) {
+                if (((BinaryExpressionNode) lhs).lhs.equals(rhs)
+                        && ((BinaryExpressionNode) lhs).rhs instanceof NumExpressionNode) {
                     if (op == BinaryExpressionNode.binaryOp.ADD)
                         return new BinaryExpressionNode(BinaryExpressionNode.binaryOp.MUL,
-                                lhs, new NumExpressionNode(((NumExpressionNode) ((BinaryExpressionNode) lhs).getRhs()).value + 1,
+                                lhs, new NumExpressionNode(((NumExpressionNode) ((BinaryExpressionNode) lhs).rhs).value + 1,
                                 ctx.start.getLine()), ctx.start.getLine());
                     else return new BinaryExpressionNode(BinaryExpressionNode.binaryOp.MUL,
-                            lhs, new NumExpressionNode(((NumExpressionNode) ((BinaryExpressionNode) lhs).getRhs()).value - 1,
+                            lhs, new NumExpressionNode(((NumExpressionNode) ((BinaryExpressionNode) lhs).rhs).value - 1,
                             ctx.start.getLine()), ctx.start.getLine());
                 }
-                if (((BinaryExpressionNode) lhs).getRhs().equals(rhs) && ((BinaryExpressionNode) lhs).getLhs() instanceof NumExpressionNode) {
+                if (((BinaryExpressionNode) lhs).rhs.equals(rhs)
+                        && ((BinaryExpressionNode) lhs).lhs instanceof NumExpressionNode) {
                     if (op == BinaryExpressionNode.binaryOp.ADD)
                         return new BinaryExpressionNode(BinaryExpressionNode.binaryOp.MUL, lhs,
-                                new NumExpressionNode(((NumExpressionNode) ((BinaryExpressionNode) lhs).getLhs()).value + 1,
+                                new NumExpressionNode(((NumExpressionNode) ((BinaryExpressionNode) lhs).lhs).value + 1,
                                         ctx.start.getLine()), ctx.start.getLine());
                     else return new BinaryExpressionNode(BinaryExpressionNode.binaryOp.MUL,
-                            lhs, new NumExpressionNode(((NumExpressionNode) ((BinaryExpressionNode) lhs).getLhs()).value - 1,
+                            lhs, new NumExpressionNode(((NumExpressionNode) ((BinaryExpressionNode) lhs).lhs).value - 1,
                             ctx.start.getLine()), ctx.start.getLine());
                 }
             }
-            if (rhs instanceof BinaryExpressionNode && ((BinaryExpressionNode) rhs).getOp() == BinaryExpressionNode.binaryOp.MUL) {
-                if (((BinaryExpressionNode) rhs).getLhs().equals(lhs) && ((BinaryExpressionNode) rhs).getRhs() instanceof NumExpressionNode) {
+            if (rhs instanceof BinaryExpressionNode
+                    && ((BinaryExpressionNode) rhs).op == BinaryExpressionNode.binaryOp.MUL) {
+                if (((BinaryExpressionNode) rhs).lhs.equals(lhs)
+                        && ((BinaryExpressionNode) rhs).rhs instanceof NumExpressionNode) {
                     if (op == BinaryExpressionNode.binaryOp.ADD)
                         return new BinaryExpressionNode(BinaryExpressionNode.binaryOp.MUL,
-                                rhs, new NumExpressionNode(((NumExpressionNode) ((BinaryExpressionNode) rhs).getRhs()).value + 1,
+                                rhs, new NumExpressionNode(((NumExpressionNode) ((BinaryExpressionNode) rhs).rhs).value + 1,
                                 ctx.start.getLine()), ctx.start.getLine());
                     else return new BinaryExpressionNode(BinaryExpressionNode.binaryOp.MUL,
-                            rhs, new NumExpressionNode(((NumExpressionNode) ((BinaryExpressionNode) rhs).getRhs()).value - 1,
+                            rhs, new NumExpressionNode(((NumExpressionNode) ((BinaryExpressionNode) rhs).rhs).value - 1,
                             ctx.start.getLine()), ctx.start.getLine());
                 }
-                if (((BinaryExpressionNode) rhs).getRhs().equals(lhs) && ((BinaryExpressionNode) rhs).getLhs() instanceof NumExpressionNode) {
+                if (((BinaryExpressionNode) rhs).rhs.equals(lhs)
+                        && ((BinaryExpressionNode) rhs).lhs instanceof NumExpressionNode) {
                     if (op == BinaryExpressionNode.binaryOp.ADD)
                         return new BinaryExpressionNode(BinaryExpressionNode.binaryOp.MUL,
-                                rhs, new NumExpressionNode(((NumExpressionNode) ((BinaryExpressionNode) lhs).getLhs()).value + 1,
+                                rhs, new NumExpressionNode(((NumExpressionNode) ((BinaryExpressionNode) lhs).lhs).value + 1,
                                 ctx.start.getLine()), ctx.start.getLine());
                     else return new BinaryExpressionNode(BinaryExpressionNode.binaryOp.MUL,
-                            rhs, new NumExpressionNode(((NumExpressionNode) ((BinaryExpressionNode) lhs).getLhs()).value - 1,
+                            rhs, new NumExpressionNode(((NumExpressionNode) ((BinaryExpressionNode) lhs).lhs).value - 1,
                             ctx.start.getLine()), ctx.start.getLine());
                 }
             }
             if (lhs instanceof BinaryExpressionNode
                     && rhs instanceof BinaryExpressionNode
-                    && ((BinaryExpressionNode) lhs).getOp() == BinaryExpressionNode.binaryOp.MUL
-                    && ((BinaryExpressionNode) rhs).getOp() == BinaryExpressionNode.binaryOp.MUL) {
-                if (((BinaryExpressionNode) lhs).getLhs() instanceof NumExpressionNode
-                        && ((BinaryExpressionNode) rhs).getLhs() instanceof NumExpressionNode) {
-                    if (((BinaryExpressionNode) lhs).getRhs().equals(((BinaryExpressionNode) rhs).getRhs())) {
+                    && ((BinaryExpressionNode) lhs).op == BinaryExpressionNode.binaryOp.MUL
+                    && ((BinaryExpressionNode) rhs).op == BinaryExpressionNode.binaryOp.MUL) {
+                if (((BinaryExpressionNode) lhs).lhs instanceof NumExpressionNode
+                        && ((BinaryExpressionNode) rhs).lhs instanceof NumExpressionNode) {
+                    if (((BinaryExpressionNode) lhs).rhs.equals(((BinaryExpressionNode) rhs).rhs)) {
                         if (op == BinaryExpressionNode.binaryOp.ADD)
                             return new BinaryExpressionNode(BinaryExpressionNode.binaryOp.MUL,
-                                    ((BinaryExpressionNode) lhs).getRhs(),
-                                    new NumExpressionNode(((NumExpressionNode) ((BinaryExpressionNode) lhs).getLhs()).value
-                                            + ((NumExpressionNode) ((BinaryExpressionNode) rhs).getLhs()).value,
+                                    ((BinaryExpressionNode) lhs).rhs,
+                                    new NumExpressionNode(((NumExpressionNode) ((BinaryExpressionNode) lhs).lhs).value
+                                            + ((NumExpressionNode) ((BinaryExpressionNode) rhs).lhs).value,
                                             ctx.start.getLine()), ctx.start.getLine());
                         else return new BinaryExpressionNode(BinaryExpressionNode.binaryOp.MUL,
-                                ((BinaryExpressionNode) lhs).getRhs(),
-                                new NumExpressionNode(((NumExpressionNode) ((BinaryExpressionNode) lhs).getLhs()).value
-                                        - ((NumExpressionNode) ((BinaryExpressionNode) rhs).getLhs()).value,
+                                ((BinaryExpressionNode) lhs).rhs,
+                                new NumExpressionNode(((NumExpressionNode) ((BinaryExpressionNode) lhs).lhs).value
+                                        - ((NumExpressionNode) ((BinaryExpressionNode) rhs).lhs).value,
                                         ctx.start.getLine()), ctx.start.getLine());
                     }
-                } else if (((BinaryExpressionNode) lhs).getLhs() instanceof NumExpressionNode
-                        && ((BinaryExpressionNode) rhs).getRhs() instanceof NumExpressionNode) {
-                    if (((BinaryExpressionNode) lhs).getRhs().equals(((BinaryExpressionNode) rhs).getLhs())) {
+                } else if (((BinaryExpressionNode) lhs).lhs instanceof NumExpressionNode
+                        && ((BinaryExpressionNode) rhs).rhs instanceof NumExpressionNode) {
+                    if (((BinaryExpressionNode) lhs).rhs.equals(((BinaryExpressionNode) rhs).lhs)) {
                         if (op == BinaryExpressionNode.binaryOp.ADD)
                             return new BinaryExpressionNode(BinaryExpressionNode.binaryOp.MUL,
-                                    ((BinaryExpressionNode) lhs).getRhs(),
-                                    new NumExpressionNode(((NumExpressionNode) ((BinaryExpressionNode) lhs).getLhs()).value
-                                            + ((NumExpressionNode) ((BinaryExpressionNode) rhs).getRhs()).value,
+                                    ((BinaryExpressionNode) lhs).rhs,
+                                    new NumExpressionNode(((NumExpressionNode) ((BinaryExpressionNode) lhs).lhs).value
+                                            + ((NumExpressionNode) ((BinaryExpressionNode) rhs).rhs).value,
                                             ctx.start.getLine()), ctx.start.getLine());
                         else return new BinaryExpressionNode(BinaryExpressionNode.binaryOp.MUL,
-                                ((BinaryExpressionNode) lhs).getRhs(),
-                                new NumExpressionNode(((NumExpressionNode) ((BinaryExpressionNode) lhs).getLhs()).value
-                                        - ((NumExpressionNode) ((BinaryExpressionNode) rhs).getRhs()).value,
+                                ((BinaryExpressionNode) lhs).rhs,
+                                new NumExpressionNode(((NumExpressionNode) ((BinaryExpressionNode) lhs).lhs).value
+                                        - ((NumExpressionNode) ((BinaryExpressionNode) rhs).rhs).value,
                                         ctx.start.getLine()), ctx.start.getLine());
                     }
-                } else if (((BinaryExpressionNode) lhs).getRhs() instanceof NumExpressionNode
-                        && ((BinaryExpressionNode) rhs).getLhs() instanceof NumExpressionNode) {
-                    if (((BinaryExpressionNode) lhs).getLhs().equals(((BinaryExpressionNode) rhs).getRhs())) {
+                } else if (((BinaryExpressionNode) lhs).rhs instanceof NumExpressionNode
+                        && ((BinaryExpressionNode) rhs).lhs instanceof NumExpressionNode) {
+                    if (((BinaryExpressionNode) lhs).lhs.equals(((BinaryExpressionNode) rhs).rhs)) {
                         if (op == BinaryExpressionNode.binaryOp.ADD)
                             return new BinaryExpressionNode(BinaryExpressionNode.binaryOp.MUL,
-                                    ((BinaryExpressionNode) lhs).getLhs(),
-                                    new NumExpressionNode(((NumExpressionNode) ((BinaryExpressionNode) lhs).getRhs()).value
-                                            + ((NumExpressionNode) ((BinaryExpressionNode) rhs).getLhs()).value,
+                                    ((BinaryExpressionNode) lhs).lhs,
+                                    new NumExpressionNode(((NumExpressionNode) ((BinaryExpressionNode) lhs).rhs).value
+                                            + ((NumExpressionNode) ((BinaryExpressionNode) rhs).lhs).value,
                                             ctx.start.getLine()), ctx.start.getLine());
                         else return new BinaryExpressionNode(BinaryExpressionNode.binaryOp.MUL,
-                                ((BinaryExpressionNode) lhs).getLhs(),
-                                new NumExpressionNode(((NumExpressionNode) ((BinaryExpressionNode) lhs).getRhs()).value
-                                        - ((NumExpressionNode) ((BinaryExpressionNode) rhs).getLhs()).value,
+                                ((BinaryExpressionNode) lhs).lhs,
+                                new NumExpressionNode(((NumExpressionNode) ((BinaryExpressionNode) lhs).rhs).value
+                                        - ((NumExpressionNode) ((BinaryExpressionNode) rhs).lhs).value,
                                         ctx.start.getLine()), ctx.start.getLine());
                     }
-                } else if (((BinaryExpressionNode) lhs).getRhs() instanceof NumExpressionNode
-                        && ((BinaryExpressionNode) rhs).getRhs() instanceof NumExpressionNode) {
-                    if (((BinaryExpressionNode) lhs).getLhs().equals(((BinaryExpressionNode) rhs).getLhs())) {
+                } else if (((BinaryExpressionNode) lhs).rhs instanceof NumExpressionNode
+                        && ((BinaryExpressionNode) rhs).rhs instanceof NumExpressionNode) {
+                    if (((BinaryExpressionNode) lhs).lhs.equals(((BinaryExpressionNode) rhs).lhs)) {
                         if (op == BinaryExpressionNode.binaryOp.ADD)
                             return new BinaryExpressionNode(BinaryExpressionNode.binaryOp.MUL,
-                                    ((BinaryExpressionNode) lhs).getLhs(),
-                                    new NumExpressionNode(((NumExpressionNode) ((BinaryExpressionNode) lhs).getRhs()).value
-                                            + ((NumExpressionNode) ((BinaryExpressionNode) rhs).getRhs()).value,
+                                    ((BinaryExpressionNode) lhs).lhs,
+                                    new NumExpressionNode(((NumExpressionNode) ((BinaryExpressionNode) lhs).rhs).value
+                                            + ((NumExpressionNode) ((BinaryExpressionNode) rhs).rhs).value,
                                             ctx.start.getLine()), ctx.start.getLine());
                         else return new BinaryExpressionNode(BinaryExpressionNode.binaryOp.MUL,
-                                ((BinaryExpressionNode) lhs).getLhs(),
-                                new NumExpressionNode(((NumExpressionNode) ((BinaryExpressionNode) lhs).getRhs()).value
-                                        - ((NumExpressionNode) ((BinaryExpressionNode) rhs).getRhs()).value,
+                                ((BinaryExpressionNode) lhs).lhs,
+                                new NumExpressionNode(((NumExpressionNode) ((BinaryExpressionNode) lhs).rhs).value
+                                        - ((NumExpressionNode) ((BinaryExpressionNode) rhs).rhs).value,
                                         ctx.start.getLine()), ctx.start.getLine());
                     }
                 }
             }
         }
-        return new BinaryExpressionNode(op, lhs, rhs, ctx.start.getLine());
+        BinaryExpressionNode node = new BinaryExpressionNode(ctx.start.getLine());
+        node.lhs = lhs;
+        node.rhs = rhs;
+        node.op = op;
+        return node;
     }
 
     @Override
-    public ASTNode visitMemExpr(MStarTreeParser.MemExprContext ctx)
-    {
-        ExpressionNode expr = (ExpressionNode) visit(ctx.expression());
-        String name = ctx.ID().getText();
-        return new MethodExpressionNode(expr, name, ctx.start.getLine());
+    public ASTNode visitMemExpr(MStarTreeParser.MemExprContext ctx) {
+        MethodExpressionNode node = new MethodExpressionNode(ctx.start.getLine());
+        node.exp = (ExpressionNode) visit(ctx.expression());
+        node.name = ctx.ID().getText();
+        return node;
     }
 
     @Override
-    public ASTNode visitFuncCallExpr(MStarTreeParser.FuncCallExprContext ctx)
-    {
-        ExpressionNode expr = (ExpressionNode) visit(ctx.expression());
-        List<ExpressionNode> paraList = new ArrayList<>();
+    public ASTNode visitFuncCallExpr(MStarTreeParser.FuncCallExprContext ctx) {
+        FunctionCallExpressionNode node = new FunctionCallExpressionNode(ctx.start.getLine());
+        node.exp = (ExpressionNode) visit(ctx.expression());
+        LinkedList<ExpressionNode> paraList = new LinkedList<>();
         if (ctx.parameterList() != null) {
             for (ParserRuleContext parameter : ctx.parameterList().expression()) {
                 ExpressionNode para = (ExpressionNode) visit(parameter);
                 paraList.add(para);
             }
         }
-        return new FunctionCallExpressionNode(expr, paraList, ctx.start.getLine());
+        node.paraList = paraList;
+        return node;
     }
 
     @Override
-    public ASTNode visitAssignExpr(MStarTreeParser.AssignExprContext ctx)
-    {
-        ExpressionNode lhs = (ExpressionNode) visit(ctx.lhs), rhs = (ExpressionNode) visit(ctx.rhs);
-        return new AssignExpressionNode(lhs, rhs, ctx.start.getLine());
+    public ASTNode visitAssignExpr(MStarTreeParser.AssignExprContext ctx) {
+        AssignExpressionNode node = new AssignExpressionNode(ctx.start.getLine());
+        node.lhs = (ExpressionNode) visit(ctx.lhs);
+        node.rhs = (ExpressionNode) visit(ctx.rhs);
+        return node;
     }
 
     @Override
-    public ASTNode visitIdExpr(MStarTreeParser.IdExprContext ctx)
-    {
-        String name = ctx.ID().getText();
-        return new IdExpressionNode(name, ctx.start.getLine());
+    public ASTNode visitIdExpr(MStarTreeParser.IdExprContext ctx) {
+        IdExpressionNode node = new IdExpressionNode(ctx.start.getLine());
+        node.name = ctx.ID().getText();
+        return node;
     }
 
     @Override
-    public ASTNode visitThisExpr(MStarTreeParser.ThisExprContext ctx)
-    {
+    public ASTNode visitThisExpr(MStarTreeParser.ThisExprContext ctx) {
         return new ThisExpressionNode(ctx.start.getLine());
     }
 
     @Override
-    public ASTNode visitBracketsExpr(MStarTreeParser.BracketsExprContext ctx)
-    {
+    public ASTNode visitBracketsExpr(MStarTreeParser.BracketsExprContext ctx) {
         return visit(ctx.expression());
     }
 
     @Override
-    public ASTNode visitNumExpr(MStarTreeParser.NumExprContext ctx)
-    {
-        int value;
+    public ASTNode visitNumExpr(MStarTreeParser.NumExprContext ctx) {
+        NumExpressionNode node = new NumExpressionNode(ctx.start.getLine());
         try {
-            value = Integer.parseInt(ctx.getText());
-        }
-        catch (Exception e) {
+            node.value = Integer.parseInt(ctx.getText());
+        } catch (Exception e) {
             throw new CompilerError(ctx.start.getLine(), "Invalid number: " + e);
         }
-        return new NumExpressionNode(value, ctx.start.getLine());
+        return node;
     }
 
     @Override
-    public ASTNode visitStrExpr(MStarTreeParser.StrExprContext ctx)
-    {
+    public ASTNode visitStrExpr(MStarTreeParser.StrExprContext ctx) {
+        StringExpressionNode node =new StringExpressionNode(ctx.start.getLine());
         commonExprOptimize = false;
         String str = ctx.getText();
-        StringBuffer s = new StringBuffer();
+        StringBuffer sb = new StringBuffer();
         int len = str.length();
         for (int i = 0; i < len; ++i) {
-            if (str.charAt(i) == '\\' && i + 1 < len){
-                if (str.charAt(i + 1) == '\\') s.append('\\');
-                else if (str.charAt(i + 1) == 'n') s.append('\n');
-                else if (str.charAt(i + 1) == '\"') s.append('\"');
+            if (str.charAt(i) == '\\' && i + 1 < len) {
+                if (str.charAt(i + 1) == '\\') sb.append('\\');
+                else if (str.charAt(i + 1) == 'n') sb.append('\n');
+                else if (str.charAt(i + 1) == '\"') sb.append('\"');
                 else throw new CompilerError(ctx.start.getLine(), "Invalid string");
                 ++i;
-            }
-            else s.append(str.charAt(i));
+            } else sb.append(str.charAt(i));
         }
-        return new StringExpressionNode(s.toString(), ctx.start.getLine());
+        node.str = sb.toString();
+        return node;
     }
 
     @Override
-    public ASTNode visitNullExpr(MStarTreeParser.NullExprContext ctx)
-    {
+    public ASTNode visitNullExpr(MStarTreeParser.NullExprContext ctx) {
         return new NullExpressionNode(ctx.start.getLine());
     }
 
     @Override
-    public ASTNode visitBoolExpr(MStarTreeParser.BoolExprContext ctx)
-    {
+    public ASTNode visitBoolExpr(MStarTreeParser.BoolExprContext ctx) {
+        BoolExpressionNode node = new BoolExpressionNode(ctx.start.getLine());
         boolean value;
         if (ctx.getText().equals("true")) value = true;
         else if (ctx.getText().equals("false")) value = false;
         else throw new CompilerError(ctx.start.getLine(), "Invalid bool constant");
-        return new BoolExpressionNode(value, ctx.start.getLine());
+        node.value = value;
+        return node;
     }
 
     @Override
-    public ASTNode visitErrorCreator(MStarTreeParser.ErrorCreatorContext ctx)
-    {
+    public ASTNode visitErrorCreator(MStarTreeParser.ErrorCreatorContext ctx) {
         throw new CompilerError(ctx.start.getLine(), "Invalid creator");
     }
 
     @Override
-    public ASTNode visitArrayCreator(MStarTreeParser.ArrayCreatorContext ctx)
-    {
+    public ASTNode visitArrayCreator(MStarTreeParser.ArrayCreatorContext ctx) {
+        NewExpressionNode node = new NewExpressionNode(ctx.start.getLine());
+        node.newType = (TypeNode) visit(ctx.basicType());
+
         TypeNode type = (TypeNode) visit(ctx.basicType());
-        List<ExpressionNode> exprList = new ArrayList<>();
+        LinkedList<ExpressionNode> exprList = new LinkedList<>();
         int cnt = 0;
         for (ParserRuleContext ExprList : ctx.expression()) {
             ExpressionNode expr = (ExpressionNode) visit(ExprList);
@@ -566,14 +572,17 @@ public class ASTBuilder extends MStarTreeBaseVisitor<ASTNode>
         }
         int dimNum = (ctx.getChildCount() - cnt - 1) / 2;
         for (int i = 0; i < dimNum; ++i) type.setType(new ArrayType(type.getType()));
-        return new NewExpressionNode(type, exprList, dimNum, ctx.start.getLine());
+        node.dimNum = (ctx.getChildCount() - cnt - 1) / 2;
+        node.exprList = exprList;
+        return node;
     }
 
     @Override
-    public ASTNode visitNonArrayCreator(MStarTreeParser.NonArrayCreatorContext ctx)
-    {
+    public ASTNode visitNonArrayCreator(MStarTreeParser.NonArrayCreatorContext ctx) {
+        NewExpressionNode node = new NewExpressionNode(ctx.start.getLine());
+        node.newType = (TypeNode) visit(ctx.nonArrayTypeCreator());
         TypeNode type = (TypeNode) visit(ctx.nonArrayTypeCreator());
-        return new NewExpressionNode(type, null, 0, ctx.start.getLine());
+        return node;
     }
 }
 

@@ -15,6 +15,14 @@ public class VariableDefinitionNode extends DefinitionNode
         this.line = line;
     }
 
+    public VariableDefinitionNode(int line)
+    {
+        this.line = line;
+        this.type = null;
+        this.exp = null;
+        this.name = null;
+    }
+
     public TypeNode getType()
     {
         return type;

@@ -10,6 +10,13 @@ public class SuffixExpressionNode extends ExpressionNode
     public suffixOp op;
     public ExpressionNode exp;
 
+    public SuffixExpressionNode(int line)
+    {
+        this.op = null;
+        this.exp = null;
+        this.line = line;
+    }
+
     public SuffixExpressionNode(suffixOp op, ExpressionNode exp, int line)
     {
         this.op = op;

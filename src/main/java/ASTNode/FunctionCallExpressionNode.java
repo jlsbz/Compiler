@@ -8,17 +8,18 @@ import java.util.*;
 
 public class FunctionCallExpressionNode extends ExpressionNode {
     public ExpressionNode exp;
-    private List<ExpressionNode> paraList;
-    private FuncEntity funcEntity;
+    public LinkedList<ExpressionNode> paraList;
+    public FuncEntity funcEntity;
 
-    public FunctionCallExpressionNode(ExpressionNode exp, List<ExpressionNode> paraList, int line) {
-        this.exp = exp;
-        this.paraList = paraList;
+    public FunctionCallExpressionNode(int line) {
+        this.exp = null;
+        this.paraList = new LinkedList<ExpressionNode>();
         this.line = line;
     }
 
-    public FunctionCallExpressionNode(int line)
-    {
+    public FunctionCallExpressionNode(ExpressionNode exp, LinkedList<ExpressionNode> paraList, int line) {
+        this.exp = exp;
+        this.paraList = paraList;
         this.line = line;
     }
 

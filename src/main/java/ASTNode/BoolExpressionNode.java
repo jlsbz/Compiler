@@ -5,13 +5,17 @@ public class BoolExpressionNode extends ConstantExpressionNode
 {
     public boolean value;
 
+    public BoolExpressionNode(int line)
+    {
+        this.line = line;
+    }
+
     public BoolExpressionNode(boolean value, int line)
     {
         this.value = value;
         this.line = line;
     }
 
-    //public boolean getValue(){return value;}
 
     @Override
     public void accept(ASTVisitor visitor)
