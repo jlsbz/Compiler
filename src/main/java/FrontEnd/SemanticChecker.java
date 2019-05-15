@@ -19,7 +19,7 @@ public class SemanticChecker extends ScopeBuilder {
     @Override
     public void visit(ProgramNode node) {
         currentScope = globalScope;
-        for (DefinitionNode declNode : node.getDecls()) {
+        for (DefinitionNode declNode : node.getDefs()) {
             if (declNode instanceof VariableDefinitionNode
                     || declNode instanceof FunctionDefinitionNode
                     || declNode instanceof ClassDefinitionNode)

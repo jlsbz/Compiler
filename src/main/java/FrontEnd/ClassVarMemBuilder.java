@@ -18,7 +18,7 @@ public class ClassVarMemBuilder extends ScopeBuilder
     @Override
     public void visit(ProgramNode node)
     {
-        for (DefinitionNode declNode : node.getDecls()){
+        for (DefinitionNode declNode : node.getDefs()){
             if (declNode instanceof ClassDefinitionNode) declNode.accept(this);
         }
     }

@@ -18,7 +18,7 @@ public class ClassFunctionBuilder extends ScopeBuilder
     public void visit(ProgramNode node)
     {
         init();
-        for (DefinitionNode declNode : node.getDecls()) {
+        for (DefinitionNode declNode : node.getDefs()) {
             if (!(declNode instanceof VariableDefinitionNode)) declNode.accept(this);
         }
         checkMain();

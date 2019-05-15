@@ -97,7 +97,7 @@ public class NASMPrinter implements IRVisitor
         idMap.put(node.getFunctions().get("main").getStartBB(), "main");
         //printf("\t\tglobal\tmain\n\n");
         try {
-            BufferedReader bufferedReader = new BufferedReader(new FileReader("lib/lib.asm"));
+            BufferedReader bufferedReader = new BufferedReader(new FileReader("lib/builtin_functions.asm"));
             String line;
             while ((line = bufferedReader.readLine()) != null) printf("%s\n", line);
         }

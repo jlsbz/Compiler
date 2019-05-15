@@ -34,7 +34,7 @@ public class IRBuilder extends ScopeBuilder {
     @Override
     public void visit(ProgramNode node) {
         currentScope = globalScope;
-        for (DefinitionNode declNode : node.getDecls()) {
+        for (DefinitionNode declNode : node.getDefs()) {
             if (declNode instanceof VariableDefinitionNode) declNode.accept(this);
             else if (declNode instanceof FunctionDefinitionNode) {
                 FuncEntity funcEntity = (FuncEntity) currentScope.get("@F" + declNode.getName());
@@ -60,7 +60,7 @@ public class IRBuilder extends ScopeBuilder {
         IRFunction irFunction = new IRFunction(funcEntity);
         irRoot.getFunctions().put(irFunction.getName(), irFunction);
         funcDeclNode.accept(this);
-        for (DefinitionNode declNode : node.getDecls()) {
+        for (DefinitionNode declNode : node.getDefs()) {
             if (declNode instanceof FunctionDefinitionNode || declNode instanceof ClassDefinitionNode)
                 declNode.accept(this);
         }
