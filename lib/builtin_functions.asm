@@ -15,6 +15,7 @@ global __toString
 global __string_substring
 global __string_parseInt
 global __string_ord
+global main
 
 extern getchar
 extern strlen
@@ -190,8 +191,6 @@ __builtin_string_less_equal:
         movzx   eax, al
         leave
         ret
-
-
 
 
 _Z10printlnInti:
@@ -552,6 +551,8 @@ L_027:
         db 25H, 73H, 00H
 
 
+__buffer.3340:
+        resb    1048576
 
 
 
