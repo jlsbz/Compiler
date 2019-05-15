@@ -1,6 +1,8 @@
 package ASTNode;
 import FrontEnd.ASTVisitor;
 
+import static Util.Print.printSpaceAndStr;
+
 public class BoolExpressionNode extends ConstantExpressionNode
 {
     public boolean value;
@@ -16,7 +18,6 @@ public class BoolExpressionNode extends ConstantExpressionNode
         this.line = line;
     }
 
-
     @Override
     public void accept(ASTVisitor visitor)
     {
@@ -28,5 +29,11 @@ public class BoolExpressionNode extends ConstantExpressionNode
     {
         if (!(obj instanceof BoolExpressionNode)) return false;
         return value == ((BoolExpressionNode) obj).value;
+    }
+
+    @Override
+    public void printInformation(int line) {
+        super.printInformation(line);
+        printSpaceAndStr(line, "bool value: " + value);
     }
 }

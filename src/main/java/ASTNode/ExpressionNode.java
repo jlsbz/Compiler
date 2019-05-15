@@ -7,10 +7,10 @@ import IR.*;
 abstract public class ExpressionNode extends ASTNode
 {
     public Type type;
-    private boolean isLeftValue;
-    private BasicBlock trueBB = null, falseBB = null;
-    private RegValue regValue, addrValue;
-    private int addrOffset;
+    public boolean isLeftValue;
+    public BasicBlock trueBB = null, falseBB = null;
+    public RegValue regValue, addrValue;
+    public int addrOffset;
 
     public void setType(Type type)
     {

@@ -43,4 +43,13 @@ public class ForStatementNode extends StatementNode {
     public void accept(ASTVisitor visitor) {
         visitor.visit(this);
     }
+
+    @Override public void printInformation(int line) {
+        super.printInformation(line);
+        if (init != null) init.printInformation(line + 1);
+        if (cond != null) cond.printInformation(line + 1);
+        if (update != null) update.printInformation(line + 1);
+        stmt.printInformation(line + 1);
+    }
+
 }

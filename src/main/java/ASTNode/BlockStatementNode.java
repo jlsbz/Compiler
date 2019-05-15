@@ -4,7 +4,6 @@ import FrontEnd.ASTVisitor;
 import Scope.Scope;
 
 import java.util.LinkedList;
-import java.util.List;
 
 public class BlockStatementNode extends StatementNode
 {
@@ -25,8 +24,7 @@ public class BlockStatementNode extends StatementNode
         this.line = line;
     }
 
-
-    public List<ASTNode> getStmtsAndVarDecls()
+    public LinkedList<ASTNode> getStmtsAndVarDecls()
     {
         return stmtsAndVarDecls;
     }
@@ -49,4 +47,15 @@ public class BlockStatementNode extends StatementNode
     {
         visitor.visit(this);
     }
+
+    @Override
+    public void printInformation(int line) {
+        super.printInformation(line);
+        for (ASTNode item : stmtsAndVarDecls) {
+            if (item instanceof StatementNode) item.printInformation(line + 1);
+            else item.printInformation(line + 1);
+        }
+    }
+
+
 }

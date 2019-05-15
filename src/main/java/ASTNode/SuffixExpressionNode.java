@@ -43,4 +43,11 @@ public class SuffixExpressionNode extends ExpressionNode
         if (!(obj instanceof SuffixExpressionNode)) return false;
         return op == ((SuffixExpressionNode) obj).getOp() && exp.equals(((SuffixExpressionNode) obj).exp);
     }
+
+    @Override
+    public void printInformation(int line) {
+        super.printInformation(line);
+        exp.printInformation(line + 1);
+    }
+
 }

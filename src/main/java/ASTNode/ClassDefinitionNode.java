@@ -1,7 +1,7 @@
 package ASTNode;
 
 import FrontEnd.ASTVisitor;
-
+import static Util.Print.printSpaceAndStr;
 import java.util.*;
 
 public class ClassDefinitionNode extends DefinitionNode
@@ -37,4 +37,17 @@ public class ClassDefinitionNode extends DefinitionNode
     {
         visitor.visit(this);
     }
+
+
+    @Override
+    public void printInformation(int line) {
+        super.printInformation(line);
+        printSpaceAndStr(line, "name: " + name);
+        for (VariableDefinitionNode item : varMember)
+            item.printInformation(line + 1);
+        for (FunctionDefinitionNode item : funcMember)
+            item.printInformation(line + 1);
+    }
+
+
 }

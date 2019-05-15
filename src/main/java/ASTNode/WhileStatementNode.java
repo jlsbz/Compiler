@@ -35,4 +35,10 @@ public class WhileStatementNode extends StatementNode
     {
         visitor.visit(this);
     }
+
+    @Override public void printInformation(int line) {
+        super.printInformation(line);
+        condition.printInformation(line + 1);
+        stmt.printInformation(line + 1);
+    }
 }

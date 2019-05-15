@@ -41,4 +41,11 @@ public class PrefixExpressionNode extends ExpressionNode
         if (!(obj instanceof PrefixExpressionNode)) return false;
         return op == ((PrefixExpressionNode) obj).getOp() && exp.equals(((PrefixExpressionNode) obj).exp);
     }
+
+    @Override
+    public void printInformation(int line) {
+        super.printInformation(line);
+        exp.printInformation(line + 1);
+    }
+
 }

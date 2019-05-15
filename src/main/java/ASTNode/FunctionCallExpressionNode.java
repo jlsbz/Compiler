@@ -24,7 +24,7 @@ public class FunctionCallExpressionNode extends ExpressionNode {
     }
 
 
-    public List<ExpressionNode> getParaList() {
+    public LinkedList<ExpressionNode> getParaList() {
         return paraList;
     }
 
@@ -51,4 +51,15 @@ public class FunctionCallExpressionNode extends ExpressionNode {
                 && funcEntity.getClassName().equals(((FunctionCallExpressionNode) obj).getFuncEntity().getClassName())
                 && funcEntity.getName() == ((FunctionCallExpressionNode) obj).getFuncEntity().getName();
     }
+
+    @Override
+    public void printInformation(int line) {
+        super.printInformation(line);
+        if (exp != null) exp.printInformation(line + 1);
+        for(ExpressionNode item: paraList)
+        {
+            item.printInformation(line + 1);
+        }
+    }
+
 }

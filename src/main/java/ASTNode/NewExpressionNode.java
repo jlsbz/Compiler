@@ -7,14 +7,14 @@ import java.util.*;
 public class NewExpressionNode extends ExpressionNode
 {
     public TypeNode newType;
-    public LinkedList<ExpressionNode> exprList;
+    public LinkedList<ExpressionNode> expList;
     public int dimNum;
 
     public NewExpressionNode(int line)
     {
         this.newType = null;
-        this.exprList = null;
-        this.dimNum = 0;
+        this.expList = null;
+        //this.dimNum = 0;
         this.line = line;
     }
 
@@ -22,8 +22,8 @@ public class NewExpressionNode extends ExpressionNode
     public NewExpressionNode(TypeNode type, LinkedList<ExpressionNode> exprList, int dimNum, int line)
     {
         this.newType = type;
-        this.exprList = exprList;
-        this.dimNum = dimNum;
+        this.expList = exprList;
+        //this.dimNum = dimNum;
         this.line = line;
     }
 
@@ -32,18 +32,24 @@ public class NewExpressionNode extends ExpressionNode
         return newType;
     }
 
-    public List<ExpressionNode> getExprList()
+    public List<ExpressionNode> getExpList()
     {
-        return exprList;
+        return expList;
     }
 
-    public int getDimNum() {
-        return dimNum;
-    }
 
     @Override
     public void accept(ASTVisitor visitor)
     {
         visitor.visit(this);
+    }
+
+
+    @Override
+    public void printInformation(int line) {
+        super.printInformation(line);
+        if (newType != null) newType.printInformation(line + 1);
+        for (ExpressionNode item : expList)
+            item.printInformation(line + 1);
     }
 }

@@ -28,4 +28,9 @@ public class NumExpressionNode extends ExpressionNode
         if (!(obj instanceof NumExpressionNode)) return false;
         return value == ((NumExpressionNode) obj).value;
     }
+
+    @Override public void printInformation(int line) {
+        super.printInformation(line);
+        System.out.println(line + " num:" + value);
+    }
 }

@@ -368,7 +368,7 @@ public class IRBuilder extends ScopeBuilder {
     }
 
     private boolean isMemAcc(ExpressionNode node) {
-        if (node instanceof ArrayExpressionNode || node instanceof MethodExpressionNode) return true;
+        if (node instanceof ArrayExpressionNode || node instanceof MemberExpressionNode) return true;
         if (node instanceof IdExpressionNode) {
             if (!((IdExpressionNode) node).isChecked()) {
                 if (currentClassName == null) ((IdExpressionNode) node).setNeedMemOp(false);
@@ -412,8 +412,8 @@ public class IRBuilder extends ScopeBuilder {
         List<RegValue> argList = new ArrayList<>();
         ExpressionNode thisExpr = null;
         if (funcEntity.isMember()) {
-            if (node.exp instanceof MethodExpressionNode) thisExpr
-                    = ((MethodExpressionNode) node.exp).exp;
+            if (node.exp instanceof MemberExpressionNode) thisExpr
+                    = ((MemberExpressionNode) node.exp).exp;
             else {
                 if (currentClassName == null) throw new CompilerError("Invalid function call");
                 thisExpr = new ThisExpressionNode(-1);
@@ -533,7 +533,7 @@ public class IRBuilder extends ScopeBuilder {
     }
 
     @Override
-    public void visit(MethodExpressionNode node) {
+    public void visit(MemberExpressionNode node) {
         boolean tmp = wantAddr;
         wantAddr = false;
         node.exp.accept(this);
@@ -608,7 +608,7 @@ public class IRBuilder extends ScopeBuilder {
 
     private void arrayNew(NewExpressionNode node, VirtualRegister vr, RegValue addr, int idx) {
         VirtualRegister Vr = new VirtualRegister(null);
-        ExpressionNode exprNode = node.getExprList().get(idx);
+        ExpressionNode exprNode = node.getExpList().get(idx);
         boolean tmp = wantAddr;
         wantAddr = false;
         exprNode.accept(this);
@@ -617,7 +617,7 @@ public class IRBuilder extends ScopeBuilder {
         currentBB.addInst(new BinaryOp(currentBB, Vr, BinaryOp.binaryOp.ADD, Vr, new ImmediateInt(8)));
         currentBB.addInst(new HeapAlloc(currentBB, Vr, Vr));
         currentBB.addInst(new Store(currentBB, exprNode.getRegValue(), 8, Vr, 0));
-        if (idx < node.getExprList().size() - 1) {
+        if (idx < node.getExpList().size() - 1) {
             VirtualRegister index = new VirtualRegister(null), address = new VirtualRegister(null);
             currentBB.addInst(new Move(currentBB, index, new ImmediateInt(0)));
             currentBB.addInst(new Move(currentBB, address, Vr));
@@ -934,7 +934,7 @@ public class IRBuilder extends ScopeBuilder {
         } else {
             ThisExpressionNode thisExprNode = new ThisExpressionNode(-1);
             thisExprNode.setType(new ClassType(currentClassName));
-            MethodExpressionNode memExprNode = new MethodExpressionNode(thisExprNode, node.getName(), -1);
+            MemberExpressionNode memExprNode = new MemberExpressionNode(thisExprNode, node.getName(), -1);
             memExprNode.accept(this);
             if (wantAddr) {
                 node.setAddrValue(memExprNode.getAddrValue());

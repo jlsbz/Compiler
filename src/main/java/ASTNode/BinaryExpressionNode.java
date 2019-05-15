@@ -10,7 +10,8 @@ public class BinaryExpressionNode extends ExpressionNode
     }
 
     public binaryOp op;
-    public ExpressionNode lhs, rhs;
+    public ExpressionNode lhs;
+    public ExpressionNode rhs;
 
     public BinaryExpressionNode(int line)
     {
@@ -29,31 +30,6 @@ public class BinaryExpressionNode extends ExpressionNode
         this.line = line;
     }
 
-    //public binaryOp getOp()
-    //{
-    //    return op;
-    //}
-
-    //public ExpressionNode getLhs()
-    //{
-    //    return lhs;
-    //}
-
-    //public ExpressionNode getRhs()
-    //{
-    //    return rhs;
-    //}
-
-    //public void setLhs(ExpressionNode lhs)
-    //{
-    //    this.lhs = lhs;
-    //}
-
-    //public void setRhs(ExpressionNode rhs)
-    //{
-    //    this.rhs = rhs;
-    //}
-
     @Override
     public void accept(ASTVisitor visitor)
     {
@@ -66,4 +42,12 @@ public class BinaryExpressionNode extends ExpressionNode
         if (!(obj instanceof BinaryExpressionNode)) return false;
         return op == ((BinaryExpressionNode) obj).op && lhs.equals(((BinaryExpressionNode) obj).lhs) && rhs.equals(((BinaryExpressionNode) obj).rhs);
     }
+
+    @Override
+    public void printInformation(int line) {
+        super.printInformation(line);
+        lhs.printInformation(line + 1);
+        rhs.printInformation(line + 1);
+    }
+
 }

@@ -464,7 +464,7 @@ public class ASTBuilder extends MStarTreeBaseVisitor<ASTNode> {
 
     @Override
     public ASTNode visitMemExpr(MStarTreeParser.MemExprContext ctx) {
-        MethodExpressionNode node = new MethodExpressionNode(ctx.start.getLine());
+        MemberExpressionNode node = new MemberExpressionNode(ctx.start.getLine());
         node.exp = (ExpressionNode) visit(ctx.expression());
         node.name = ctx.ID().getText();
         return node;
@@ -578,7 +578,7 @@ public class ASTBuilder extends MStarTreeBaseVisitor<ASTNode> {
         int dimNum = (ctx.getChildCount() - cnt - 1) / 2;
         for (int i = 0; i < dimNum; ++i) type.setType(new ArrayType(type.getType()));
         node.dimNum = (ctx.getChildCount() - cnt - 1) / 2;
-        node.exprList = exprList;
+        node.expList = exprList;
         return node;
     }
 

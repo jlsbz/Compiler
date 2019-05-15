@@ -24,4 +24,11 @@ public class ExpressionStatementNode extends StatementNode
     {
         visitor.visit(this);
     }
+
+    @Override
+    public void printInformation(int line) {
+        super.printInformation(line);
+        if (exp != null) exp.printInformation(line + 1);
+    }
+
 }

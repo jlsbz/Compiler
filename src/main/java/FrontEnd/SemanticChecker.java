@@ -213,7 +213,7 @@ public class SemanticChecker extends ScopeBuilder {
     }
 
     @Override
-    public void visit(MethodExpressionNode node) {
+    public void visit(MemberExpressionNode node) {
         node.exp.accept(this);
         String className;
         if (node.exp.getType() instanceof ArrayType) className = "array";
@@ -262,8 +262,8 @@ public class SemanticChecker extends ScopeBuilder {
 
     @Override
     public void visit(NewExpressionNode node) {
-        if (node.getExprList() != null) {
-            for (ExpressionNode exprNode : node.getExprList()) {
+        if (node.getExpList() != null) {
+            for (ExpressionNode exprNode : node.getExpList()) {
                 exprNode.accept(this);
                 if (!(exprNode.getType() instanceof IntType))
                     throw new SemanticError(exprNode.line, "Expression's type should be int type");
