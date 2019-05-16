@@ -8,6 +8,9 @@ public abstract class ASTNode
     public Location loc;
 =======
     public int line;
+<<<<<<< HEAD
+>>>>>>> parent of 50bb6a7... 举酒欲饮无管弦
+=======
 >>>>>>> parent of 50bb6a7... 举酒欲饮无管弦
     public boolean outInfluence = false;
 

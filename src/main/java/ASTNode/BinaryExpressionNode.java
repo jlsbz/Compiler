@@ -15,6 +15,9 @@ public class BinaryExpressionNode extends ExpressionNode
 =======
     public binaryOp op;
     public ExpressionNode lhs, rhs;
+<<<<<<< HEAD
+>>>>>>> parent of 50bb6a7... 举酒欲饮无管弦
+=======
 >>>>>>> parent of 50bb6a7... 举酒欲饮无管弦
 
     public BinaryExpressionNode(binaryOp op, ExpressionNode lhs, ExpressionNode rhs, Location config)
@@ -85,6 +88,10 @@ public class BinaryExpressionNode extends ExpressionNode
     public boolean equals(Object obj)
     {
         if (!(obj instanceof BinaryExpressionNode)) return false;
+<<<<<<< HEAD
         return op == ((BinaryExpressionNode) obj).getOp() && lhs.equals(((BinaryExpressionNode) obj).getLhs()) && rhs.equals(((BinaryExpressionNode) obj).getRhs());
+=======
+        return op == ((BinaryExpressionNode) obj).op && lhs.equals(((BinaryExpressionNode) obj).lhs) && rhs.equals(((BinaryExpressionNode) obj).rhs);
+>>>>>>> parent of 50bb6a7... 举酒欲饮无管弦
     }
 }

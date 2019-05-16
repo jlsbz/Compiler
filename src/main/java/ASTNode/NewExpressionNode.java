@@ -33,8 +33,11 @@ public class NewExpressionNode extends ExpressionNode
         this.exprList = exprList;
         this.dimNum = dimNum;
 <<<<<<< HEAD
+<<<<<<< HEAD
         this.loc = config;
 =======
+=======
+>>>>>>> parent of 50bb6a7... 举酒欲饮无管弦
         this.line = line;
 >>>>>>> parent of 50bb6a7... 举酒欲饮无管弦
     }

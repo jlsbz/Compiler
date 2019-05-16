@@ -12,7 +12,10 @@ public class BoolExpressionNode extends ConstantExpressionNode
     }
 
 <<<<<<< HEAD
+<<<<<<< HEAD
     //public boolean getValue(){return value;}
+=======
+>>>>>>> parent of 50bb6a7... 举酒欲饮无管弦
 =======
 >>>>>>> parent of 50bb6a7... 举酒欲饮无管弦
 

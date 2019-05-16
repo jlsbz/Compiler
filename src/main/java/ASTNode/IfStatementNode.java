@@ -4,6 +4,7 @@ import FrontEnd.ASTVisitor;
 public class IfStatementNode extends StatementNode
 {
 <<<<<<< HEAD
+<<<<<<< HEAD
     private ExpressionNode condition;
     private StatementNode thenStmt, elseStmt;
 
@@ -15,6 +16,8 @@ public class IfStatementNode extends StatementNode
         this.loc = config;
     }
 =======
+=======
+>>>>>>> parent of 50bb6a7... 举酒欲饮无管弦
     public ExpressionNode condition;
     public StatementNode thenStmt;
     public StatementNode elseStmt;
@@ -34,6 +37,9 @@ public class IfStatementNode extends StatementNode
         this.line = line;
     }
 
+<<<<<<< HEAD
+>>>>>>> parent of 50bb6a7... 举酒欲饮无管弦
+=======
 >>>>>>> parent of 50bb6a7... 举酒欲饮无管弦
 
     public ExpressionNode getCondition()

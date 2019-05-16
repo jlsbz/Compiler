@@ -6,6 +6,9 @@ import Scope.Scope;
 <<<<<<< HEAD
 =======
 import java.util.LinkedList;
+<<<<<<< HEAD
+>>>>>>> parent of 50bb6a7... 举酒欲饮无管弦
+=======
 >>>>>>> parent of 50bb6a7... 举酒欲饮无管弦
 import java.util.List;
 
@@ -31,6 +34,9 @@ public class BlockStatementNode extends StatementNode
     }
 
 
+<<<<<<< HEAD
+>>>>>>> parent of 50bb6a7... 举酒欲饮无管弦
+=======
 >>>>>>> parent of 50bb6a7... 举酒欲饮无管弦
     public List<ASTNode> getStmtsAndVarDecls()
     {

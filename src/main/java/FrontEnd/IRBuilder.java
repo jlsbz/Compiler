@@ -934,7 +934,11 @@ public class IRBuilder extends ScopeBuilder {
             ThisExpressionNode thisExprNode = new ThisExpressionNode(null);
             thisExprNode.setType(new ClassType(currentClassName));
 <<<<<<< HEAD
+<<<<<<< HEAD
             MethodExpressionNode memExprNode = new MethodExpressionNode(thisExprNode, node.getName(), null);
+=======
+            MethodExpressionNode memExprNode = new MethodExpressionNode(thisExprNode, node.getName(), -1);
+>>>>>>> parent of 50bb6a7... 举酒欲饮无管弦
 =======
             MethodExpressionNode memExprNode = new MethodExpressionNode(thisExprNode, node.getName(), -1);
 >>>>>>> parent of 50bb6a7... 举酒欲饮无管弦
