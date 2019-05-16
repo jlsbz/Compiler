@@ -19,7 +19,12 @@ public class Main {
 
     public static void main(String[] args) throws Exception {
         try {
+            //long startTime=System.currentTimeMillis();   //获取开始时间
+
             compile();
+            //long endTime=System.currentTimeMillis(); //获取结束时间
+            //System.out.println("程序运行时间： "+(endTime-startTime)+"ms");
+
         } catch (Error error) {
             System.err.println(error.getMessage());
             System.exit(1);
@@ -55,7 +60,7 @@ public class Main {
         irRoot = irBuilder.getIrRoot();
         new BinaryOpTransformer(irRoot).run();
 
-        String outFile = "test/13.asm";
+        String outFile = "test/t22_2.asm";
         PrintStream outS;
         if (isSystemout) outS = System.out;
         else outS = new PrintStream(new FileOutputStream(outFile));
@@ -63,6 +68,7 @@ public class Main {
         new GlobalVarProcessor(irRoot).run();
         new RegisterAllocator(irRoot).run();
         new NASMTransformer(irRoot).run();
+        new ExtraInstructionOptimizer(irRoot).run();
         new NASMPrinter(outS).visit(irRoot);
     }
 

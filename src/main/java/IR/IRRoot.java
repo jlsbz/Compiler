@@ -46,13 +46,13 @@ public class IRRoot
         irFunction = new IRFunction("toString", "__toString");
         irFunction.getUsedPhysicalGeneralRegs().addAll(NASMRegisterSet.generalRegs);
         builtInFunctions.put(irFunction.getName(), irFunction);
-        irFunction = new IRFunction("__member_string_substring", "__string_substring");
+        irFunction = new IRFunction("__member_string_substring", "__member___string_substring");
         irFunction.getUsedPhysicalGeneralRegs().addAll(NASMRegisterSet.generalRegs);
         builtInFunctions.put(irFunction.getName(), irFunction);
-        irFunction = new IRFunction("__member_string_parseInt", "__string_parseInt");
+        irFunction = new IRFunction("__member_string_parseInt", "__member___string_parseInt");
         irFunction.getUsedPhysicalGeneralRegs().addAll(NASMRegisterSet.generalRegs);
         builtInFunctions.put(irFunction.getName(), irFunction);
-        irFunction = new IRFunction("__member_string_ord", "__string_ord");
+        irFunction = new IRFunction("__member_string_ord", "__member___string_ord");
         irFunction.getUsedPhysicalGeneralRegs().addAll(NASMRegisterSet.generalRegs);
         builtInFunctions.put(irFunction.getName(), irFunction);
         irFunction = new IRFunction("printInt", "__printInt");

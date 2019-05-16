@@ -43,14 +43,17 @@ void println(char *str) {
 }
 
 void printInt(int num) {
-    if (num == 0) putchar('0');
+    if (num == 0) {
+            putchar('0');
+            return;
+    }
     if (num < 0) {
         num = -num;
         putchar('-');
     }
     int digits[10], len = 0;
     while (num > 0) {
-        digits[len++] = num % 10;
+        digits[++len] = num % 10;
         num /= 10;
     }
     for (int i = len - 1; i >= 0; --i)
@@ -58,7 +61,11 @@ void printInt(int num) {
 }
 
 void printlnInt(int num) {
-    if (num == 0) putchar('0');
+    if (num == 0) {
+            putchar('0');
+            putchar('\n');
+            return;
+    }
     if (num < 0) {
         num = -num;
         putchar('-');
@@ -138,18 +145,17 @@ char* __member___string_substring(char *str, int l, int r) {
 
 int __member___string_parseInt(char *str) {
     str += 8;
-    bool neg = false;
     int i = 0;
     while (str[i] < '0' || str[i] > '9')
     {
-        if (str[i++] == '-') neg = true;
+        if (str[i++] == '-') continue;
     }
     int num = str[i++] - '0';
     while (str[i] >= '0' && str[i] <= '9')
     {
         num = num * 10 + str[i++] - '0';
     }
-    if (neg) return -num;
+    if (str[0] == '-') return -num;
     return num;
 }
 
