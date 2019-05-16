@@ -3,6 +3,7 @@ import FrontEnd.ASTVisitor;
 
 public class IfStatementNode extends StatementNode
 {
+<<<<<<< HEAD
     private ExpressionNode condition;
     private StatementNode thenStmt, elseStmt;
 
@@ -13,6 +14,27 @@ public class IfStatementNode extends StatementNode
         this.elseStmt = elseStmt;
         this.loc = config;
     }
+=======
+    public ExpressionNode condition;
+    public StatementNode thenStmt;
+    public StatementNode elseStmt;
+
+    public IfStatementNode(ExpressionNode condition, StatementNode thenStmt, StatementNode elseStmt, int line)
+    {
+        this.condition = condition;
+        this.thenStmt = thenStmt;
+        this.elseStmt = elseStmt;
+        this.line = line;
+    }
+    public IfStatementNode(int line)
+    {
+        this.condition = null;
+        this.thenStmt = null;
+        this.elseStmt = null;
+        this.line = line;
+    }
+
+>>>>>>> parent of 50bb6a7... 举酒欲饮无管弦
 
     public ExpressionNode getCondition()
     {

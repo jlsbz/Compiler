@@ -11,7 +11,10 @@ public class BoolExpressionNode extends ConstantExpressionNode
         this.loc = config;
     }
 
+<<<<<<< HEAD
     //public boolean getValue(){return value;}
+=======
+>>>>>>> parent of 50bb6a7... 举酒欲饮无管弦
 
     @Override
     public void accept(ASTVisitor visitor)

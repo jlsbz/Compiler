@@ -933,7 +933,11 @@ public class IRBuilder extends ScopeBuilder {
         } else {
             ThisExpressionNode thisExprNode = new ThisExpressionNode(null);
             thisExprNode.setType(new ClassType(currentClassName));
+<<<<<<< HEAD
             MethodExpressionNode memExprNode = new MethodExpressionNode(thisExprNode, node.getName(), null);
+=======
+            MethodExpressionNode memExprNode = new MethodExpressionNode(thisExprNode, node.getName(), -1);
+>>>>>>> parent of 50bb6a7... 举酒欲饮无管弦
             memExprNode.accept(this);
             if (wantAddr) {
                 node.setAddrValue(memExprNode.getAddrValue());

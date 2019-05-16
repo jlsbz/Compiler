@@ -446,11 +446,19 @@ public class ASTBuilder extends MStarTreeBaseVisitor<ASTNode>
     }
 
     @Override
+<<<<<<< HEAD
     public ASTNode visitMemExpr(MStarTreeParser.MemExprContext ctx)
     {
         ExpressionNode expr = (ExpressionNode) visit(ctx.expression());
         String name = ctx.ID().getText();
         return new MethodExpressionNode(expr, name, Location.ctxGetLoc(ctx));
+=======
+    public ASTNode visitMemExpr(MStarTreeParser.MemExprContext ctx) {
+        MethodExpressionNode node = new MethodExpressionNode(ctx.start.getLine());
+        node.exp = (ExpressionNode) visit(ctx.expression());
+        node.name = ctx.ID().getText();
+        return node;
+>>>>>>> parent of 50bb6a7... 举酒欲饮无管弦
     }
 
     @Override
@@ -561,7 +569,13 @@ public class ASTBuilder extends MStarTreeBaseVisitor<ASTNode>
         }
         int dimNum = (ctx.getChildCount() - cnt - 1) / 2;
         for (int i = 0; i < dimNum; ++i) type.setType(new ArrayType(type.getType()));
+<<<<<<< HEAD
         return new NewExpressionNode(type, exprList, dimNum, Location.ctxGetLoc(ctx));
+=======
+        node.dimNum = (ctx.getChildCount() - cnt - 1) / 2;
+        node.exprList = exprList;
+        return node;
+>>>>>>> parent of 50bb6a7... 举酒欲饮无管弦
     }
 
     @Override

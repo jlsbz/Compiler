@@ -3,6 +3,10 @@ package ASTNode;
 import FrontEnd.ASTVisitor;
 import Scope.Scope;
 
+<<<<<<< HEAD
+=======
+import java.util.LinkedList;
+>>>>>>> parent of 50bb6a7... 举酒欲饮无管弦
 import java.util.List;
 
 public class BlockStatementNode extends StatementNode
@@ -18,6 +22,16 @@ public class BlockStatementNode extends StatementNode
         this.loc = config;
     }
 
+<<<<<<< HEAD
+=======
+    public BlockStatementNode(int line)
+    {
+        stmtsAndVarDecls = new LinkedList<ASTNode>();
+        this.line = line;
+    }
+
+
+>>>>>>> parent of 50bb6a7... 举酒欲饮无管弦
     public List<ASTNode> getStmtsAndVarDecls()
     {
         return stmtsAndVarDecls;

@@ -16,6 +16,15 @@ public class ProgramNode extends ASTNode
         this.loc = config;
     }
 
+<<<<<<< HEAD
+=======
+    public ProgramNode()
+    {
+
+    }
+
+
+>>>>>>> parent of 50bb6a7... 举酒欲饮无管弦
     public List<DefinitionNode> getDecls()
     {
         return def;
