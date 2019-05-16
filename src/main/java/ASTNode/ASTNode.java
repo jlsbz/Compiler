@@ -1,24 +1,16 @@
 package ASTNode;
 
 import FrontEnd.ASTVisitor;
+import static Util.Print.printDashAndStr;
 
 public abstract class ASTNode
 {
-<<<<<<< HEAD
-    public Location loc;
-=======
     public int line;
-<<<<<<< HEAD
->>>>>>> parent of 50bb6a7... 举酒欲饮无管弦
-=======
->>>>>>> parent of 50bb6a7... 举酒欲饮无管弦
-    public boolean outInfluence = false;
-
-    //public Location getLocation()
-    //{
-    //    return config;
-   // }
 
 
     abstract public void accept(ASTVisitor visitor);
+
+    public void printInformation(int line) {
+        printDashAndStr(line, this.getClass().getName());
+    }
 }

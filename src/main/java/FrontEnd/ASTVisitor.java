@@ -18,7 +18,7 @@ public interface ASTVisitor
     void visit(SuffixExpressionNode node);
     void visit(FunctionCallExpressionNode node);
     void visit(ArrayExpressionNode node);
-    void visit(MethodExpressionNode node);
+    void visit(MemberExpressionNode node);
     void visit(PrefixExpressionNode node);
     void visit(NewExpressionNode node);
     void visit(BinaryExpressionNode node);

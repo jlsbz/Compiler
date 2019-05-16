@@ -7,24 +7,19 @@ import java.util.*;
 
 public class ProgramNode extends ASTNode
 {
-    private List<DefinitionNode> def;
-    private Scope scope;
+    public List<DefinitionNode> def;
+    public Scope scope;
 
-    public ProgramNode(List<DefinitionNode> def, Location config)
+    public ProgramNode(List<DefinitionNode> def, int line)
     {
         this.def = def;
-        this.loc = config;
+        this.line = line;
     }
 
-<<<<<<< HEAD
-=======
     public ProgramNode()
-    {
-
-    }
+    {}
 
 
->>>>>>> parent of 50bb6a7... 举酒欲饮无管弦
     public List<DefinitionNode> getDecls()
     {
         return def;
@@ -35,4 +30,12 @@ public class ProgramNode extends ASTNode
     {
         visitor.visit(this);
     }
+
+    @Override
+    public void printInformation(int tab) {
+        super.printInformation(line);
+        for (DefinitionNode item : def)
+            item.printInformation(line + 1);
+    }
+
 }

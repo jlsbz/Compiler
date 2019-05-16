@@ -4,15 +4,21 @@ import Scope.VarEntity;
 
 public class IdExpressionNode extends ExpressionNode
 {
-    private String name;
-    private VarEntity entity = null;
-    private boolean isChecked = false;
-    private boolean needMemOp;
+    public String name;
+    public VarEntity entity = null;
+    public boolean isChecked = false;
+    public boolean needMemOp;
 
-    public IdExpressionNode(String name, Location config)
+    public IdExpressionNode(int line)
+    {
+        this.name = null;
+        this.line = line;
+    }
+
+    public IdExpressionNode(String name, int line)
     {
         this.name = name;
-        this.loc = config;
+        this.line = line;
     }
 
     public String getName()

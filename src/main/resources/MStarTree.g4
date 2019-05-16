@@ -1,26 +1,23 @@
 grammar MStarTree;
 
-program : programSection*
-        ;
+program
+    : (classDefinition | variableDefinition | functionDefinition)*
+    ;
 
-programSection : functionDefinition
-               | classDefinition
-               | variableDefinition
-               ;
 
-functionDefinition : functionType? ID '(' parameterListDefinition? ')' block
+functionDefinition : functionType? ID LPAREN parameterListDefinition? RPAREN block
              ;
 
-classDefinition : CLASS ID '{' memberDefinition* '}'
+classDefinition : CLASS ID LBRACE memberDefinition* RBRACE
           ;
 
-variableDefinition : typeType ID ('=' expression)? ';'
+variableDefinition : typeType ID ( ASSIGN expression)? SEMI
              ;
 
 memberDefinition : functionDefinition | variableDefinition
            ;
 
-parameterListDefinition : parameterDefinition (',' parameterDefinition)*
+parameterListDefinition : parameterDefinition (COMMA parameterDefinition)*
                   ;
 
 parameterDefinition : typeType ID
@@ -30,7 +27,7 @@ functionType : typeType
              | VOID
              ;
 
-typeType : typeType '[' ']' #arrayType
+typeType : typeType LBRACK RBRACK #arrayType
          | basicType        #nonArrayType
          ;
 
@@ -41,84 +38,124 @@ basicType : INT
           // STRING
           ;
 
-statement : block                                                                              #blockStmt
-          | expression? ';'                                                                    #expressionStmt
-          | IF '(' expression ')' thenStmt=statement (ELSE elseStmt=statement)?                #ifElseStmt
-          | WHILE '(' expression ')' statement                                                 #whileStmt
-          | FOR '(' init=expression? ';' cond=expression? ';' update=expression? ')' statement #forStmt
-          | CONTINUE ';'                                                                       #continueStmt
-          | BREAK ';'                                                                          #breakStmt
-          | RETURN expression? ';'                                                             #returnStmt
+statement : block                                                                                       #blockStmt
+          | expression? SEMI                                                                            #expressionStmt
+          | IF LPAREN expression RPAREN thenStmt=statement (ELSE elseStmt=statement)?                   #ifElseStmt
+          | WHILE LPAREN expression RPAREN statement                                                    #whileStmt
+          | FOR LPAREN init=expression? SEMI cond=expression? SEMI update=expression? RPAREN statement  #forStmt
+          | CONTINUE SEMI                                                                               #continueStmt
+          | BREAK SEMI                                                                                  #breakStmt
+          | RETURN expression? SEMI                                                                     #returnStmt
           ;
 
-block : '{' blockStatement* '}'
+block : LBRACE blockStatement* RBRACE
       ;
 
 blockStatement : statement    #stmt
                | variableDefinition #varDeclStmt
                ;
 
-expression : expression op=('++' | '--')                         #suffixExpr
-           | expression '.' ID                                   #memExpr
-           | arr=expression '[' sub=expression ']'               #arrayExpr
-           | expression '(' parameterList? ')'                   #funcCallExpr
-           | <assoc=right> op=('++'|'--') expression             #prefixExpr
-           | <assoc=right> op=('+' | '-') expression             #prefixExpr
-           | <assoc=right> op=('!' | '~') expression             #prefixExpr
-           | <assoc=right> NEW creator                           #newExpr
-           | lhs=expression op=('*' | '/' | '%') rhs=expression  #binaryExpr
-           | lhs=expression op=('+' | '-') rhs=expression        #binaryExpr
-           | lhs=expression op=('<<'|'>>') rhs=expression        #binaryExpr
-           | lhs=expression op=('<' | '>') rhs=expression        #binaryExpr
-           | lhs=expression op=('<='|'>=') rhs=expression        #binaryExpr
-           | lhs=expression op=('=='|'!=') rhs=expression        #binaryExpr
-           | lhs=expression op='&' rhs=expression                #binaryExpr
-           | lhs=expression op='^' rhs=expression                #binaryExpr
-           | lhs=expression op='|' rhs=expression                #binaryExpr
-           | <assoc=right> lhs=expression op='&&' rhs=expression #binaryExpr
-           | <assoc=right> lhs=expression op='||' rhs=expression #binaryExpr
-           | <assoc=right> lhs=expression op='=' rhs=expression  #assignExpr
-           | ID                                                  #idExpr
-           | THIS                                                #thisExpr
-           | NUMBER                                              #numExpr
-           | STR                                                 #strExpr
-           | NullLiteral                                         #nullExpr
-           | BoolConstant                                        #boolExpr
-           | '(' expression ')'                                  #bracketsExpr
+expression : expression op=(SELFINC | SELFDEC)                          #suffixExpr
+           | expression DOT ID                                          #memExpr
+           | arr=expression LBRACK sub=expression RBRACK                #arrayExpr
+           | expression LPAREN parameterList? RPAREN                    #funcCallExpr
+           | <assoc=right> op=(SELFINC | SELFDEC) expression            #prefixExpr
+           | <assoc=right> op=(ADD | SUB) expression                    #prefixExpr
+           | <assoc=right> op=(NEG | NOT) expression                    #prefixExpr
+           | <assoc=right> NEW creator                                  #newExpr
+           | lhs=expression op=(MUL | DIV | MOD) rhs=expression         #binaryExpr
+           | lhs=expression op=(ADD | SUB) rhs=expression               #binaryExpr
+           | lhs=expression op=(LSHIFT| RSHIFT) rhs=expression          #binaryExpr
+           | lhs=expression op=(LT | GT) rhs=expression                 #binaryExpr
+           | lhs=expression op=(LE | GE) rhs=expression                 #binaryExpr
+           | lhs=expression op=(EQ | NEQ) rhs=expression                #binaryExpr
+           | lhs=expression op=AND rhs=expression                       #binaryExpr
+           | lhs=expression op=OR rhs=expression                        #binaryExpr
+           | lhs=expression op=XOR rhs=expression                       #binaryExpr
+           | <assoc=right> lhs=expression op=LOGAND rhs=expression      #binaryExpr
+           | <assoc=right> lhs=expression op=LOGOR rhs=expression       #binaryExpr
+           | <assoc=right> lhs=expression op=ASSIGN rhs=expression      #assignExpr
+           | ID                                                         #idExpr
+           | THIS                                                       #thisExpr
+           | NUMBER                                                     #numExpr
+           | STR                                                        #strExpr
+           | NullLiteral                                                #nullExpr
+           | BoolConstant                                               #boolExpr
+           | LPAREN expression RPAREN                                   #bracketsExpr
            ;
 
 nonArrayTypeCreator : INT
                     | BOOL
                     | STRING
-                    | ID ('(' ')')?
+                    | ID (LPAREN RPAREN)?
                     ;
 
-creator : basicType ('[' expression ']')+ ('[' ']')+ ('[' expression ']')+ #errorCreator
-        | basicType ('[' expression ']')+ ('[' ']')*                       #arrayCreator
-        | nonArrayTypeCreator                                              #nonArrayCreator
+creator : basicType (LBRACK expression RBRACK)+ (LBRACK RBRACK)+ (LBRACK expression RBRACK)+    #errorCreator
+        | basicType (LBRACK expression RBRACK)+ (LBRACK RBRACK)*                                #arrayCreator
+        | nonArrayTypeCreator                                                                   #nonArrayCreator
         ;
 
-parameterList : expression (',' expression)*
+parameterList : expression (COMMA expression)*
               ;
 
+
+// ------------------ Keywords & Symbol ----------------------
+
+IF       : 'if';
+ELSE     : 'else';
+FOR      : 'for';
+WHILE    : 'while';
+BREAK    : 'break';
+CONTINUE : 'continue';
+RETURN   : 'return';
+CLASS    : 'class';
+NEW      : 'new';
+THIS     : 'this';
+
+
+LPAREN :'(';
+RPAREN :')';
+LBRACK :'[';
+RBRACK :']';
+LBRACE :'{';
+RBRACE :'}';
+SEMI   :';';
+COMMA  :',';
+COLON  :':';
+DOT    :'.';
+ASSIGN :'=';
+SELFINC:'++';
+SELFDEC:'--';
+ADD    :'+';
+SUB    :'-';
+MUL    :'*';
+DIV    :'/';
+MOD    :'%';
+NEG    :'!';
+NOT    :'~';
+LSHIFT :'<<';
+RSHIFT :'>>';
+LT     :'<';
+GT     :'>';
+LE     :'<=';
+GE     :'>=';
+EQ     :'==';
+NEQ    :'!=';
+AND    :'&';
+OR     :'|';
+XOR    :'^';
+LOGAND :'&&';
+LOGOR  :'||';
+
+VOID : 'void';
 BOOL : 'bool';
 INT : 'int';
 STRING : 'string';
 fragment NULL : 'null';
-VOID : 'void';
 fragment TRUE : 'true';
 fragment FALSE : 'false';
-IF : 'if';
-ELSE : 'else';
-FOR : 'for';
-WHILE : 'while';
-BREAK : 'break';
-CONTINUE : 'continue';
-RETURN : 'return';
-NEW : 'new';
-CLASS : 'class';
-THIS : 'this';
 
+//----------------------- constant -------------------
 NUMBER : [1-9] [0-9]*
        | '0'
        ;
@@ -135,10 +172,16 @@ BoolConstant : TRUE
 
 NullLiteral : NULL;
 
-ID : LETTER (LETTERLINE | DIGIT)*;
-fragment LETTER : [a-zA-Z];
-fragment LETTERLINE : [a-zA-Z_];
-fragment DIGIT : [0-9];
+ID : [a-zA-Z] [0-9a-zA-Z_]*;
 
-COMMENT : '//' .*? '\r'? '\n' -> skip;
+COMMENT : LINECOMMENT
+        | BLOCKCOMMENT;
+
+LINECOMMENT: '//' ~[\r\n]* -> skip
+    ;
+
+BLOCKCOMMENT
+    : '/*' .*? '*/' -> skip
+    ;
+
 WS : [ \n\t\r]+ -> skip;

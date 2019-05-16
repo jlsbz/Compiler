@@ -5,13 +5,16 @@ public class NumExpressionNode extends ExpressionNode
 {
     public int value;
 
-    public NumExpressionNode(int value, Location config)
+    public NumExpressionNode(int line)
     {
-        this.value = value;
-        this.loc = config;
+        this.line = line;
     }
 
-    //public int getValue(){return value;}
+    public NumExpressionNode(int value, int line)
+    {
+        this.value = value;
+        this.line = line;
+    }
 
     @Override
     public void accept(ASTVisitor visitor)
@@ -24,5 +27,10 @@ public class NumExpressionNode extends ExpressionNode
     {
         if (!(obj instanceof NumExpressionNode)) return false;
         return value == ((NumExpressionNode) obj).value;
+    }
+
+    @Override public void printInformation(int line) {
+        super.printInformation(line);
+        System.out.println(line + " num:" + value);
     }
 }

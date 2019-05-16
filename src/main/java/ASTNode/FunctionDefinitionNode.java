@@ -5,19 +5,24 @@ import java.util.*;
 
 public class FunctionDefinitionNode extends DefinitionNode
 {
-    private boolean isConstruct;
-    private TypeNode returnType;
-    private List<VariableDefinitionNode> parameterList;
-    private BlockStatementNode body;
+    public boolean isConstruct;
+    public TypeNode returnType;
+    public List<VariableDefinitionNode> parameterList;
+    public BlockStatementNode body;
 
-    public FunctionDefinitionNode(TypeNode returnType, String name, List<VariableDefinitionNode> parameterList, BlockStatementNode body, Location config)
+    public FunctionDefinitionNode(TypeNode returnType, String name, List<VariableDefinitionNode> parameterList, BlockStatementNode body, int line)
     {
         this.returnType = returnType;
-        this.isConstruct = returnType == null;
+        this.isConstruct = (returnType == null);
         this.name = name;
         this.parameterList = parameterList;
         this.body = body;
-        this.loc = config;
+        this.line = line;
+    }
+
+    public FunctionDefinitionNode(int line)
+    {
+        this.line = line;
     }
 
     public boolean getIsConstruct()
@@ -45,4 +50,15 @@ public class FunctionDefinitionNode extends DefinitionNode
     {
         visitor.visit(this);
     }
+
+    @Override
+    public void printInformation(int line) {
+        if (returnType != null) returnType.printInformation(line + 1);
+        for(VariableDefinitionNode item: parameterList)
+        {
+            item.printInformation(line + 1);
+        }
+        body.printInformation(line + 1);
+    }
+
 }

@@ -6,14 +6,20 @@ public class MethodExpressionNode extends ExpressionNode
     public ExpressionNode exp;
     public String name;
 
-    public MethodExpressionNode(ExpressionNode exp, String name, Location config)
+    public MethodExpressionNode(int line)
+    {
+        this.exp = null;
+        this.name = null;
+        this.line = line;
+    }
+
+    public MethodExpressionNode(ExpressionNode exp, String name, int line)
     {
         this.exp = exp;
         this.name = name;
-        this.loc = config;
+        this.line = line;
     }
 
-    //public ExpressionNode getExpr() { return exp; }
 
     public  String getName()
     {

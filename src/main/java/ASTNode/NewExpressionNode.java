@@ -6,40 +6,25 @@ import java.util.*;
 
 public class NewExpressionNode extends ExpressionNode
 {
-<<<<<<< HEAD
-    private TypeNode newType;
-    private List<ExpressionNode> exprList;
-    private int dimNum;
-
-    public NewExpressionNode(TypeNode type, List<ExpressionNode> exprList, int dimNum, Location config)
-=======
     public TypeNode newType;
-    public LinkedList<ExpressionNode> exprList;
+    public LinkedList<ExpressionNode> expList;
     public int dimNum;
 
     public NewExpressionNode(int line)
     {
         this.newType = null;
-        this.exprList = null;
-        this.dimNum = 0;
+        this.expList = null;
+        //this.dimNum = 0;
         this.line = line;
     }
 
 
     public NewExpressionNode(TypeNode type, LinkedList<ExpressionNode> exprList, int dimNum, int line)
->>>>>>> parent of 50bb6a7... 举酒欲饮无管弦
     {
         this.newType = type;
-        this.exprList = exprList;
-        this.dimNum = dimNum;
-<<<<<<< HEAD
-<<<<<<< HEAD
-        this.loc = config;
-=======
-=======
->>>>>>> parent of 50bb6a7... 举酒欲饮无管弦
+        this.expList = exprList;
+        //this.dimNum = dimNum;
         this.line = line;
->>>>>>> parent of 50bb6a7... 举酒欲饮无管弦
     }
 
     public TypeNode getNewType()
@@ -47,18 +32,24 @@ public class NewExpressionNode extends ExpressionNode
         return newType;
     }
 
-    public List<ExpressionNode> getExprList()
+    public List<ExpressionNode> getExpList()
     {
-        return exprList;
+        return expList;
     }
 
-    public int getDimNum() {
-        return dimNum;
-    }
 
     @Override
     public void accept(ASTVisitor visitor)
     {
         visitor.visit(this);
+    }
+
+
+    @Override
+    public void printInformation(int line) {
+        super.printInformation(line);
+        if (newType != null) newType.printInformation(line + 1);
+        for (ExpressionNode item : expList)
+            item.printInformation(line + 1);
     }
 }

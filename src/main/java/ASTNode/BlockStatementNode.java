@@ -3,42 +3,28 @@ package ASTNode;
 import FrontEnd.ASTVisitor;
 import Scope.Scope;
 
-<<<<<<< HEAD
-=======
 import java.util.LinkedList;
-<<<<<<< HEAD
->>>>>>> parent of 50bb6a7... 举酒欲饮无管弦
-=======
->>>>>>> parent of 50bb6a7... 举酒欲饮无管弦
-import java.util.List;
 
 public class BlockStatementNode extends StatementNode
 {
-    private List<ASTNode> stmtsAndVarDecls;
-    private Scope scope;
-    private boolean isInit = false;
+    public LinkedList<ASTNode> stmtsAndVarDecls;
+    public Scope scope;
+    public boolean isInit = false;
 
 
-    public BlockStatementNode(List<ASTNode> stmtsAndVarDecls, Location config)
+    public BlockStatementNode(LinkedList<ASTNode> stmtsAndVarDecls, int line)
     {
         this.stmtsAndVarDecls = stmtsAndVarDecls;
-        this.loc = config;
+        this.line = line;
     }
 
-<<<<<<< HEAD
-=======
     public BlockStatementNode(int line)
     {
         stmtsAndVarDecls = new LinkedList<ASTNode>();
         this.line = line;
     }
 
-
-<<<<<<< HEAD
->>>>>>> parent of 50bb6a7... 举酒欲饮无管弦
-=======
->>>>>>> parent of 50bb6a7... 举酒欲饮无管弦
-    public List<ASTNode> getStmtsAndVarDecls()
+    public LinkedList<ASTNode> getStmtsAndVarDecls()
     {
         return stmtsAndVarDecls;
     }
@@ -61,4 +47,15 @@ public class BlockStatementNode extends StatementNode
     {
         visitor.visit(this);
     }
+
+    @Override
+    public void printInformation(int line) {
+        super.printInformation(line);
+        for (ASTNode item : stmtsAndVarDecls) {
+            if (item instanceof StatementNode) item.printInformation(line + 1);
+            else item.printInformation(line + 1);
+        }
+    }
+
+
 }

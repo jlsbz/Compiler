@@ -1,5 +1,6 @@
 // Generated from C:/Users/93739/IdeaProjects/MStar/src/main/resources\MStarTree.g4 by ANTLR 4.7.2
 package MStarTree;
+
 import org.antlr.v4.runtime.ParserRuleContext;
 import org.antlr.v4.runtime.tree.ErrorNode;
 import org.antlr.v4.runtime.tree.TerminalNode;
@@ -22,18 +23,6 @@ public class MStarTreeBaseListener implements MStarTreeListener {
 	 * <p>The default implementation does nothing.</p>
 	 */
 	@Override public void exitProgram(MStarTreeParser.ProgramContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void enterProgramSection(MStarTreeParser.ProgramSectionContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void exitProgramSection(MStarTreeParser.ProgramSectionContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *

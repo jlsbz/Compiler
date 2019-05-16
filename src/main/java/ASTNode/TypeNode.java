@@ -1,18 +1,27 @@
 package ASTNode;
 
-
+import static Util.Print.*;
 import FrontEnd.ASTVisitor;
 import Type.Type;
 
 public class TypeNode extends ASTNode
 {
-    private Type type;
+    public Type type;
 
-    public TypeNode(Type type, Location config)
+    public TypeNode(int line)
+    {
+        this.type = null;
+        this.line = line;
+    }
+
+
+    public TypeNode(Type type, int line)
     {
         this.type = type;
-        this.loc = config;
+        this.line = line;
     }
+
+
 
     public Type getType()
     {
@@ -28,5 +37,11 @@ public class TypeNode extends ASTNode
     public void accept(ASTVisitor visitor)
     {
         visitor.visit(this);
+    }
+
+    @Override
+    public void printInformation(int line) {
+        super.printInformation(line);
+        printSpaceAndStr(line, "type: " + type.getType());
     }
 }

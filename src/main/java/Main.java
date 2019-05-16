@@ -13,7 +13,7 @@ import java.io.*;
 
 public class Main
 {
-    private static ProgramNode ast;
+    private static ProgramNode prog;
     private static Scope globalScope;
     private static IRRoot irRoot;
 
@@ -39,7 +39,7 @@ public class Main
     private static void buildAST() throws Exception
     {
         String inFile = "test/program.txt";
-        inFile = null;
+        //inFile = null;
         InputStream inS;
         if (inFile == null) inS = System.in;
         else inS = new FileInputStream(inFile);
@@ -47,34 +47,32 @@ public class Main
         MStarTreeLexer lexer = new MStarTreeLexer(input);
         CommonTokenStream tokens = new CommonTokenStream(lexer);
         MStarTreeParser parser = new MStarTreeParser(tokens);
-        parser.removeErrorListeners();
-        parser.addErrorListener(new SyntaxErrorListener());
         ParseTree tree = parser.program();
         ASTBuilder astBuilder = new ASTBuilder();
-        ast = (ProgramNode) astBuilder.visit(tree);
+        prog = (ProgramNode) astBuilder.visit(tree);
     }
 
     private static void semanticCheck()
     {
         ClassFunctionBuilder globalScopeBuilder = new ClassFunctionBuilder();
-        globalScopeBuilder.visit(ast);
+        globalScopeBuilder.visit(prog);
         globalScope = globalScopeBuilder.getScope();
-        new ClassVarMemBuilder(globalScope).visit(ast);
-        new SemanticChecker(globalScope).visit(ast);
+        new ClassVarMemBuilder(globalScope).visit(prog);
+        new SemanticChecker(globalScope).visit(prog);
     }
 
     private static void buildIR()
     {
         IRBuilder irBuilder = new IRBuilder(globalScope);
-        irBuilder.visit(ast);
+        irBuilder.visit(prog);
         irRoot = irBuilder.getIrRoot();
         new BinaryOpTransformer(irRoot).run();
     }
 
     private static void generateCode() throws Exception
     {
-        String outFile = "1.asm";
-        outFile = null;
+        String outFile = "test/2.asm";
+        //outFile = null;
         PrintStream outS;
         if (outFile == null) outS = System.out;
         else outS = new PrintStream(new FileOutputStream(outFile));

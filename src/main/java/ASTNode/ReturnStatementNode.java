@@ -6,17 +6,29 @@ public class ReturnStatementNode extends StatementNode
 {
     public ExpressionNode exp;
 
-    public ReturnStatementNode(ExpressionNode exp, Location config)
+    public ReturnStatementNode(int line)
     {
-        this.exp = exp;
-        this.loc = config;
+        this.exp = null;
+        this.line = line;
     }
 
-    //public ExpressionNode getExp(){return exp;}
+    public ReturnStatementNode(ExpressionNode exp, int line)
+    {
+        this.exp = exp;
+        this.line = line;
+    }
 
     @Override
     public void accept(ASTVisitor visitor)
     {
         visitor.visit(this);
     }
+
+    @Override
+    public void printInformation(int line) {
+        super.printInformation(line);
+        if (exp != null)
+            exp.printInformation(line + 1);
+    }
+
 }

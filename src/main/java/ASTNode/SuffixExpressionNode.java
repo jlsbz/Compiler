@@ -10,11 +10,18 @@ public class SuffixExpressionNode extends ExpressionNode
     public suffixOp op;
     public ExpressionNode exp;
 
-    public SuffixExpressionNode(suffixOp op, ExpressionNode exp, Location config)
+    public SuffixExpressionNode(int line)
+    {
+        this.op = null;
+        this.exp = null;
+        this.line = line;
+    }
+
+    public SuffixExpressionNode(suffixOp op, ExpressionNode exp, int line)
     {
         this.op = op;
         this.exp = exp;
-        this.loc = config;
+        this.line = line;
     }
 
     public suffixOp getOp()
@@ -36,4 +43,11 @@ public class SuffixExpressionNode extends ExpressionNode
         if (!(obj instanceof SuffixExpressionNode)) return false;
         return op == ((SuffixExpressionNode) obj).getOp() && exp.equals(((SuffixExpressionNode) obj).exp);
     }
+
+    @Override
+    public void printInformation(int line) {
+        super.printInformation(line);
+        exp.printInformation(line + 1);
+    }
+
 }

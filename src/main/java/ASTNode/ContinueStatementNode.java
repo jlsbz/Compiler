@@ -1,16 +1,24 @@
 package ASTNode;
 import FrontEnd.ASTVisitor;
 
+import static Util.Print.printSpaceAndStr;
+
 public class ContinueStatementNode extends StatementNode{
 
-    public ContinueStatementNode(Location config)
+    public ContinueStatementNode(int line)
     {
-        this.loc = config;
+        this.line = line;
     }
 
     @Override
     public void accept(ASTVisitor visitor)
     {
         visitor.visit(this);
+    }
+
+    @Override
+    public void printInformation(int line) {
+        super.printInformation(line);
+        printSpaceAndStr(line, "continue");
     }
 }
