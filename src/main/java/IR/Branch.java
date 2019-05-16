@@ -1,5 +1,6 @@
 package IR;
 
+import Register.*;
 import java.util.Map;
 
 public class Branch extends JumpInstruction
@@ -64,6 +65,9 @@ public class Branch extends JumpInstruction
     @Override
     public Instruction copyRename(Map<Object, Object> renameMap)
     {
-        return new Branch((BasicBlock) renameMap.getOrDefault(getParentBB(), getParentBB()), (RegValue) renameMap.getOrDefault(condition, condition), (BasicBlock) renameMap.getOrDefault(thenBB, thenBB), (BasicBlock) renameMap.getOrDefault(elseBB, elseBB));
+        return new Branch((BasicBlock) renameMap.getOrDefault(getParentBB(), getParentBB()),
+                (RegValue) renameMap.getOrDefault(condition, condition),
+                (BasicBlock) renameMap.getOrDefault(thenBB, thenBB),
+                (BasicBlock) renameMap.getOrDefault(elseBB, elseBB));
     }
 }

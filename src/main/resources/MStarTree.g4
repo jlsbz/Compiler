@@ -39,7 +39,7 @@ basicType : INT
           ;
 
 statement : block                                                                                       #blockStmt
-          | expression? SEMI                                                                            #expressionStmt
+          | expression? COMMA                                                                           #expressionStmt
           | IF LPAREN expression RPAREN thenStmt=statement (ELSE elseStmt=statement)?                   #ifElseStmt
           | WHILE LPAREN expression RPAREN statement                                                    #whileStmt
           | FOR LPAREN init=expression? SEMI cond=expression? SEMI update=expression? RPAREN statement  #forStmt
@@ -56,7 +56,7 @@ blockStatement : statement    #stmt
                ;
 
 expression : expression op=(SELFINC | SELFDEC)                          #suffixExpr
-           | expression DOT ID                                          #memExpr
+           | expression COMMA ID                                        #memExpr
            | arr=expression LBRACK sub=expression RBRACK                #arrayExpr
            | expression LPAREN parameterList? RPAREN                    #funcCallExpr
            | <assoc=right> op=(SELFINC | SELFDEC) expression            #prefixExpr

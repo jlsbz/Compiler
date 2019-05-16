@@ -6,13 +6,6 @@ public class WhileStatementNode extends StatementNode
     public ExpressionNode condition;
     public StatementNode stmt;
 
-    public WhileStatementNode(int line)
-    {
-        this.condition = null;
-        this.stmt = null;
-        this.line = line;
-    }
-
     public WhileStatementNode(ExpressionNode condition, StatementNode stmt, int line)
     {
         this.condition = condition;
@@ -34,11 +27,5 @@ public class WhileStatementNode extends StatementNode
     public void accept(ASTVisitor visitor)
     {
         visitor.visit(this);
-    }
-
-    @Override public void printInformation(int line) {
-        super.printInformation(line);
-        condition.printInformation(line + 1);
-        stmt.printInformation(line + 1);
     }
 }

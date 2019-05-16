@@ -13,7 +13,7 @@ public class FunctionDefinitionNode extends DefinitionNode
     public FunctionDefinitionNode(TypeNode returnType, String name, List<VariableDefinitionNode> parameterList, BlockStatementNode body, int line)
     {
         this.returnType = returnType;
-        this.isConstruct = (returnType == null);
+        this.isConstruct = returnType == null;
         this.name = name;
         this.parameterList = parameterList;
         this.body = body;
@@ -50,15 +50,4 @@ public class FunctionDefinitionNode extends DefinitionNode
     {
         visitor.visit(this);
     }
-
-    @Override
-    public void printInformation(int line) {
-        if (returnType != null) returnType.printInformation(line + 1);
-        for(VariableDefinitionNode item: parameterList)
-        {
-            item.printInformation(line + 1);
-        }
-        body.printInformation(line + 1);
-    }
-
 }

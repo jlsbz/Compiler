@@ -1,6 +1,7 @@
 package BackEnd;
 
 import IR.*;
+import Register.*;
 
 import java.util.*;
 

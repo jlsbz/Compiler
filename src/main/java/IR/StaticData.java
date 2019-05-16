@@ -1,5 +1,7 @@
 package IR;
 
+import Register.Register;
+
 public abstract class StaticData extends Register
 {
     private String name;

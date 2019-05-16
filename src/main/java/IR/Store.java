@@ -1,5 +1,7 @@
 package IR;
 
+import Register.*;
+
 import java.util.Map;
 
 public class Store extends Instruction
@@ -100,7 +102,13 @@ public class Store extends Instruction
 
     @Override
     public Store copyRename(Map<Object, Object> renameMap) {
-        if (isStaticData) return new Store((BasicBlock) renameMap.getOrDefault(getParentBB(), getParentBB()), (RegValue) renameMap.getOrDefault(value, value), size, (StaticData) renameMap.getOrDefault(address, address));
-        return new Store((BasicBlock) renameMap.getOrDefault(getParentBB(), getParentBB()), (RegValue) renameMap.getOrDefault(value, value), size, (RegValue) renameMap.getOrDefault(address, address), addrOffset);
+        if (isStaticData) return new Store((BasicBlock) renameMap.getOrDefault(getParentBB(), getParentBB()),
+                (RegValue) renameMap.getOrDefault(value, value),
+                size,
+                (StaticData) renameMap.getOrDefault(address, address));
+        return new Store((BasicBlock) renameMap.getOrDefault(getParentBB(), getParentBB()),
+                (RegValue) renameMap.getOrDefault(value, value),
+                size,
+                (RegValue) renameMap.getOrDefault(address, address), addrOffset);
     }
 }

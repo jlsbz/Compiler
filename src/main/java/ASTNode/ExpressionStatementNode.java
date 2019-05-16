@@ -12,23 +12,11 @@ public class ExpressionStatementNode extends StatementNode
         this.line = line;
     }
 
-    public ExpressionStatementNode(int line)
-    {
-        this.line = line;
-        this.exp = null;
-    }
-
+    //public ExpressionNode getExp(){return expr;}
 
     @Override
     public void accept(ASTVisitor visitor)
     {
         visitor.visit(this);
     }
-
-    @Override
-    public void printInformation(int line) {
-        super.printInformation(line);
-        if (exp != null) exp.printInformation(line + 1);
-    }
-
 }

@@ -1,5 +1,7 @@
 package IR;
 
+import Register.RegValue;
+
 public class ImmediateInt extends RegValue
 {
     private int value;

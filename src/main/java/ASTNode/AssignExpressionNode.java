@@ -4,14 +4,7 @@ import FrontEnd.ASTVisitor;
 
 public class AssignExpressionNode extends ExpressionNode
 {
-    public ExpressionNode lhs, rhs;
-
-    public AssignExpressionNode(int line)
-    {
-        this.lhs = null;
-        this.rhs = null;
-        this.line = line;
-    }
+    private ExpressionNode lhs, rhs;
 
     public AssignExpressionNode(ExpressionNode lhs, ExpressionNode rhs, int line)
     {

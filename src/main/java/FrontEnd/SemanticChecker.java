@@ -213,7 +213,7 @@ public class SemanticChecker extends ScopeBuilder {
     }
 
     @Override
-    public void visit(MemberExpressionNode node) {
+    public void visit(MethodExpressionNode node) {
         node.exp.accept(this);
         String className;
         if (node.exp.getType() instanceof ArrayType) className = "array";
@@ -231,7 +231,7 @@ public class SemanticChecker extends ScopeBuilder {
     @Override
     public void visit(PrefixExpressionNode node) {
         node.exp.accept(this);
-        switch (node.op) {
+        switch (node.getOp()) {
             case INC:
             case DEC:
                 if (!(node.exp.getType() instanceof IntType))
@@ -262,8 +262,8 @@ public class SemanticChecker extends ScopeBuilder {
 
     @Override
     public void visit(NewExpressionNode node) {
-        if (node.getExpList() != null) {
-            for (ExpressionNode exprNode : node.getExpList()) {
+        if (node.getExprList() != null) {
+            for (ExpressionNode exprNode : node.getExprList()) {
                 exprNode.accept(this);
                 if (!(exprNode.getType() instanceof IntType))
                     throw new SemanticError(exprNode.line, "Expression's type should be int type");
@@ -275,10 +275,10 @@ public class SemanticChecker extends ScopeBuilder {
 
     @Override
     public void visit(BinaryExpressionNode node) {
-        node.lhs.accept(this);
-        node.rhs.accept(this);
-        if (node.lhs.getType() instanceof StringType && node.rhs.getType() instanceof StringType) {
-            switch (node.op) {
+        node.getLhs().accept(this);
+        node.getRhs().accept(this);
+        if (node.getLhs().getType() instanceof StringType && node.getRhs().getType() instanceof StringType) {
+            switch (node.getOp()) {
                 case ADD:
                     node.setType(StringType.getStringType());
                     break;
@@ -294,7 +294,7 @@ public class SemanticChecker extends ScopeBuilder {
                     throw new CompilerError(node.line, "No such binary operator for string type");
             }
         } else {
-            switch (node.op) {
+            switch (node.getOp()) {
                 case ADD:
                 case SUB:
                 case MUL:
@@ -305,13 +305,13 @@ public class SemanticChecker extends ScopeBuilder {
                 case BITWISE_OR:
                 case BITWISE_AND:
                 case BITWISE_XOR:
-                    if (!(node.lhs.getType() instanceof IntType && node.rhs.getType() instanceof IntType))
+                    if (!(node.getLhs().getType() instanceof IntType && node.getRhs().getType() instanceof IntType))
                         throw new SemanticError(node.line, "LHS and RHS should both be int type");
                     node.setType(IntType.getIntType());
                     break;
                 case UNEQUAL:
                 case EQUAL:
-                    if (checkBinType(node.lhs.getType(), node.rhs.getType()))
+                    if (checkBinType(node.getLhs().getType(), node.getRhs().getType()))
                         throw new SemanticError(node.line, "Expression's type not match");
                     node.setType(BoolType.getBoolType());
                     break;
@@ -319,13 +319,13 @@ public class SemanticChecker extends ScopeBuilder {
                 case LESS_EQUAL:
                 case GREATER:
                 case LESS:
-                    if (!(node.lhs.getType() instanceof IntType && node.rhs.getType() instanceof IntType))
+                    if (!(node.getLhs().getType() instanceof IntType && node.getRhs().getType() instanceof IntType))
                         throw new SemanticError(node.line, "LHS and RHS should both be int type");
                     node.setType(BoolType.getBoolType());
                     break;
                 case LOGIC_OR:
                 case LOGIC_AND:
-                    if (!(node.lhs.getType() instanceof BoolType && node.rhs.getType() instanceof BoolType))
+                    if (!(node.getLhs().getType() instanceof BoolType && node.getRhs().getType() instanceof BoolType))
                         throw new SemanticError(node.line, "LHS and RHS should both be bool type");
                     node.setType(BoolType.getBoolType());
                     break;
@@ -346,13 +346,13 @@ public class SemanticChecker extends ScopeBuilder {
 
     @Override
     public void visit(AssignExpressionNode node) {
-        node.lhs.accept(this);
-        node.rhs.accept(this);
-        if (!node.lhs.isLeftValue())
-            throw new SemanticError(node.lhs.line, "LHS should be left value");
-        if (checkAssignType(node.lhs.getType(), node.rhs.getType()))
+        node.getLhs().accept(this);
+        node.getRhs().accept(this);
+        if (!node.getLhs().isLeftValue())
+            throw new SemanticError(node.getLhs().line, "LHS should be left value");
+        if (checkAssignType(node.getLhs().getType(), node.getRhs().getType()))
             throw new SemanticError(node.line, "LHS's type and RHS's type not match");
-        node.setType(node.lhs.getType());
+        node.setType(node.getLhs().getType());
         node.setLeftValue(false);
     }
 

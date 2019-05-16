@@ -1,16 +1,16 @@
 package ASTNode;
 
-import FrontEnd.ASTVisitor;
+import Register.RegValue;
 import Type.Type;
 import IR.*;
 
 abstract public class ExpressionNode extends ASTNode
 {
     public Type type;
-    public boolean isLeftValue;
-    public BasicBlock trueBB = null, falseBB = null;
-    public RegValue regValue, addrValue;
-    public int addrOffset;
+    private boolean isLeftValue;
+    private BasicBlock trueBB = null, falseBB = null;
+    private RegValue regValue, addrValue;
+    private int addrOffset;
 
     public void setType(Type type)
     {

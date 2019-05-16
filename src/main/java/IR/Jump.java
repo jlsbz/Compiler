@@ -1,5 +1,7 @@
 package IR;
 
+import Register.Register;
+
 import java.util.Map;
 
 public class Jump extends JumpInstruction

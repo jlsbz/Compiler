@@ -1,4 +1,5 @@
-package IR;
+package Register;
+
 
 public class NASMRegister extends PhysicalRegister
 {

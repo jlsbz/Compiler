@@ -1,5 +1,7 @@
 package IR;
 
+import Register.*;
+
 import java.util.Map;
 
 public class Push extends Instruction

@@ -1,6 +1,9 @@
 package BackEnd;
 
 import IR.*;
+import Register.NASMRegisterSet;
+import Register.PhysicalRegister;
+import Register.RegValue;
 
 import java.util.*;
 

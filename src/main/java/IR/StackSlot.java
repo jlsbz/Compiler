@@ -1,5 +1,7 @@
 package IR;
 
+import Register.*;
+
 public class StackSlot extends Register
 {
     private IRFunction parentFunction;

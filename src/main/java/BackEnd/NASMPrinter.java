@@ -1,6 +1,8 @@
 package BackEnd;
 
 import IR.*;
+import Register.PhysicalRegister;
+import Register.VirtualRegister;
 import Util.CompilerError;
 
 import java.io.BufferedReader;

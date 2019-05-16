@@ -1,24 +1,19 @@
 package ASTNode;
 
 import FrontEnd.ASTVisitor;
-import static Util.Print.printSpaceAndStr;
+
 import java.util.*;
 
 public class ClassDefinitionNode extends DefinitionNode
 {
-    public List<VariableDefinitionNode> varMember;
-    public List<FunctionDefinitionNode> funcMember;
+    private List<VariableDefinitionNode> varMember;
+    private List<FunctionDefinitionNode> funcMember;
 
     public ClassDefinitionNode(String name, List<VariableDefinitionNode> varMember, List<FunctionDefinitionNode> funcMember, int line)
     {
         this.name = name;
         this.varMember = varMember;
         this.funcMember = funcMember;
-        this.line = line;
-    }
-
-    public ClassDefinitionNode(int line)
-    {
         this.line = line;
     }
 
@@ -37,17 +32,4 @@ public class ClassDefinitionNode extends DefinitionNode
     {
         visitor.visit(this);
     }
-
-
-    @Override
-    public void printInformation(int line) {
-        super.printInformation(line);
-        printSpaceAndStr(line, "name: " + name);
-        for (VariableDefinitionNode item : varMember)
-            item.printInformation(line + 1);
-        for (FunctionDefinitionNode item : funcMember)
-            item.printInformation(line + 1);
-    }
-
-
 }

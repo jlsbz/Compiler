@@ -1,5 +1,7 @@
 package IR;
 
+import Register.PhysicalRegister;
+import Register.VirtualRegister;
 import Scope.FuncEntity;
 
 import java.util.*;

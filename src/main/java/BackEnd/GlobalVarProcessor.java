@@ -1,6 +1,8 @@
 package BackEnd;
 
 import IR.*;
+import Register.Register;
+import Register.VirtualRegister;
 
 import java.util.HashMap;
 import java.util.HashSet;

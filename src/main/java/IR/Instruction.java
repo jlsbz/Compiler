@@ -1,5 +1,6 @@
 package IR;
 
+import Register.*;
 import Util.CompilerError;
 
 import java.util.*;

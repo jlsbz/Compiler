@@ -1,5 +1,8 @@
 package IR;
 
+import Register.PhysicalRegister;
+import Register.Register;
+
 import java.util.Map;
 
 public class Pop extends Instruction

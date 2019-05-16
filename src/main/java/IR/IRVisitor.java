@@ -1,5 +1,8 @@
 package IR;
 
+import Register.PhysicalRegister;
+import Register.VirtualRegister;
+
 public interface IRVisitor
 {
     void visit(IRRoot node);

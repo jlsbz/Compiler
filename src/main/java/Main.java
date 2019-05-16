@@ -19,17 +19,6 @@ public class Main
 
     public static void main(String[] args) throws Exception
     {
-        try {
-            compile();
-        }
-        catch (Error e) {
-            System.err.println(e.getMessage());
-            System.exit(1);
-        }
-    }
-
-    private static void compile() throws Exception
-    {
         buildAST();
         semanticCheck();
         buildIR();
@@ -71,7 +60,7 @@ public class Main
 
     private static void generateCode() throws Exception
     {
-        String outFile = "test/2.asm";
+        String outFile = "test/13.asm";
         //outFile = null;
         PrintStream outS;
         if (outFile == null) outS = System.out;

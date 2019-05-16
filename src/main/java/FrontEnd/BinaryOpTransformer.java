@@ -1,6 +1,8 @@
 package FrontEnd;
 
 import IR.*;
+import Register.VirtualRegister;
+
 public class BinaryOpTransformer
 {
     private IRRoot irRoot;

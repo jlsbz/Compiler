@@ -1,7 +1,7 @@
 package Scope;
 
 import ASTNode.*;
-import IR.Register;
+import Register.Register;
 import Type.Type;
 
 public class VarEntity extends Entity
