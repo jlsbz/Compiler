@@ -5,7 +5,14 @@ import FrontEnd.ASTVisitor;
 
 public class ArrayExpressionNode extends ExpressionNode
 {
-    private ExpressionNode arr, sub;
+    public ExpressionNode arr, sub;
+
+    public ArrayExpressionNode(int line)
+    {
+        this.arr = null;
+        this.sub = null;
+        this.line = line;
+    }
 
     public ArrayExpressionNode(ExpressionNode arr, ExpressionNode sub, int line)
     {

@@ -3,7 +3,7 @@ package IR;
 import Register.*;
 import java.util.Map;
 
-public class Branch extends JumpInstruction
+public class Branch extends TransInst
 {
     private RegValue condition;
     private BasicBlock thenBB, elseBB;

@@ -6,10 +6,8 @@ import Util.CompilerError;
 
 import java.util.*;
 
-public class RegisterAllocator
-{
-    private class VrInfo
-    {
+public class RegisterAllocator {
+    private class VrInfo {
         Set<VirtualRegister> neighbours = new HashSet<>();
         boolean isRemoved = false;
         Register color = null;
@@ -28,8 +26,7 @@ public class RegisterAllocator
     private Set<PhysicalRegister> usedColors = new HashSet<>();
     private Map<Register, Register> renameMap = new HashMap<>();
 
-    public RegisterAllocator(IRRoot irRoot)
-    {
+    public RegisterAllocator(IRRoot irRoot) {
         this.irRoot = irRoot;
         physicalRegisters = new ArrayList<>(NASMRegisterSet.generalRegs);
         int maxNumFuncArgs = 3;
@@ -41,8 +38,7 @@ public class RegisterAllocator
         if (irRoot.isHasDivShiftInst()) {
             pr0 = physicalRegisters.get(0);
             pr1 = physicalRegisters.get(1);
-        }
-        else {
+        } else {
             pr0 = NASMRegisterSet.rbx;
             pr1 = physicalRegisters.get(0);
         }
@@ -52,15 +48,8 @@ public class RegisterAllocator
         colorsNum = physicalRegisters.size();
     }
 
-    public void run()
-    {
-        registerPreProcess();
-        graphColoringAllocate();
-        //naiveAllocate();
-    }
 
-    private void registerPreProcess()
-    {
+    private void registerPreProcess() {
         for (IRFunction irFunction : irRoot.getFunctions().values()) {
             Instruction instruction = irFunction.getStartBB().getHead();
             for (int i = 6; i < irFunction.getArgVrList().size(); ++i) {
@@ -78,13 +67,12 @@ public class RegisterAllocator
         }
     }
 
-    private void livelinessAnalyse()
-    {
+    private void livelnessAnalysis() {
         for (IRFunction irFunction : irRoot.getFunctions().values()) {
             for (BasicBlock bb : irFunction.getReversePreOrder()) {
                 for (Instruction inst = bb.getHead(); inst != null; inst = inst.getNext()) {
-                    inst.getLiveIn().clear();
-                    inst.getLiveOut().clear();
+                    inst.liveIn.clear();
+                    inst.liveOut.clear();
                 }
             }
             Set<VirtualRegister> liveIn = new HashSet<>(), liveOut = new HashSet<>();
@@ -95,28 +83,28 @@ public class RegisterAllocator
                     for (Instruction inst = bb.getTail(); inst != null; inst = inst.getPrev()) {
                         liveIn.clear();
                         liveOut.clear();
-                        if (inst instanceof JumpInstruction) {
-                            if (inst instanceof Jump) liveOut.addAll(((Jump) inst).getDestBB().getHead().getLiveIn());
+                        if (inst instanceof TransInst) {
+                            if (inst instanceof Jump) liveOut.addAll(((Jump) inst).getDestBB().getHead().liveIn);
                             else if (inst instanceof Branch) {
-                                liveOut.addAll(((Branch) inst).getThenBB().getHead().getLiveIn());
-                                liveOut.addAll(((Branch) inst).getElseBB().getHead().getLiveIn());
+                                liveOut.addAll(((Branch) inst).getThenBB().getHead().liveIn);
+                                liveOut.addAll(((Branch) inst).getElseBB().getHead().liveIn);
                             }
-                        }
-                        else if (inst.getNext() != null) liveOut.addAll(inst.getNext().getLiveIn());
+                        } else if (inst.getNext() != null) liveOut.addAll(inst.getNext().liveIn);
                         liveIn.addAll(liveOut);
-                        if (inst.getDefinedRegister() instanceof VirtualRegister) liveIn.remove(inst.getDefinedRegister());
+                        if (inst.getDefinedRegister() instanceof VirtualRegister)
+                            liveIn.remove(inst.getDefinedRegister());
                         for (Register register : inst.getUsedRegisters()) {
                             if (register instanceof VirtualRegister) liveIn.add((VirtualRegister) register);
                         }
-                        if (!inst.getLiveIn().equals(liveIn)) {
+                        if (!inst.liveIn.equals(liveIn)) {
                             flag = true;
-                            inst.getLiveIn().clear();
-                            inst.getLiveIn().addAll(liveIn);
+                            inst.liveIn.clear();
+                            inst.liveIn.addAll(liveIn);
                         }
-                        if (!inst.getLiveOut().equals(liveOut)) {
+                        if (!inst.liveOut.equals(liveOut)) {
                             flag = true;
-                            inst.getLiveOut().clear();
-                            inst.getLiveOut().addAll(liveOut);
+                            inst.liveOut.clear();
+                            inst.liveOut.addAll(liveOut);
                         }
                     }
                 }
@@ -124,9 +112,8 @@ public class RegisterAllocator
         }
     }
 
-    private void graphColoringAllocate()
-    {
-        livelinessAnalyse();
+    private void graphColoringAllocate() {
+        livelnessAnalysis();
         for (IRFunction irFunction : irRoot.getFunctions().values()) {
             vrInfoMap.clear();
             vrNodes.clear();
@@ -137,8 +124,7 @@ public class RegisterAllocator
         }
     }
 
-    private VrInfo getVrInfo(VirtualRegister vr)
-    {
+    private VrInfo getVrInfo(VirtualRegister vr) {
         VrInfo vrInfo = vrInfoMap.get(vr);
         if (vrInfo == null) {
             vrInfo = new VrInfo();
@@ -147,8 +133,7 @@ public class RegisterAllocator
         return vrInfo;
     }
 
-    private void removeVrNode(VirtualRegister vr)
-    {
+    private void removeVrNode(VirtualRegister vr) {
         VrInfo vrInfo = vrInfoMap.get(vr), neighbourInfo;
         vrInfo.isRemoved = true;
         vrNodes.remove(vr);
@@ -161,8 +146,7 @@ public class RegisterAllocator
         }
     }
 
-    private void buildGraph(IRFunction irFunction)
-    {
+    private void buildGraph(IRFunction irFunction) {
         for (VirtualRegister vr : irFunction.getArgVrList()) getVrInfo(vr);
         for (BasicBlock bb : irFunction.getReversePreOrder()) {
             for (Instruction inst = bb.getHead(); inst != null; inst = inst.getNext()) {
@@ -175,15 +159,14 @@ public class RegisterAllocator
                         vrInfo.suggestSameVrs.add((VirtualRegister) rhs);
                         getVrInfo((VirtualRegister) rhs).suggestSameVrs.add((VirtualRegister) definedRegister);
                     }
-                    for (VirtualRegister vr : inst.getLiveOut()) {
+                    for (VirtualRegister vr : inst.liveOut) {
                         if (vr != definedRegister && vr != rhs) {
                             getVrInfo(vr).neighbours.add((VirtualRegister) definedRegister);
                             getVrInfo((VirtualRegister) definedRegister).neighbours.add(vr);
                         }
                     }
-                }
-                else {
-                    for (VirtualRegister vr : inst.getLiveOut()) {
+                } else {
+                    for (VirtualRegister vr : inst.liveOut) {
                         if (vr != definedRegister) {
                             getVrInfo(vr).neighbours.add((VirtualRegister) definedRegister);
                             getVrInfo((VirtualRegister) definedRegister).neighbours.add(vr);
@@ -199,8 +182,7 @@ public class RegisterAllocator
         }
     }
 
-    private void colorize(IRFunction irFunction)
-    {
+    private void colorize(IRFunction irFunction) {
         stack.clear();
         while (!vrNodes.isEmpty()) {
             while (!smallDegreeVrNodes.isEmpty()) {
@@ -224,14 +206,14 @@ public class RegisterAllocator
             usedColors.clear();
             for (VirtualRegister neighbours : vrInfo.neighbours) {
                 VrInfo neighbourInfo = vrInfoMap.get(neighbours);
-                if (!neighbourInfo.isRemoved && neighbourInfo.color instanceof PhysicalRegister) usedColors.add((PhysicalRegister) neighbourInfo.color);
+                if (!neighbourInfo.isRemoved && neighbourInfo.color instanceof PhysicalRegister)
+                    usedColors.add((PhysicalRegister) neighbourInfo.color);
             }
             PhysicalRegister forcedPr = vr.getForcedPr();
             if (forcedPr != null) {
                 if (usedColors.contains(forcedPr)) throw new CompilerError("Invalid physical register");
                 vrInfo.color = forcedPr;
-            }
-            else {
+            } else {
                 for (VirtualRegister suggestSameVr : vrInfo.suggestSameVrs) {
                     Register color = getVrInfo(suggestSameVr).color;
                     if (color instanceof PhysicalRegister && !usedColors.contains(color)) {
@@ -255,18 +237,17 @@ public class RegisterAllocator
         }
     }
 
-    private void updateInstruction(IRFunction irFunction)
-    {
+    private void updateInstruction(IRFunction irFunction) {
         for (BasicBlock bb : irFunction.getReversePreOrder()) {
             for (Instruction inst = bb.getHead(), nextInst; inst != null; inst = nextInst) {
                 nextInst = inst.getNext();
                 if (inst instanceof FunctionCall) {
                     List<RegValue> argsList = ((FunctionCall) inst).getArgsList();
                     for (int i = 0; i < argsList.size(); ++i) {
-                        if ( argsList.get(i) instanceof VirtualRegister) argsList.set(i, vrInfoMap.get(argsList.get(i)).color);
+                        if (argsList.get(i) instanceof VirtualRegister)
+                            argsList.set(i, vrInfoMap.get(argsList.get(i)).color);
                     }
-                }
-                else if (!inst.getUsedRegisters().isEmpty()) {
+                } else if (!inst.getUsedRegisters().isEmpty()) {
                     boolean usedPr0 = false;
                     renameMap.clear();
                     for (Register register : inst.getUsedRegisters()) {
@@ -278,13 +259,11 @@ public class RegisterAllocator
                                 inst.prepend(new Load(bb, pr, 8, color, 0));
                                 renameMap.put(register, pr);
                                 irFunction.getUsedPhysicalGeneralRegs().add(pr);
-                            }
-                            else {
+                            } else {
                                 renameMap.put(register, color);
                                 irFunction.getUsedPhysicalGeneralRegs().add((PhysicalRegister) color);
                             }
-                        }
-                        else renameMap.put(register, register);
+                        } else renameMap.put(register, register);
                     }
                     inst.setUsedRegisters(renameMap);
                 }
@@ -294,8 +273,7 @@ public class RegisterAllocator
                         inst.setDefinedRegister(pr0);
                         inst.append(new Store(bb, pr0, 8, color, 0));
                         irFunction.getUsedPhysicalGeneralRegs().add(pr0);
-                    }
-                    else {
+                    } else {
                         inst.setDefinedRegister(color);
                         irFunction.getUsedPhysicalGeneralRegs().add((PhysicalRegister) color);
                     }
@@ -304,73 +282,11 @@ public class RegisterAllocator
         }
     }
 
-    private Map<VirtualRegister, StackSlot> vrStackSlotMap = new HashMap<>();
-
-    private StackSlot getStackSlot(VirtualRegister vr, IRFunction irFunction)
-    {
-        StackSlot stackSlot = vrStackSlotMap.get(vr);
-        if (stackSlot == null) {
-            stackSlot = new StackSlot(irFunction, vr.getName(), false);
-            vrStackSlotMap.put(vr, stackSlot);
-        }
-        return stackSlot;
+    public void run() {
+        registerPreProcess();
+        graphColoringAllocate();
     }
 
-    private void naiveAllocate()
-    {
-        for (IRFunction irFunction : irRoot.getFunctions().values()) {
-            vrStackSlotMap.clear();
-            vrStackSlotMap.putAll(irFunction.getArgsStackSlotMap());
-            for (BasicBlock bb : irFunction.getReversePostOrder()) {
-                for (Instruction inst = bb.getHead(), nextInst; inst != null; inst = nextInst) {
-                    nextInst = inst.getNext();
-                    int cnt = 0;
-                    if (inst instanceof FunctionCall) {
-                        List<RegValue> argsList = ((FunctionCall) inst).getArgsList();
-                        for (int i = 0; i < argsList.size(); ++i) {
-                            RegValue regValue = argsList.get(i);
-                            if (regValue instanceof VirtualRegister) {
-                                PhysicalRegister pr = ((VirtualRegister) regValue).getForcedPr();
-                                if (pr != null) argsList.set(i, pr);
-                                else argsList.set(i, getStackSlot((VirtualRegister) regValue, irFunction));
-                            }
-                        }
-                    }
-                    else {
-                        Collection<Register> usedRegisters = inst.getUsedRegisters();
-                        if (!usedRegisters.isEmpty()) {
-                            renameMap.clear();
-                            for (Register register : usedRegisters) {
-                                if (register instanceof VirtualRegister) {
-                                    PhysicalRegister pr = ((VirtualRegister) register).getForcedPr();
-                                    boolean isArg6 = false;
-                                    if (pr == null) pr = physicalRegisters.get(cnt++);
-                                    else isArg6 = true;
-                                    renameMap.put(register, pr);
-                                    irFunction.getUsedPhysicalGeneralRegs().add(pr);
-                                    if (isArg6) continue;
-                                    inst.prepend(new Load(bb, pr, 8, getStackSlot((VirtualRegister) register, irFunction), 0));
-                                }
-                                else renameMap.put(register, register);
-                            }
-                            inst.setUsedRegisters(renameMap);
-                        }
-                    }
-                    Register definedRegister = inst.getDefinedRegister();
-                    if (inst instanceof BinaryOp && !((BinaryOp) inst).isDivMod()) {
-                        if (definedRegister instanceof VirtualRegister) inst.append(new Store(bb, ((BinaryOp) inst).getLhs(), 8, getStackSlot((VirtualRegister) definedRegister, irFunction), 0));
-                        inst.setDefinedRegister((Register) ((BinaryOp) inst).getLhs());
-                        continue;
-                    }
-                    if (definedRegister instanceof VirtualRegister) {
-                        PhysicalRegister pr = ((VirtualRegister) definedRegister).getForcedPr();
-                        if (pr == null) pr = physicalRegisters.get(cnt++);
-                        irFunction.getUsedPhysicalGeneralRegs().add(pr);
-                        inst.setDefinedRegister(pr);
-                        inst.append(new Store(bb, pr, 8, getStackSlot((VirtualRegister) definedRegister, irFunction), 0));
-                    }
-                }
-            }
-        }
-    }
+
 }
+

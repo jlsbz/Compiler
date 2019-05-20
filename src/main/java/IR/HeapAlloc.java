@@ -63,6 +63,9 @@ public class HeapAlloc extends Instruction
     @Override
     public Instruction copyRename(Map<Object, Object> renameMap)
     {
-        return new HeapAlloc((BasicBlock) renameMap.getOrDefault(getParentBB(), getParentBB()), (Register) renameMap.getOrDefault(destination, destination), (RegValue) renameMap.getOrDefault(allocSize, allocSize));
+        return new HeapAlloc((BasicBlock) renameMap.getOrDefault(
+                getParentBB(), getParentBB()),
+                (Register) renameMap.getOrDefault(destination, destination),
+                (RegValue) renameMap.getOrDefault(allocSize, allocSize));
     }
 }

@@ -17,9 +17,7 @@ public class ProgramNode extends ASTNode
     }
 
     public ProgramNode()
-    {
-
-    }
+    {}
 
 
     public List<DefinitionNode> getDecls()
@@ -32,4 +30,12 @@ public class ProgramNode extends ASTNode
     {
         visitor.visit(this);
     }
+
+    @Override
+    public void printInformation(int tab) {
+        super.printInformation(line);
+        for (DefinitionNode item : def)
+            item.printInformation(line + 1);
+    }
+
 }

@@ -1,6 +1,7 @@
 package IR;
 
 import Register.PhysicalRegister;
+import Register.StackSlot;
 import Register.VirtualRegister;
 import Scope.FuncEntity;
 

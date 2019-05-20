@@ -2,10 +2,9 @@ package BackEnd;
 
 import IR.*;
 import Register.*;
-
 import java.util.*;
 
-public class FunctionInLineOptimizer
+public class InLineOptimizer
 {
     private class FuncInfo
     {
@@ -16,7 +15,7 @@ public class FunctionInLineOptimizer
     private IRRoot irRoot;
     private Map<IRFunction, FuncInfo> funcInfoMap = new HashMap<>();
 
-    public FunctionInLineOptimizer(IRRoot irRoot)
+    public InLineOptimizer(IRRoot irRoot)
     {
         this.irRoot = irRoot;
     }
@@ -59,7 +58,8 @@ public class FunctionInLineOptimizer
                         nextInst = inst.getNext();
                         if (!(inst instanceof FunctionCall)) continue;
                         FuncInfo calleeFuncInfo = funcInfoMap.get(((FunctionCall) inst).getFunction());
-                        if (calleeFuncInfo == null || calleeFuncInfo.isRecursiveCall || calleeFuncInfo.instNum > 30 || calleeFuncInfo.instNum + funcInfo.instNum > 1 << 12) continue;
+                        if (calleeFuncInfo == null || calleeFuncInfo.isRecursiveCall || calleeFuncInfo.instNum > 50
+                                || calleeFuncInfo.instNum + funcInfo.instNum > 4096) continue;
                         nextInst = doInLine((FunctionCall) inst);
                         funcInfo.instNum += calleeFuncInfo.instNum;
                         isChanged = true;
@@ -87,7 +87,7 @@ public class FunctionInLineOptimizer
         if (callerFunction.getEndBB() == functionCall.getParentBB()) callerFunction.setEndBB(newEndBB);
         Map<Object, Object> callBBRenameMap = Collections.singletonMap(functionCall.getParentBB(), newEndBB);
         for (Instruction inst = functionCall.getNext(); inst != null; inst = inst.getNext()) {
-            if (inst instanceof JumpInstruction) newEndBB.setJumpInst((JumpInstruction) inst.copyRename(callBBRenameMap));
+            if (inst instanceof TransInst) newEndBB.setJumpInst((TransInst) inst.copyRename(callBBRenameMap));
             else newEndBB.addInst(inst.copyRename(callBBRenameMap));
             inst.remove();
         }
@@ -115,8 +115,8 @@ public class FunctionInLineOptimizer
                     if (!(inst instanceof Return)) newEndBBHead.prepend(inst.copyRename(renameMap));
                 }
                 else {
-                    if (inst instanceof JumpInstruction) {
-                        if (!(inst instanceof Return)) newBB.setJumpInst((JumpInstruction) inst.copyRename(renameMap));
+                    if (inst instanceof TransInst) {
+                        if (!(inst instanceof Return)) newBB.setJumpInst((TransInst) inst.copyRename(renameMap));
                     }
                     else newBB.addInst(inst.copyRename(renameMap));
                 }
@@ -124,7 +124,8 @@ public class FunctionInLineOptimizer
         }
         if (!functionCall.getParentBB().isHasJumpInst()) functionCall.getParentBB().setJumpInst(new Jump(functionCall.getParentBB(), newEndBB));
         Return returnInst = calleeFunction.getReturnList().get(0);
-        if (returnInst.getRetValue() != null && functionCall.getDestination() != null) newEndBBHead.prepend(new Move(newEndBB, functionCall.getDestination(), (RegValue) renameMap.get(returnInst.getRetValue())));
+        if (returnInst.getRetValue() != null && functionCall.getDestination() != null)
+            newEndBBHead.prepend(new Move(newEndBB, functionCall.getDestination(), (RegValue) renameMap.get(returnInst.getRetValue())));
         return newEndBB.getHead();
     }
 }

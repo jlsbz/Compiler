@@ -1,15 +1,14 @@
 package BackEnd;
 
 import IR.*;
-import Register.Register;
-import Register.VirtualRegister;
+import Register.*;
 
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-public class GlobalVarProcessor
+public class GlobalVarNumber
 {
     private class FuncInfo
     {
@@ -22,7 +21,7 @@ public class GlobalVarProcessor
     private IRRoot irRoot;
     private Map<IRFunction, FuncInfo> funcInfoMap = new HashMap<>();
 
-    public GlobalVarProcessor(IRRoot irRoot)
+    public GlobalVarNumber(IRRoot irRoot)
     {
         this.irRoot = irRoot;
     }
@@ -59,6 +58,7 @@ public class GlobalVarProcessor
                     Register definedRegister = inst.getDefinedRegister();
                     if (definedRegister != null && definedRegister instanceof StaticData) {
                         VirtualRegister vr = getStaticDataVr(funcInfo.staticDataVrMap, (StaticData) definedRegister);
+                        //inst.setUsedRegisters(vr);
                         inst.setDefinedRegister(vr);
                         funcInfo.definedStaticData.add((StaticData) definedRegister);
                     }

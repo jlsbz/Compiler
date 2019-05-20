@@ -1,7 +1,6 @@
 package IR;
 
-import Register.PhysicalRegister;
-import Register.VirtualRegister;
+import Register.*;
 
 public interface IRVisitor
 {
@@ -15,11 +14,11 @@ public interface IRVisitor
     void visit(Return node);
     void visit(ImmediateInt node);
     void visit(Move node);
-    void visit(BinaryOp node);
+    void visit(Binary node);
     void visit(FunctionCall node);
     void visit(Store node);
     void visit(Load node);
-    void visit(UnaryOp node);
+    void visit(Unary node);
     void visit(HeapAlloc node);
     void visit(Comparison node);
     void visit(StaticStr node);

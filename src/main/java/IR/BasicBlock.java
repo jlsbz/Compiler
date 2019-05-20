@@ -21,7 +21,7 @@ public class BasicBlock
 
     public void addInst(Instruction instruction)
     {
-        if (hasJumpInst) throw new CompilerError("Basic block has jump instruction");
+        if (hasJumpInst) throw new CompilerError("has jump instruction");
         if (head == null) head = tail = instruction;
         else {
             tail.setNext(instruction);
@@ -35,7 +35,7 @@ public class BasicBlock
         return hasJumpInst;
     }
 
-    public void setJumpInst(JumpInstruction jumpInst)
+    public void setJumpInst(TransInst jumpInst)
     {
         addInst(jumpInst);
         hasJumpInst = true;
@@ -78,7 +78,7 @@ public class BasicBlock
         }
         else if (tail instanceof Jump) removeNextBB(((Jump) tail).getDestBB());
         else if (tail instanceof Return) parentFunc.getReturnList().remove(tail);
-        else throw new CompilerError("Invalid jump instruction");
+        else throw new CompilerError("Invalid jump");
     }
 
     public void removeNextBB(BasicBlock bb)

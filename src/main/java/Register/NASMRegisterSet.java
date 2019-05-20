@@ -8,6 +8,21 @@ public class NASMRegisterSet
     public static NASMRegister rax, rbx, rcx, rdx, rsi, rdi, rsp, rbp, r8, r9, r10, r11, r12, r13, r14, r15;
     public static List<PhysicalRegister> argRegs;
 
+    // rax/eax 0  return value  func return value
+    // rbx 1
+    // rcx 2
+    // rdx 3
+    // rsp 4  top of global stack       stack point
+    // rbp 5  current stack             base point
+    // rsi 6
+    // rdi 7
+    // r8-15
+    // %rdi，%rsi，%rdx，%rcx，%r8，%r9 用作函数参数，依次对应第1参数，第2参数。。。
+    // %r10，%r11 用作数据存储，遵循调用者使用规则，简单说就是使用之前要先保存原值
+    // 帧指针%ebp和栈指针%esp，有了这两个指针，我们就可以刻画一个完整的栈帧
+    //
+
+
     static {
         allRegs = new ArrayList<>();
         generalRegs = new ArrayList<>();

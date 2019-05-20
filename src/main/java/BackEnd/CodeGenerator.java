@@ -1,8 +1,7 @@
 package BackEnd;
 
 import IR.*;
-import Register.PhysicalRegister;
-import Register.VirtualRegister;
+import Register.*;
 import Util.CompilerError;
 
 import java.io.BufferedReader;
@@ -12,7 +11,7 @@ import java.io.PrintStream;
 import java.util.HashMap;
 import java.util.Map;
 
-public class NASMPrinter implements IRVisitor
+public class CodeGenerator implements IRVisitor
 {
     private PrintStream outS;
     private PhysicalRegister pr;
@@ -20,7 +19,7 @@ public class NASMPrinter implements IRVisitor
     private Map<String, Integer> idCnt = new HashMap<>();
     private boolean isBssSection = false, isDataSection = false;
 
-    public NASMPrinter(PrintStream outS)
+    public CodeGenerator(PrintStream outS)
     {
         this.outS = outS;
     }
@@ -97,7 +96,6 @@ public class NASMPrinter implements IRVisitor
     {
         pr = node.getPr();
         idMap.put(node.getFunctions().get("main").getStartBB(), "main");
-        //printf("\t\tglobal\tmain\n\n");
         try {
             BufferedReader bufferedReader = new BufferedReader(new FileReader("lib/lib.asm"));
             String line;
@@ -106,7 +104,7 @@ public class NASMPrinter implements IRVisitor
         catch (IOException e) {
             throw new CompilerError("IO exception when reading builtin functions from file");
         }
-        // printf("\t\textern\tmalloc\n\n");
+
         if (node.getStaticDataList().size() > 0) {
             isBssSection = true;
             printf("\t\tsection\t.bss\n");
@@ -169,7 +167,7 @@ public class NASMPrinter implements IRVisitor
     @Override
     public void visit(VirtualRegister node)
     {
-        throw new CompilerError("There should be no virtual register in NASMPrinter");
+        throw new CompilerError("There should be no virtual register in CodeGenerator");
     }
 
     @Override
@@ -215,9 +213,9 @@ public class NASMPrinter implements IRVisitor
     }
 
     @Override
-    public void visit(BinaryOp node)
+    public void visit(Binary node)
     {
-        if (node.getOp() == BinaryOp.binaryOp.DIV || node.getOp() == BinaryOp.binaryOp.MOD) {
+        if (node.getOp() == Binary.binaryOp.DIV || node.getOp() == Binary.binaryOp.MOD) {
             printf("\t\tmov\t\trbx, ");
             node.getRhs().accept(this);
             printf("\n\t\tmov\t\trax, ");
@@ -227,15 +225,15 @@ public class NASMPrinter implements IRVisitor
             printf("\t\tidiv\trbx\n");
             printf("\t\tmov\t\t");
             node.getDestination().accept(this);
-            if (node.getOp() == BinaryOp.binaryOp.DIV) printf(", rax\n");
+            if (node.getOp() == Binary.binaryOp.DIV) printf(", rax\n");
             else printf(", rdx\n");
             printf("\t\tmov\t\trdx, %s\n", pr.getName());
         }
-        else if (node.getOp() == BinaryOp.binaryOp.SHL || node.getOp() == BinaryOp.binaryOp.SHR) {
+        else if (node.getOp() == Binary.binaryOp.SHL || node.getOp() == Binary.binaryOp.SHR) {
             printf("\t\tmov\t\trbx, rcx\n");
             printf("\t\tmov\t\trcx, ");
             node.getRhs().accept(this);
-            if (node.getOp() == BinaryOp.binaryOp.SHL) printf("\n\t\tsal\t\t");
+            if (node.getOp() == Binary.binaryOp.SHL) printf("\n\t\tsal\t\t");
             else printf("\n\t\tsar\t\t");
             node.getLhs().accept(this);
             printf(", cl\n");
@@ -338,7 +336,7 @@ public class NASMPrinter implements IRVisitor
     }
 
     @Override
-    public void visit(UnaryOp node)
+    public void visit(Unary node)
     {
         String op;
         switch (node.getOp()) {

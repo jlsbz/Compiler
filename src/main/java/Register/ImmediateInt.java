@@ -1,6 +1,6 @@
-package IR;
+package Register;
 
-import Register.RegValue;
+import IR.IRVisitor;
 
 public class ImmediateInt extends RegValue
 {

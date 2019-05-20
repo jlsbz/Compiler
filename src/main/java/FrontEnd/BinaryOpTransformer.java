@@ -18,26 +18,27 @@ public class BinaryOpTransformer
             for (BasicBlock bb : irFunction.getReversePostOrder())
                 for (Instruction inst = bb.getHead(), nextInst; inst != null; inst = nextInst) {
                     nextInst = inst.getNext();
-                    if (!(inst instanceof BinaryOp)) continue;
-                    BinaryOp binaryInst = (BinaryOp) inst;
-                    if (binaryInst.getDestination() == binaryInst.getLhs()) continue;
-                    if (binaryInst.getDestination() == binaryInst.getRhs()) {
-                        if (binaryInst.isExchangeable()) {
-                            binaryInst.setRhs(binaryInst.getLhs());
-                            binaryInst.setLhs(binaryInst.getDestination());
+                    if (!(inst instanceof Binary)) continue;
+                    Binary binary = (Binary) inst;
+                    if (binary.getDestination() == binary.getLhs()) continue;
+                    if (binary.getDestination() == binary.getRhs()) {
+                        if (binary.isExchangeable()) {
+                            binary.setRhs(binary.getLhs());
+                            binary.setLhs(binary.getDestination());
                         }
                         else {
                             VirtualRegister vr = new VirtualRegister("rhsBack");
-                            binaryInst.prepend(new Move(binaryInst.getParentBB(), vr, binaryInst.getRhs()));
-                            binaryInst.prepend(new Move(binaryInst.getParentBB(), binaryInst.getDestination(), binaryInst.getLhs()));
-                            binaryInst.setLhs(binaryInst.getDestination());
-                            binaryInst.setRhs(vr);
+                            binary.prepend(new Move(binary.getParentBB(), vr, binary.getRhs()));
+                            binary.prepend(new Move(binary.getParentBB(), binary.getDestination(), binary.getLhs()));
+                            binary.setLhs(binary.getDestination());
+                            binary.setRhs(vr);
                         }
                     }
-                    else if (!binaryInst.isDivMod()) {
-                        binaryInst.prepend(new Move(binaryInst.getParentBB(), binaryInst.getDestination(), binaryInst.getLhs()));
-                        binaryInst.setLhs(binaryInst.getDestination());
+                    else if (!binary.isDivMod()) {
+                        binary.prepend(new Move(binary.getParentBB(), binary.getDestination(), binary.getLhs()));
+                        binary.setLhs(binary.getDestination());
                     }
                 }
     }
 }
+

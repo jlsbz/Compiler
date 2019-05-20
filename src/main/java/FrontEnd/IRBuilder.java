@@ -8,12 +8,13 @@ import Util.CompilerError;
 import IR.*;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 
 public class IRBuilder extends ScopeBuilder {
     private Scope globalScope, currentScope;
     private IRRoot irRoot = new IRRoot();
-    private List<ASTNode> initFuncStmts = new ArrayList<>();
+    private LinkedList<ASTNode> initFuncStmts = new LinkedList<>();
     private String currentClassName = null;
     private IRFunction currentFunction = null;
     private BasicBlock currentBB = null;
@@ -37,14 +38,14 @@ public class IRBuilder extends ScopeBuilder {
         for (DefinitionNode declNode : node.getDecls()) {
             if (declNode instanceof VariableDefinitionNode) declNode.accept(this);
             else if (declNode instanceof FunctionDefinitionNode) {
-                FuncEntity funcEntity = (FuncEntity) currentScope.get("@F" + declNode.getName());
+                FuncEntity funcEntity = (FuncEntity) currentScope.get("__F_" + declNode.getName());
                 IRFunction irFunction = new IRFunction(funcEntity);
                 irRoot.getFunctions().put(irFunction.getName(), irFunction);
             } else {
-                ClassEntity classEntity = (ClassEntity) currentScope.get("@C" + declNode.getName());
+                ClassEntity classEntity = (ClassEntity) currentScope.get("__C_" + declNode.getName());
                 currentScope = classEntity.getScope();
                 for (FunctionDefinitionNode funcDeclNode : ((ClassDefinitionNode) declNode).getFuncMember()) {
-                    FuncEntity funcEntity = (FuncEntity) currentScope.get("@F" + funcDeclNode.getName());
+                    FuncEntity funcEntity = (FuncEntity) currentScope.get("__F_" + funcDeclNode.getName());
                     IRFunction irFunction = new IRFunction(funcEntity);
                     irRoot.getFunctions().put(irFunction.getName(), irFunction);
                 }
@@ -56,7 +57,7 @@ public class IRBuilder extends ScopeBuilder {
         blockStmtNode.setScope(globalScope);
         FunctionDefinitionNode funcDeclNode = new FunctionDefinitionNode(new TypeNode(VoidType.getVoidType(), -1), "__init_func", new ArrayList<>(), blockStmtNode, -1);
         FuncEntity funcEntity = new FuncEntity(funcDeclNode);
-        globalScope.put("__init_func", "@F__init_func", funcEntity);
+        globalScope.put("__init_func", "__F__init_func", funcEntity);
         IRFunction irFunction = new IRFunction(funcEntity);
         irRoot.getFunctions().put(irFunction.getName(), irFunction);
         funcDeclNode.accept(this);
@@ -70,7 +71,7 @@ public class IRBuilder extends ScopeBuilder {
 
     @Override
     public void visit(VariableDefinitionNode node) {
-        VarEntity varEntity = (VarEntity) currentScope.get("@V" + node.getName());
+        VarEntity varEntity = (VarEntity) currentScope.get("__V_" + node.getName());
         if (currentScope.isTop()) {
             StaticData staticData = new StaticVar(node.getName(), 8);
             irRoot.getStaticDataList().add(staticData);
@@ -139,7 +140,7 @@ public class IRBuilder extends ScopeBuilder {
         Scope tmp = currentScope;
         currentScope = node.getBody().getScope();
         if (currentClassName != null) {
-            VarEntity varEntity = (VarEntity) currentScope.get("@Vthis");
+            VarEntity varEntity = (VarEntity) currentScope.get("__V_this");
             VirtualRegister vr = new VirtualRegister("this");
             varEntity.setRegister(vr);
             currentFunction.getArgVrList().add(vr);
@@ -204,11 +205,11 @@ public class IRBuilder extends ScopeBuilder {
         node.getCondition().setTrueBB(thenBB);
         node.getCondition().accept(this);
         if (isInForStmt > 0 && node.getCondition() instanceof BinaryExpressionNode
-                && ((BinaryExpressionNode) node.getCondition()).getOp() == BinaryExpressionNode.binaryOp.GREATER_EQUAL) {
-            if (((BinaryExpressionNode) node.getCondition()).getLhs() instanceof IdExpressionNode
-                    && ((BinaryExpressionNode) node.getCondition()).getRhs() instanceof NumExpressionNode) {
-                forVarName.add(((IdExpressionNode) ((BinaryExpressionNode) node.getCondition()).getLhs()).getName());
-                forVarNum.add(((NumExpressionNode) ((BinaryExpressionNode) node.getCondition()).getRhs()).value);
+                && ((BinaryExpressionNode) node.getCondition()).op == BinaryExpressionNode.binaryOp.GREATER_EQUAL) {
+            if (((BinaryExpressionNode) node.getCondition()).lhs instanceof IdExpressionNode
+                    && ((BinaryExpressionNode) node.getCondition()).rhs instanceof NumExpressionNode) {
+                forVarName.add(((IdExpressionNode) ((BinaryExpressionNode) node.getCondition()).lhs).getName());
+                forVarNum.add(((NumExpressionNode) ((BinaryExpressionNode) node.getCondition()).rhs).value);
             }
         }
         if (node.getCondition() instanceof BoolExpressionNode)
@@ -278,11 +279,11 @@ public class IRBuilder extends ScopeBuilder {
         if (!currentBB.getHasJumpInst()) currentBB.setJumpInst(new Jump(currentBB, updateBB));
         Instruction inst = tmpBB.getTail().getPrev();
         if (node.getInit() instanceof AssignExpressionNode && node.getCond() instanceof BinaryExpressionNode
-                && ((BinaryExpressionNode) node.getCond()).getOp() == BinaryExpressionNode.binaryOp.LESS) {
-            if (((BinaryExpressionNode) node.getCond()).getLhs() instanceof IdExpressionNode
-                    && ((AssignExpressionNode) node.getInit()).getLhs() instanceof IdExpressionNode) {
-                IdExpressionNode cond = (IdExpressionNode) ((BinaryExpressionNode) node.getCond()).getLhs(), init
-                        = (IdExpressionNode) ((AssignExpressionNode) node.getInit()).getLhs();
+                && ((BinaryExpressionNode) node.getCond()).op == BinaryExpressionNode.binaryOp.LESS) {
+            if (((BinaryExpressionNode) node.getCond()).lhs instanceof IdExpressionNode
+                    && ((AssignExpressionNode) node.getInit()).lhs instanceof IdExpressionNode) {
+                IdExpressionNode cond = (IdExpressionNode) ((BinaryExpressionNode) node.getCond()).lhs, init
+                        = (IdExpressionNode) ((AssignExpressionNode) node.getInit()).lhs;
                 if (cond.getName().equals(init.getName())) {
                     for (int i = 0; i < forVarName.size(); ++i) {
                         if (init.getName().equals(forVarName.get(i)) && inst instanceof Move) {
@@ -342,17 +343,17 @@ public class IRBuilder extends ScopeBuilder {
     private void selfIncDec(ExpressionNode node, ExpressionNode exp) {
         boolean tmp = wantAddr;
         wantAddr = false;
-        BinaryOp.binaryOp op;
+        Binary.binaryOp op;
         exp.accept(this);
         if (node instanceof SuffixExpressionNode) {
-            op = ((SuffixExpressionNode) node).getOp()
-                    == SuffixExpressionNode.suffixOp.INC ? BinaryOp.binaryOp.ADD : BinaryOp.binaryOp.SUB;
+            op = ((SuffixExpressionNode) node).op
+                    == SuffixExpressionNode.suffixOp.INC ? Binary.binaryOp.ADD : Binary.binaryOp.SUB;
             VirtualRegister vr = new VirtualRegister(null);
             currentBB.addInst(new Move(currentBB, vr, exp.getRegValue()));
             node.setRegValue(vr);
         } else {
-            op = ((PrefixExpressionNode) node).getOp()
-                    == PrefixExpressionNode.prefixOp.INC ? BinaryOp.binaryOp.ADD : BinaryOp.binaryOp.SUB;
+            op = ((PrefixExpressionNode) node).op
+                    == PrefixExpressionNode.prefixOp.INC ? Binary.binaryOp.ADD : Binary.binaryOp.SUB;
             node.setRegValue(exp.getRegValue());
         }
         ImmediateInt one = new ImmediateInt(1);
@@ -360,20 +361,20 @@ public class IRBuilder extends ScopeBuilder {
             wantAddr = true;
             exp.accept(this);
             VirtualRegister vr = new VirtualRegister(null);
-            currentBB.addInst(new BinaryOp(currentBB, vr, op, exp.getRegValue(), one));
+            currentBB.addInst(new Binary(currentBB, vr, op, exp.getRegValue(), one));
             currentBB.addInst(new Store(currentBB, vr, 8, exp.getAddrValue(), exp.getAddrOffset()));
             if (node instanceof PrefixExpressionNode) exp.setRegValue(vr);
-        } else currentBB.addInst(new BinaryOp(currentBB, (Register) exp.getRegValue(), op, exp.getRegValue(), one));
+        } else currentBB.addInst(new Binary(currentBB, (Register) exp.getRegValue(), op, exp.getRegValue(), one));
         wantAddr = tmp;
     }
 
     private boolean isMemAcc(ExpressionNode node) {
-        if (node instanceof ArrayExpressionNode || node instanceof MethodExpressionNode) return true;
+        if (node instanceof ArrayExpressionNode || node instanceof MemberExpressionNode) return true;
         if (node instanceof IdExpressionNode) {
             if (!((IdExpressionNode) node).isChecked()) {
                 if (currentClassName == null) ((IdExpressionNode) node).setNeedMemOp(false);
                 else
-                    ((IdExpressionNode) node).setNeedMemOp(((VarEntity) currentScope.get("@V" +
+                    ((IdExpressionNode) node).setNeedMemOp(((VarEntity) currentScope.get("__V_" +
                             ((IdExpressionNode) node).getName())).getRegister() == null);
                 ((IdExpressionNode) node).setChecked(true);
             }
@@ -384,8 +385,8 @@ public class IRBuilder extends ScopeBuilder {
 
     private void processPrintFuncCall(ExpressionNode arg, String funcName) {
         if (arg instanceof BinaryExpressionNode) {
-            processPrintFuncCall(((BinaryExpressionNode) arg).getLhs(), "print");
-            processPrintFuncCall(((BinaryExpressionNode) arg).getRhs(), funcName);
+            processPrintFuncCall(((BinaryExpressionNode) arg).lhs, "print");
+            processPrintFuncCall(((BinaryExpressionNode) arg).rhs, funcName);
             return;
         }
         IRFunction calleeFunc;
@@ -412,8 +413,8 @@ public class IRBuilder extends ScopeBuilder {
         List<RegValue> argList = new ArrayList<>();
         ExpressionNode thisExpr = null;
         if (funcEntity.isMember()) {
-            if (node.exp instanceof MethodExpressionNode) thisExpr
-                    = ((MethodExpressionNode) node.exp).exp;
+            if (node.exp instanceof MemberExpressionNode) thisExpr
+                    = ((MemberExpressionNode) node.exp).exp;
             else {
                 if (currentClassName == null) throw new CompilerError("Invalid function call");
                 thisExpr = new ThisExpressionNode(-1);
@@ -519,8 +520,8 @@ public class IRBuilder extends ScopeBuilder {
         node.getSub().accept(this);
         wantAddr = tmp;
         VirtualRegister vr = new VirtualRegister(null);
-        currentBB.addInst(new BinaryOp(currentBB, vr, BinaryOp.binaryOp.MUL, node.getSub().getRegValue(), new ImmediateInt(8)));
-        currentBB.addInst(new BinaryOp(currentBB, vr, BinaryOp.binaryOp.ADD, node.getArr().getRegValue(), vr));
+        currentBB.addInst(new Binary(currentBB, vr, Binary.binaryOp.MUL, node.getSub().getRegValue(), new ImmediateInt(8)));
+        currentBB.addInst(new Binary(currentBB, vr, Binary.binaryOp.ADD, node.getArr().getRegValue(), vr));
         if (wantAddr) {
             node.setAddrValue(vr);
             node.setAddrOffset(8);
@@ -533,15 +534,15 @@ public class IRBuilder extends ScopeBuilder {
     }
 
     @Override
-    public void visit(MethodExpressionNode node) {
+    public void visit(MemberExpressionNode node) {
         boolean tmp = wantAddr;
         wantAddr = false;
         node.exp.accept(this);
         wantAddr = tmp;
         RegValue classAddr = node.exp.getRegValue();
         String className = ((ClassType) node.exp.getType()).getName();
-        ClassEntity classEntity = (ClassEntity) currentScope.get("@C" + className);
-        VarEntity varEntity = (VarEntity) classEntity.getScope().selfGet("@V" + node.getName());
+        ClassEntity classEntity = (ClassEntity) currentScope.get("__C_" + className);
+        VarEntity varEntity = (VarEntity) classEntity.getScope().selfGet("__V_" + node.getName());
         if (wantAddr) {
             node.setAddrValue(classAddr);
             node.setAddrOffset(varEntity.getAddrOffset());
@@ -557,7 +558,7 @@ public class IRBuilder extends ScopeBuilder {
     @Override
     public void visit(PrefixExpressionNode node) {
         VirtualRegister vr;
-        switch (node.getOp()) {
+        switch (node.op) {
             case DEC:
             case INC:
                 selfIncDec(node, node.exp);
@@ -570,13 +571,13 @@ public class IRBuilder extends ScopeBuilder {
                 vr = new VirtualRegister(null);
                 node.setRegValue(vr);
                 node.exp.accept(this);
-                currentBB.addInst(new UnaryOp(currentBB, vr, UnaryOp.unaryOp.NEG, node.exp.getRegValue()));
+                currentBB.addInst(new Unary(currentBB, vr, Unary.unaryOp.NEG, node.exp.getRegValue()));
                 break;
             case BITWISE_NOT:
                 vr = new VirtualRegister(null);
                 node.setRegValue(vr);
                 node.exp.accept(this);
-                currentBB.addInst(new UnaryOp(currentBB, vr, UnaryOp.unaryOp.BITWISE_NOT, node.exp.getRegValue()));
+                currentBB.addInst(new Unary(currentBB, vr, Unary.unaryOp.BITWISE_NOT, node.exp.getRegValue()));
                 break;
             case LOGIC_NOT:
                 node.exp.setTrueBB(node.getFalseBB());
@@ -594,7 +595,7 @@ public class IRBuilder extends ScopeBuilder {
         Type type = node.getNewType().getType();
         if (type instanceof ClassType) {
             String className = ((ClassType) type).getName();
-            currentBB.addInst(new HeapAlloc(currentBB, vr, new ImmediateInt(((ClassEntity) globalScope.get("@C" + className)).getMemorySize())));
+            currentBB.addInst(new HeapAlloc(currentBB, vr, new ImmediateInt(((ClassEntity) globalScope.get("__C_" + className)).getMemorySize())));
             IRFunction irFunction = irRoot.getFunctions().get("__member_" + className + "_" + className);
             if (irFunction != null) {
                 List<RegValue> argList = new ArrayList<>();
@@ -608,16 +609,16 @@ public class IRBuilder extends ScopeBuilder {
 
     private void arrayNew(NewExpressionNode node, VirtualRegister vr, RegValue addr, int idx) {
         VirtualRegister Vr = new VirtualRegister(null);
-        ExpressionNode exprNode = node.getExprList().get(idx);
+        ExpressionNode exprNode = node.getExpList().get(idx);
         boolean tmp = wantAddr;
         wantAddr = false;
         exprNode.accept(this);
         wantAddr = tmp;
-        currentBB.addInst(new BinaryOp(currentBB, Vr, BinaryOp.binaryOp.MUL, exprNode.getRegValue(), new ImmediateInt(8)));
-        currentBB.addInst(new BinaryOp(currentBB, Vr, BinaryOp.binaryOp.ADD, Vr, new ImmediateInt(8)));
+        currentBB.addInst(new Binary(currentBB, Vr, Binary.binaryOp.MUL, exprNode.getRegValue(), new ImmediateInt(8)));
+        currentBB.addInst(new Binary(currentBB, Vr, Binary.binaryOp.ADD, Vr, new ImmediateInt(8)));
         currentBB.addInst(new HeapAlloc(currentBB, Vr, Vr));
         currentBB.addInst(new Store(currentBB, exprNode.getRegValue(), 8, Vr, 0));
-        if (idx < node.getExprList().size() - 1) {
+        if (idx < node.getExpList().size() - 1) {
             VirtualRegister index = new VirtualRegister(null), address = new VirtualRegister(null);
             currentBB.addInst(new Move(currentBB, index, new ImmediateInt(0)));
             currentBB.addInst(new Move(currentBB, address, Vr));
@@ -630,9 +631,9 @@ public class IRBuilder extends ScopeBuilder {
             currentBB.addInst(new Comparison(currentBB, cmp, Comparison.comparisonOp.LESS, index, exprNode.getRegValue()));
             currentBB.setJumpInst(new Branch(currentBB, cmp, bodyBB, afterBB));
             currentBB = bodyBB;
-            currentBB.addInst(new BinaryOp(currentBB, address, BinaryOp.binaryOp.ADD, address, new ImmediateInt(8)));
+            currentBB.addInst(new Binary(currentBB, address, Binary.binaryOp.ADD, address, new ImmediateInt(8)));
             arrayNew(node, null, address, idx + 1);
-            currentBB.addInst(new BinaryOp(currentBB, index, BinaryOp.binaryOp.ADD, index, new ImmediateInt(1)));
+            currentBB.addInst(new Binary(currentBB, index, Binary.binaryOp.ADD, index, new ImmediateInt(1)));
             currentBB.setJumpInst(new Jump(currentBB, condBB));
             currentBB = afterBB;
         }
@@ -642,12 +643,12 @@ public class IRBuilder extends ScopeBuilder {
 
     @Override
     public void visit(BinaryExpressionNode node) {
-        if (node.getLhs().getType() instanceof StringType) {
-            node.getLhs().accept(this);
-            node.getRhs().accept(this);
+        if (node.lhs.getType() instanceof StringType) {
+            node.lhs.accept(this);
+            node.rhs.accept(this);
             IRFunction irFunction;
             ExpressionNode tmp;
-            switch (node.getOp()) {
+            switch (node.op) {
                 case ADD:
                     irFunction = irRoot.getBuiltInFunctions().get("__builtin_string_concat");
                     break;
@@ -664,23 +665,23 @@ public class IRBuilder extends ScopeBuilder {
                     irFunction = irRoot.getBuiltInFunctions().get("__builtin_string_less_equal");
                     break;
                 case GREATER:
-                    tmp = node.getLhs();
-                    node.setLhs(node.getRhs());
-                    node.setRhs(tmp);
+                    tmp = node.lhs;
+                    node.lhs = node.rhs;
+                    node.rhs = tmp;
                     irFunction = irRoot.getBuiltInFunctions().get("__builtin_string_less");
                     break;
                 case GREATER_EQUAL:
-                    tmp = node.getLhs();
-                    node.setLhs(node.getRhs());
-                    node.setRhs(tmp);
+                    tmp = node.lhs;
+                    node.lhs = node.rhs;
+                    node.rhs = tmp;
                     irFunction = irRoot.getBuiltInFunctions().get("__builtin_string_less_equal");
                     break;
                 default:
                     throw new CompilerError("Invalid string binary operation");
             }
             List<RegValue> argList = new ArrayList<>();
-            argList.add(node.getLhs().getRegValue());
-            argList.add(node.getRhs().getRegValue());
+            argList.add(node.lhs.getRegValue());
+            argList.add(node.rhs.getRegValue());
             VirtualRegister vr = new VirtualRegister(null);
             currentBB.addInst(new FunctionCall(currentBB, irFunction, argList, vr));
             if (node.getTrueBB() != null)
@@ -688,44 +689,44 @@ public class IRBuilder extends ScopeBuilder {
             else node.setRegValue(vr);
             return;
         }
-        if (isLogicalBinaryOp(node.getOp())) {
-            if (node.getOp() == BinaryExpressionNode.binaryOp.LOGIC_AND) {
-                node.getLhs().setTrueBB(new BasicBlock(currentFunction, "and_lhs_true"));
-                node.getLhs().setFalseBB(node.getFalseBB());
-                node.getLhs().accept(this);
-                currentBB = node.getLhs().getTrueBB();
+        if (isLogicalBinaryOp(node.op)) {
+            if (node.op == BinaryExpressionNode.binaryOp.LOGIC_AND) {
+                node.lhs.setTrueBB(new BasicBlock(currentFunction, "and_lhs_true"));
+                node.lhs.setFalseBB(node.getFalseBB());
+                node.lhs.accept(this);
+                currentBB = node.lhs.getTrueBB();
             } else {
-                node.getLhs().setTrueBB(node.getTrueBB());
-                node.getLhs().setFalseBB(new BasicBlock(currentFunction, "or_lhs_false"));
-                node.getLhs().accept(this);
-                currentBB = node.getLhs().getFalseBB();
+                node.lhs.setTrueBB(node.getTrueBB());
+                node.lhs.setFalseBB(new BasicBlock(currentFunction, "or_lhs_false"));
+                node.lhs.accept(this);
+                currentBB = node.lhs.getFalseBB();
             }
-            node.getRhs().setTrueBB(node.getTrueBB());
-            node.getRhs().setFalseBB(node.getFalseBB());
-            node.getRhs().accept(this);
-        } else if (isArithmeticBinaryOp(node.getOp())) {
-            node.getLhs().accept(this);
-            node.getRhs().accept(this);
-            RegValue lhs = node.getLhs().getRegValue(), rhs = node.getRhs().getRegValue();
+            node.rhs.setTrueBB(node.getTrueBB());
+            node.rhs.setFalseBB(node.getFalseBB());
+            node.rhs.accept(this);
+        } else if (isArithmeticBinaryOp(node.op)) {
+            node.lhs.accept(this);
+            node.rhs.accept(this);
+            RegValue lhs = node.lhs.getRegValue(), rhs = node.rhs.getRegValue();
             int lhsValue = 0, rhsValue = 0;
             boolean bothImmediate = lhs instanceof ImmediateInt && rhs instanceof ImmediateInt;
             if (lhs instanceof ImmediateInt) lhsValue = ((ImmediateInt) lhs).getValue();
             if (rhs instanceof ImmediateInt) rhsValue = ((ImmediateInt) rhs).getValue();
-            BinaryOp.binaryOp op = null;
-            switch (node.getOp()) {
+            Binary.binaryOp op = null;
+            switch (node.op) {
                 case MUL:
                     if (bothImmediate) {
                         node.setRegValue(new ImmediateInt(lhsValue * rhsValue));
                         return;
                     }
-                    op = BinaryOp.binaryOp.MUL;
+                    op = Binary.binaryOp.MUL;
                     break;
                 case DIV:
                     if (bothImmediate) {
                         node.setRegValue(new ImmediateInt(lhsValue / rhsValue));
                         return;
                     }
-                    op = BinaryOp.binaryOp.DIV;
+                    op = Binary.binaryOp.DIV;
                     irRoot.setHasDivShiftInst(true);
                     break;
                 case MOD:
@@ -733,7 +734,7 @@ public class IRBuilder extends ScopeBuilder {
                         node.setRegValue(new ImmediateInt(lhsValue % rhsValue));
                         return;
                     }
-                    op = BinaryOp.binaryOp.MOD;
+                    op = Binary.binaryOp.MOD;
                     irRoot.setHasDivShiftInst(true);
                     break;
                 case ADD:
@@ -741,21 +742,21 @@ public class IRBuilder extends ScopeBuilder {
                         node.setRegValue(new ImmediateInt(lhsValue + rhsValue));
                         return;
                     }
-                    op = BinaryOp.binaryOp.ADD;
+                    op = Binary.binaryOp.ADD;
                     break;
                 case SUB:
                     if (bothImmediate) {
                         node.setRegValue(new ImmediateInt(lhsValue - rhsValue));
                         return;
                     }
-                    op = BinaryOp.binaryOp.SUB;
+                    op = Binary.binaryOp.SUB;
                     break;
                 case SHL:
                     if (bothImmediate) {
                         node.setRegValue(new ImmediateInt(lhsValue << rhsValue));
                         return;
                     }
-                    op = BinaryOp.binaryOp.SHL;
+                    op = Binary.binaryOp.SHL;
                     irRoot.setHasDivShiftInst(true);
                     break;
                 case SHR:
@@ -763,7 +764,7 @@ public class IRBuilder extends ScopeBuilder {
                         node.setRegValue(new ImmediateInt(lhsValue >> rhsValue));
                         return;
                     }
-                    op = BinaryOp.binaryOp.SHR;
+                    op = Binary.binaryOp.SHR;
                     irRoot.setHasDivShiftInst(true);
                     break;
                 case BITWISE_AND:
@@ -771,36 +772,36 @@ public class IRBuilder extends ScopeBuilder {
                         node.setRegValue(new ImmediateInt(lhsValue & rhsValue));
                         return;
                     }
-                    op = BinaryOp.binaryOp.BITWISE_AND;
+                    op = Binary.binaryOp.BITWISE_AND;
                     break;
                 case BITWISE_OR:
                     if (bothImmediate) {
                         node.setRegValue(new ImmediateInt(lhsValue | rhsValue));
                         return;
                     }
-                    op = BinaryOp.binaryOp.BITWISE_OR;
+                    op = Binary.binaryOp.BITWISE_OR;
                     break;
                 case BITWISE_XOR:
                     if (bothImmediate) {
                         node.setRegValue(new ImmediateInt(lhsValue ^ rhsValue));
                         return;
                     }
-                    op = BinaryOp.binaryOp.BITWISE_XOR;
+                    op = Binary.binaryOp.BITWISE_XOR;
                     break;
             }
             VirtualRegister vr = new VirtualRegister(null);
             node.setRegValue(vr);
-            currentBB.addInst(new BinaryOp(currentBB, vr, op, lhs, rhs));
+            currentBB.addInst(new Binary(currentBB, vr, op, lhs, rhs));
         } else {
-            node.getLhs().accept(this);
-            node.getRhs().accept(this);
-            RegValue lhs = node.getLhs().getRegValue(), rhs = node.getRhs().getRegValue();
+            node.lhs.accept(this);
+            node.rhs.accept(this);
+            RegValue lhs = node.lhs.getRegValue(), rhs = node.rhs.getRegValue();
             int lhsValue = 0, rhsValue = 0;
             if (lhs instanceof ImmediateInt) lhsValue = ((ImmediateInt) lhs).getValue();
             if (rhs instanceof ImmediateInt) rhsValue = ((ImmediateInt) rhs).getValue();
             boolean bothImmediate = lhs instanceof ImmediateInt && rhs instanceof ImmediateInt;
             Comparison.comparisonOp op = null;
-            switch (node.getOp()) {
+            switch (node.op) {
                 case LESS:
                     if (bothImmediate) {
                         if (lhsValue < rhsValue) node.setRegValue(new ImmediateInt(1));
@@ -902,26 +903,26 @@ public class IRBuilder extends ScopeBuilder {
 
     @Override
     public void visit(AssignExpressionNode node) {
-        boolean needMemOp = isMemAcc(node.getLhs());
+        boolean needMemOp = isMemAcc(node.lhs);
         wantAddr = needMemOp;
-        node.getLhs().accept(this);
+        node.lhs.accept(this);
         wantAddr = false;
-        if (isBoolExpr(node.getRhs())) {
-            node.getRhs().setTrueBB(new BasicBlock(currentFunction, null));
-            node.getRhs().setFalseBB(new BasicBlock(currentFunction, null));
+        if (isBoolExpr(node.rhs)) {
+            node.rhs.setTrueBB(new BasicBlock(currentFunction, null));
+            node.rhs.setFalseBB(new BasicBlock(currentFunction, null));
         }
-        node.getRhs().accept(this);
+        node.rhs.accept(this);
         RegValue destination;
         int addrOffset;
         if (needMemOp) {
-            destination = node.getLhs().getAddrValue();
-            addrOffset = node.getLhs().getAddrOffset();
+            destination = node.lhs.getAddrValue();
+            addrOffset = node.lhs.getAddrOffset();
         } else {
-            destination = node.getLhs().getRegValue();
+            destination = node.lhs.getRegValue();
             addrOffset = 0;
         }
-        assign(destination, addrOffset, node.getRhs(), needMemOp);
-        node.setRegValue(node.getRhs().getRegValue());
+        assign(destination, addrOffset, node.rhs, needMemOp);
+        node.setRegValue(node.rhs.getRegValue());
     }
 
     @Override
@@ -934,7 +935,7 @@ public class IRBuilder extends ScopeBuilder {
         } else {
             ThisExpressionNode thisExprNode = new ThisExpressionNode(-1);
             thisExprNode.setType(new ClassType(currentClassName));
-            MethodExpressionNode memExprNode = new MethodExpressionNode(thisExprNode, node.getName(), -1);
+            MemberExpressionNode memExprNode = new MemberExpressionNode(thisExprNode, node.getName(), -1);
             memExprNode.accept(this);
             if (wantAddr) {
                 node.setAddrValue(memExprNode.getAddrValue());
@@ -950,7 +951,7 @@ public class IRBuilder extends ScopeBuilder {
 
     @Override
     public void visit(ThisExpressionNode node) {
-        VarEntity varEntity = (VarEntity) currentScope.get("@Vthis");
+        VarEntity varEntity = (VarEntity) currentScope.get("__V_this");
         node.setRegValue(varEntity.getRegister());
         if (node.getTrueBB() != null)
             currentBB.setJumpInst(new Branch(currentBB, node.getRegValue(), node.getTrueBB(), node.getFalseBB()));
@@ -981,3 +982,4 @@ public class IRBuilder extends ScopeBuilder {
         node.setRegValue(new ImmediateInt(0));
     }
 }
+

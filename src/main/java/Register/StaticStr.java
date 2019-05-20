@@ -1,4 +1,6 @@
-package IR;
+package Register;
+
+import IR.IRVisitor;
 
 public class StaticStr extends StaticData
 {

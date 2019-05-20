@@ -3,22 +3,28 @@ package ASTNode;
 import FrontEnd.ASTVisitor;
 import Scope.Scope;
 
-import java.util.List;
+import java.util.LinkedList;
 
 public class BlockStatementNode extends StatementNode
 {
-    private List<ASTNode> stmtsAndVarDecls;
-    private Scope scope;
-    private boolean isInit = false;
+    public LinkedList<ASTNode> stmtsAndVarDecls;
+    public Scope scope;
+    public boolean isInit = false;
 
 
-    public BlockStatementNode(List<ASTNode> stmtsAndVarDecls, int line)
+    public BlockStatementNode(LinkedList<ASTNode> stmtsAndVarDecls, int line)
     {
         this.stmtsAndVarDecls = stmtsAndVarDecls;
         this.line = line;
     }
 
-    public List<ASTNode> getStmtsAndVarDecls()
+    public BlockStatementNode(int line)
+    {
+        stmtsAndVarDecls = new LinkedList<ASTNode>();
+        this.line = line;
+    }
+
+    public LinkedList<ASTNode> getStmtsAndVarDecls()
     {
         return stmtsAndVarDecls;
     }
@@ -41,4 +47,15 @@ public class BlockStatementNode extends StatementNode
     {
         visitor.visit(this);
     }
+
+    @Override
+    public void printInformation(int line) {
+        super.printInformation(line);
+        for (ASTNode item : stmtsAndVarDecls) {
+            if (item instanceof StatementNode) item.printInformation(line + 1);
+            else item.printInformation(line + 1);
+        }
+    }
+
+
 }

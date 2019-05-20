@@ -37,14 +37,14 @@ public class Scope
 
     public void put(String name, String key, Entity entity)
     {
-        if (!key.startsWith("@")) throw new SemanticError(String.format("ScopeEntity entity key Should start with \'@\' but get \"%s\"", key));
+        if (!key.startsWith("__")) throw new SemanticError(String.format("ScopeEntity entity key Should start with \'__\' but get \"%s\"", key));
         if (map.containsKey(key)) throw new SemanticError(String.format("Name \"%s\" has been already defined", name));
         map.put(key, entity);
     }
 
     public void put(int line, String name, String key, Entity entity)
     {
-        if (!key.startsWith("@")) throw new SemanticError(line, String.format("Entity key Should start with \'@\' but get \"%s\"", key));
+        if (!key.startsWith("__")) throw new SemanticError(line, String.format("Entity key Should start with \'__\' but get \"%s\"", key));
         if (map.containsKey(key)) throw new SemanticError(line, String.format("Name \"%s\" has been already defined", name));
         map.put(key, entity);
     }
@@ -66,15 +66,15 @@ public class Scope
 
     public Entity selfGetVarFunc(int line, String name)
     {
-        if (map.containsKey("@V" + name)) return map.get("@V" + name);
-        if (map.containsKey("@F" + name)) return map.get("@F" + name);
+        if (map.containsKey("__V_" + name)) return map.get("__V_" + name);
+        if (map.containsKey("__F_" + name)) return map.get("__F_" + name);
         throw new SemanticError(line, String.format("Entity \"%s\" not found", name));
     }
 
     public Entity getVarFunc(int line, String name)
     {
-        if (map.containsKey("@V" + name)) return map.get("@V" + name);
-        if (map.containsKey("@F" + name)) return map.get("@F" + name);
+        if (map.containsKey("__V_" + name)) return map.get("__V_" + name);
+        if (map.containsKey("__F_" + name)) return map.get("__F_" + name);
         if (isTop) throw new SemanticError(line, String.format("Entity \"%s\" not found", name));
         return parent.getVarFunc(line, name);
     }

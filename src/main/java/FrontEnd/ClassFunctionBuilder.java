@@ -28,14 +28,14 @@ public class ClassFunctionBuilder extends ScopeBuilder
     public void visit(FunctionDefinitionNode node)
     {
         String name = node.getName();
-        scope.put(node.line, name, "@F" + name, new FuncEntity(node));
+        scope.put(node.line, name, "__F_" + name, new FuncEntity(node));
     }
 
     @Override
     public void visit(ClassDefinitionNode node)
     {
         String name = node.getName();
-        scope.put(node.line, name, "@C" + name, new ClassEntity(node, scope));
+        scope.put(node.line, name, "__C_" + name, new ClassEntity(node, scope));
     }
 
     private void init()
@@ -51,10 +51,10 @@ public class ClassFunctionBuilder extends ScopeBuilder
         builtInFunction(string.getScope(), "substring", Arrays.asList(new VarEntity("left", IntType.getIntType()), new VarEntity("right", IntType.getIntType())), StringType.getStringType());
         builtInFunction(string.getScope(), "parseInt", new ArrayList<>(), IntType.getIntType());
         builtInFunction(string.getScope(), "ord", Collections.singletonList(new VarEntity("pos", IntType.getIntType())), IntType.getIntType());
-        scope.put("string", "@Cstring", string);
+        scope.put("string", "__C_string", string);
         ClassEntity array = new ClassEntity("array", new ClassType("string"), scope);
         builtInFunction(array.getScope(), "size", new ArrayList<>(), IntType.getIntType());
-        scope.put("array", "@Carray", array);
+        scope.put("array", "__C_array", array);
     }
 
     private void builtInFunction(Scope scope1, String name, List<VarEntity> parameters, Type returnType)
@@ -64,12 +64,12 @@ public class ClassFunctionBuilder extends ScopeBuilder
         entity.setParameters(parameters);
         entity.setReturnType(returnType);
         entity.setMember(!scope1.isTop());
-        scope1.put(name, "@F" + name, entity);
+        scope1.put(name, "__F_" + name, entity);
     }
 
     private void checkMain()
     {
-        FuncEntity entity = (FuncEntity) scope.get("@Fmain");
+        FuncEntity entity = (FuncEntity) scope.get("__F_main");
         if (entity == null) throw new SemanticError("\"main\" function not found");
         if (!(entity.getReturnType() instanceof IntType)) throw new SemanticError("\"main\" function's return type should be int");
         if (!entity.getParameters().isEmpty()) throw new SemanticError("\"main\" function's parameters should be null");

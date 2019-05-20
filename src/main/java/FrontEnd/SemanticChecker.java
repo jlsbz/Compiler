@@ -32,13 +32,13 @@ public class SemanticChecker extends ScopeBuilder {
     public void visit(VariableDefinitionNode node) {
         if (node.getType().getType() instanceof ClassType) {
             String className = ((ClassType) node.getType().getType()).getName();
-            currentScope.get(node.line, className, "@C" + className);
+            currentScope.get(node.line, className, "__C_" + className);
         }
         if (node.exp != null) {
             node.exp.accept(this);
             if (checkVarExpr(node)) throw new SemanticError(node.line, "Invalid initialization type");
         }
-        currentScope.put(node.line, node.getName(), "@V" + node.getName(), new VarEntity(node));
+        currentScope.put(node.line, node.getName(), "__V_" + node.getName(), new VarEntity(node));
     }
 
     private boolean checkVarExpr(VariableDefinitionNode node) {
@@ -50,14 +50,14 @@ public class SemanticChecker extends ScopeBuilder {
 
     @Override
     public void visit(FunctionDefinitionNode node) {
-        FuncEntity entity = (FuncEntity) currentScope.get(node.line, node.getName(), "@F" + node.getName());
+        FuncEntity entity = (FuncEntity) currentScope.get(node.line, node.getName(), "__F_" + node.getName());
         if (entity.getReturnType() instanceof ClassType)
-            globalScope.get(node.line, ((ClassType) entity.getReturnType()).getName(), "@C" + ((ClassType) entity.getReturnType()).getName());
+            globalScope.get(node.line, ((ClassType) entity.getReturnType()).getName(), "__C_" + ((ClassType) entity.getReturnType()).getName());
         currentReturnType = entity.getReturnType();
         node.getBody().setScope(currentScope);
         currentScope = node.getBody().getScope();
         if (currentClassType != null) {
-            currentScope.put(node.line, "this", "@Vthis", new VarEntity("this", currentClassType));
+            currentScope.put(node.line, "this", "__V_this", new VarEntity("this", currentClassType));
             if (node.getIsConstruct() && !node.getName().equals(currentClassType.getName()))
                 throw new SemanticError(node.line, "Constructor's name should be the same as the class's name");
         }
@@ -71,7 +71,7 @@ public class SemanticChecker extends ScopeBuilder {
 
     @Override
     public void visit(ClassDefinitionNode node) {
-        ClassEntity entity = (ClassEntity) globalScope.get(node.line, node.getName(), "@C" + node.getName());
+        ClassEntity entity = (ClassEntity) globalScope.get(node.line, node.getName(), "__C_" + node.getName());
         currentScope = entity.getScope();
         currentClassType = (ClassType) entity.getType();
         for (FunctionDefinitionNode funcDeclNode : node.getFuncMember()) funcDeclNode.accept(this);
@@ -213,7 +213,7 @@ public class SemanticChecker extends ScopeBuilder {
     }
 
     @Override
-    public void visit(MethodExpressionNode node) {
+    public void visit(MemberExpressionNode node) {
         node.exp.accept(this);
         String className;
         if (node.exp.getType() instanceof ArrayType) className = "array";
@@ -221,7 +221,7 @@ public class SemanticChecker extends ScopeBuilder {
         else if (node.exp.getType() instanceof ClassType)
             className = ((ClassType) node.exp.getType()).getName();
         else throw new SemanticError(node.exp.line, "Expression should be class type");
-        ClassEntity entity = (ClassEntity) currentScope.get(node.exp.line, className, "@C" + className);
+        ClassEntity entity = (ClassEntity) currentScope.get(node.exp.line, className, "__C_" + className);
         Entity varOrFunc = entity.getScope().selfGetVarFunc(node.line, node.getName());
         if (varOrFunc instanceof FuncEntity) currentFuncEntity = (FuncEntity) varOrFunc;
         node.setType(varOrFunc.getType());
@@ -262,8 +262,8 @@ public class SemanticChecker extends ScopeBuilder {
 
     @Override
     public void visit(NewExpressionNode node) {
-        if (node.getExprList() != null) {
-            for (ExpressionNode exprNode : node.getExprList()) {
+        if (node.getExpList() != null) {
+            for (ExpressionNode exprNode : node.getExpList()) {
                 exprNode.accept(this);
                 if (!(exprNode.getType() instanceof IntType))
                     throw new SemanticError(exprNode.line, "Expression's type should be int type");
@@ -275,10 +275,10 @@ public class SemanticChecker extends ScopeBuilder {
 
     @Override
     public void visit(BinaryExpressionNode node) {
-        node.getLhs().accept(this);
-        node.getRhs().accept(this);
-        if (node.getLhs().getType() instanceof StringType && node.getRhs().getType() instanceof StringType) {
-            switch (node.getOp()) {
+        node.lhs.accept(this);
+        node.rhs.accept(this);
+        if (node.lhs.getType() instanceof StringType && node.rhs.getType() instanceof StringType) {
+            switch (node.op) {
                 case ADD:
                     node.setType(StringType.getStringType());
                     break;
@@ -294,7 +294,7 @@ public class SemanticChecker extends ScopeBuilder {
                     throw new CompilerError(node.line, "No such binary operator for string type");
             }
         } else {
-            switch (node.getOp()) {
+            switch (node.op) {
                 case ADD:
                 case SUB:
                 case MUL:
@@ -305,13 +305,13 @@ public class SemanticChecker extends ScopeBuilder {
                 case BITWISE_OR:
                 case BITWISE_AND:
                 case BITWISE_XOR:
-                    if (!(node.getLhs().getType() instanceof IntType && node.getRhs().getType() instanceof IntType))
+                    if (!(node.lhs.getType() instanceof IntType && node.rhs.getType() instanceof IntType))
                         throw new SemanticError(node.line, "LHS and RHS should both be int type");
                     node.setType(IntType.getIntType());
                     break;
                 case UNEQUAL:
                 case EQUAL:
-                    if (checkBinType(node.getLhs().getType(), node.getRhs().getType()))
+                    if (checkBinType(node.lhs.getType(), node.rhs.getType()))
                         throw new SemanticError(node.line, "Expression's type not match");
                     node.setType(BoolType.getBoolType());
                     break;
@@ -319,13 +319,13 @@ public class SemanticChecker extends ScopeBuilder {
                 case LESS_EQUAL:
                 case GREATER:
                 case LESS:
-                    if (!(node.getLhs().getType() instanceof IntType && node.getRhs().getType() instanceof IntType))
+                    if (!(node.lhs.getType() instanceof IntType && node.rhs.getType() instanceof IntType))
                         throw new SemanticError(node.line, "LHS and RHS should both be int type");
                     node.setType(BoolType.getBoolType());
                     break;
                 case LOGIC_OR:
                 case LOGIC_AND:
-                    if (!(node.getLhs().getType() instanceof BoolType && node.getRhs().getType() instanceof BoolType))
+                    if (!(node.lhs.getType() instanceof BoolType && node.rhs.getType() instanceof BoolType))
                         throw new SemanticError(node.line, "LHS and RHS should both be bool type");
                     node.setType(BoolType.getBoolType());
                     break;

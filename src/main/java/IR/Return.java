@@ -4,7 +4,7 @@ import Register.*;
 
 import java.util.Map;
 
-public class Return extends JumpInstruction
+public class Return extends TransInst
 {
     private RegValue retValue;
 

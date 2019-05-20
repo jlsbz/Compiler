@@ -19,7 +19,12 @@ public class Main {
 
     public static void main(String[] args) throws Exception {
         try {
+            //long startTime=System.currentTimeMillis();
+
             compile();
+            //long endTime=System.currentTimeMillis();
+            //System.out.println("程序运行时间： "+(endTime-startTime)+"ms");
+
         } catch (Error error) {
             System.err.println(error.getMessage());
             System.exit(1);
@@ -27,8 +32,8 @@ public class Main {
     }
 
     private static void compile() throws Exception {
-        boolean isSystemin = true;
-        boolean isSystemout = true;
+        boolean isSystemin = false;
+        boolean isSystemout = false;
 
         String inFile = "test/program.txt";
         InputStream inS;
@@ -59,12 +64,13 @@ public class Main {
         PrintStream outS;
         if (isSystemout) outS = System.out;
         else outS = new PrintStream(new FileOutputStream(outFile));
-        new FunctionInLineOptimizer(irRoot).run();
-        new GlobalVarProcessor(irRoot).run();
+
+        new InLineOptimizer(irRoot).run();
+        new GlobalVarNumber(irRoot).run();
         new RegisterAllocator(irRoot).run();
-        new NASMTransformer(irRoot).run();
-        new ExtraInstructionOptimizer(irRoot).run();
-        new NASMPrinter(outS).visit(irRoot);
+        new CodeTransformer(irRoot).run();
+
+        new CodeGenerator(outS).visit(irRoot);
     }
 
 }

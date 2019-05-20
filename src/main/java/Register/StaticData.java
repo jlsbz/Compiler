@@ -1,6 +1,6 @@
-package IR;
+package Register;
 
-import Register.Register;
+import IR.IRVisitor;
 
 public abstract class StaticData extends Register
 {

@@ -154,7 +154,7 @@ public class ASTBuilder extends MStarTreeBaseVisitor<ASTNode>
     @Override
     public ASTNode visitBlock(MStarTreeParser.BlockContext ctx)
     {
-        List<ASTNode> stmtsAndVarDefinitions = new ArrayList<>();
+        LinkedList<ASTNode> stmtsAndVarDefinitions = new LinkedList<>();
         if (ctx.blockStatement() != null) {
             for (ParserRuleContext blockStmt : ctx.blockStatement()) {
                 ASTNode stmtAndVarDefinition = visit(blockStmt);
@@ -339,109 +339,109 @@ public class ASTBuilder extends MStarTreeBaseVisitor<ASTNode>
         }
         if (commonExprOptimize && (op == BinaryExpressionNode.binaryOp.ADD || op == BinaryExpressionNode.binaryOp.SUB)) {
             if (lhs instanceof BinaryExpressionNode
-                    && ((BinaryExpressionNode) lhs).getOp() == BinaryExpressionNode.binaryOp.MUL) {
-                if (((BinaryExpressionNode) lhs).getLhs().equals(rhs)
-                        && ((BinaryExpressionNode) lhs).getRhs() instanceof NumExpressionNode) {
+                    && ((BinaryExpressionNode) lhs).op == BinaryExpressionNode.binaryOp.MUL) {
+                if (((BinaryExpressionNode) lhs).lhs.equals(rhs)
+                        && ((BinaryExpressionNode) lhs).rhs instanceof NumExpressionNode) {
                     if (op == BinaryExpressionNode.binaryOp.ADD)
                         return new BinaryExpressionNode(BinaryExpressionNode.binaryOp.MUL,
-                                lhs, new NumExpressionNode(((NumExpressionNode) ((BinaryExpressionNode) lhs).getRhs()).value + 1,
+                                lhs, new NumExpressionNode(((NumExpressionNode) ((BinaryExpressionNode) lhs).rhs).value + 1,
                                 ctx.start.getLine()), ctx.start.getLine());
                     else return new BinaryExpressionNode(BinaryExpressionNode.binaryOp.MUL,
-                            lhs, new NumExpressionNode(((NumExpressionNode) ((BinaryExpressionNode) lhs).getRhs()).value - 1,
+                            lhs, new NumExpressionNode(((NumExpressionNode) ((BinaryExpressionNode) lhs).rhs).value - 1,
                             ctx.start.getLine()), ctx.start.getLine());
                 }
-                if (((BinaryExpressionNode) lhs).getRhs().equals(rhs) && ((BinaryExpressionNode) lhs).getLhs() instanceof NumExpressionNode) {
+                if (((BinaryExpressionNode) lhs).rhs.equals(rhs) && ((BinaryExpressionNode) lhs).lhs instanceof NumExpressionNode) {
                     if (op == BinaryExpressionNode.binaryOp.ADD)
                         return new BinaryExpressionNode(BinaryExpressionNode.binaryOp.MUL, lhs,
-                                new NumExpressionNode(((NumExpressionNode) ((BinaryExpressionNode) lhs).getLhs()).value + 1,
+                                new NumExpressionNode(((NumExpressionNode) ((BinaryExpressionNode) lhs).lhs).value + 1,
                                         ctx.start.getLine()), ctx.start.getLine());
                     else return new BinaryExpressionNode(BinaryExpressionNode.binaryOp.MUL,
-                            lhs, new NumExpressionNode(((NumExpressionNode) ((BinaryExpressionNode) lhs).getLhs()).value - 1,
+                            lhs, new NumExpressionNode(((NumExpressionNode) ((BinaryExpressionNode) lhs).lhs).value - 1,
                             ctx.start.getLine()), ctx.start.getLine());
                 }
             }
-            if (rhs instanceof BinaryExpressionNode && ((BinaryExpressionNode) rhs).getOp() == BinaryExpressionNode.binaryOp.MUL) {
-                if (((BinaryExpressionNode) rhs).getLhs().equals(lhs) && ((BinaryExpressionNode) rhs).getRhs() instanceof NumExpressionNode) {
+            if (rhs instanceof BinaryExpressionNode && ((BinaryExpressionNode) rhs).op == BinaryExpressionNode.binaryOp.MUL) {
+                if (((BinaryExpressionNode) rhs).lhs.equals(lhs) && ((BinaryExpressionNode) rhs).rhs instanceof NumExpressionNode) {
                     if (op == BinaryExpressionNode.binaryOp.ADD)
                         return new BinaryExpressionNode(BinaryExpressionNode.binaryOp.MUL,
-                                rhs, new NumExpressionNode(((NumExpressionNode) ((BinaryExpressionNode) rhs).getRhs()).value + 1,
+                                rhs, new NumExpressionNode(((NumExpressionNode) ((BinaryExpressionNode) rhs).rhs).value + 1,
                                 ctx.start.getLine()), ctx.start.getLine());
                     else return new BinaryExpressionNode(BinaryExpressionNode.binaryOp.MUL,
-                            rhs, new NumExpressionNode(((NumExpressionNode) ((BinaryExpressionNode) rhs).getRhs()).value - 1,
+                            rhs, new NumExpressionNode(((NumExpressionNode) ((BinaryExpressionNode) rhs).rhs).value - 1,
                             ctx.start.getLine()), ctx.start.getLine());
                 }
-                if (((BinaryExpressionNode) rhs).getRhs().equals(lhs) && ((BinaryExpressionNode) rhs).getLhs() instanceof NumExpressionNode) {
+                if (((BinaryExpressionNode) rhs).rhs.equals(lhs) && ((BinaryExpressionNode) rhs).lhs instanceof NumExpressionNode) {
                     if (op == BinaryExpressionNode.binaryOp.ADD)
                         return new BinaryExpressionNode(BinaryExpressionNode.binaryOp.MUL,
-                                rhs, new NumExpressionNode(((NumExpressionNode) ((BinaryExpressionNode) lhs).getLhs()).value + 1,
+                                rhs, new NumExpressionNode(((NumExpressionNode) ((BinaryExpressionNode) lhs).lhs).value + 1,
                                 ctx.start.getLine()), ctx.start.getLine());
                     else return new BinaryExpressionNode(BinaryExpressionNode.binaryOp.MUL,
-                            rhs, new NumExpressionNode(((NumExpressionNode) ((BinaryExpressionNode) lhs).getLhs()).value - 1,
+                            rhs, new NumExpressionNode(((NumExpressionNode) ((BinaryExpressionNode) lhs).lhs).value - 1,
                             ctx.start.getLine()), ctx.start.getLine());
                 }
             }
             if (lhs instanceof BinaryExpressionNode
                     && rhs instanceof BinaryExpressionNode
-                    && ((BinaryExpressionNode) lhs).getOp() == BinaryExpressionNode.binaryOp.MUL
-                    && ((BinaryExpressionNode) rhs).getOp() == BinaryExpressionNode.binaryOp.MUL) {
-                if (((BinaryExpressionNode) lhs).getLhs() instanceof NumExpressionNode
-                        && ((BinaryExpressionNode) rhs).getLhs() instanceof NumExpressionNode) {
-                    if (((BinaryExpressionNode) lhs).getRhs().equals(((BinaryExpressionNode) rhs).getRhs())) {
+                    && ((BinaryExpressionNode) lhs).op == BinaryExpressionNode.binaryOp.MUL
+                    && ((BinaryExpressionNode) rhs).op == BinaryExpressionNode.binaryOp.MUL) {
+                if (((BinaryExpressionNode) lhs).lhs instanceof NumExpressionNode
+                        && ((BinaryExpressionNode) rhs).lhs instanceof NumExpressionNode) {
+                    if (((BinaryExpressionNode) lhs).rhs.equals(((BinaryExpressionNode) rhs).rhs)) {
                         if (op == BinaryExpressionNode.binaryOp.ADD)
                             return new BinaryExpressionNode(BinaryExpressionNode.binaryOp.MUL,
-                                    ((BinaryExpressionNode) lhs).getRhs(),
-                                    new NumExpressionNode(((NumExpressionNode) ((BinaryExpressionNode) lhs).getLhs()).value
-                                            + ((NumExpressionNode) ((BinaryExpressionNode) rhs).getLhs()).value,
+                                    ((BinaryExpressionNode) lhs).rhs,
+                                    new NumExpressionNode(((NumExpressionNode) ((BinaryExpressionNode) lhs).lhs).value
+                                            + ((NumExpressionNode) ((BinaryExpressionNode) rhs).lhs).value,
                                             ctx.start.getLine()), ctx.start.getLine());
                         else return new BinaryExpressionNode(BinaryExpressionNode.binaryOp.MUL,
-                                ((BinaryExpressionNode) lhs).getRhs(),
-                                new NumExpressionNode(((NumExpressionNode) ((BinaryExpressionNode) lhs).getLhs()).value
-                                        - ((NumExpressionNode) ((BinaryExpressionNode) rhs).getLhs()).value,
+                                ((BinaryExpressionNode) lhs).rhs,
+                                new NumExpressionNode(((NumExpressionNode) ((BinaryExpressionNode) lhs).lhs).value
+                                        - ((NumExpressionNode) ((BinaryExpressionNode) rhs).lhs).value,
                                         ctx.start.getLine()), ctx.start.getLine());
                     }
-                } else if (((BinaryExpressionNode) lhs).getLhs() instanceof NumExpressionNode
-                        && ((BinaryExpressionNode) rhs).getRhs() instanceof NumExpressionNode) {
-                    if (((BinaryExpressionNode) lhs).getRhs().equals(((BinaryExpressionNode) rhs).getLhs())) {
+                } else if (((BinaryExpressionNode) lhs).lhs instanceof NumExpressionNode
+                        && ((BinaryExpressionNode) rhs).rhs instanceof NumExpressionNode) {
+                    if (((BinaryExpressionNode) lhs).rhs.equals(((BinaryExpressionNode) rhs).lhs)) {
                         if (op == BinaryExpressionNode.binaryOp.ADD)
                             return new BinaryExpressionNode(BinaryExpressionNode.binaryOp.MUL,
-                                    ((BinaryExpressionNode) lhs).getRhs(),
-                                    new NumExpressionNode(((NumExpressionNode) ((BinaryExpressionNode) lhs).getLhs()).value
-                                            + ((NumExpressionNode) ((BinaryExpressionNode) rhs).getRhs()).value,
+                                    ((BinaryExpressionNode) lhs).rhs,
+                                    new NumExpressionNode(((NumExpressionNode) ((BinaryExpressionNode) lhs).lhs).value
+                                            + ((NumExpressionNode) ((BinaryExpressionNode) rhs).rhs).value,
                                             ctx.start.getLine()), ctx.start.getLine());
                         else return new BinaryExpressionNode(BinaryExpressionNode.binaryOp.MUL,
-                                ((BinaryExpressionNode) lhs).getRhs(),
-                                new NumExpressionNode(((NumExpressionNode) ((BinaryExpressionNode) lhs).getLhs()).value
-                                        - ((NumExpressionNode) ((BinaryExpressionNode) rhs).getRhs()).value,
+                                ((BinaryExpressionNode) lhs).rhs,
+                                new NumExpressionNode(((NumExpressionNode) ((BinaryExpressionNode) lhs).lhs).value
+                                        - ((NumExpressionNode) ((BinaryExpressionNode) rhs).rhs).value,
                                         ctx.start.getLine()), ctx.start.getLine());
                     }
-                } else if (((BinaryExpressionNode) lhs).getRhs() instanceof NumExpressionNode
-                        && ((BinaryExpressionNode) rhs).getLhs() instanceof NumExpressionNode) {
-                    if (((BinaryExpressionNode) lhs).getLhs().equals(((BinaryExpressionNode) rhs).getRhs())) {
+                } else if (((BinaryExpressionNode) lhs).rhs instanceof NumExpressionNode
+                        && ((BinaryExpressionNode) rhs).lhs instanceof NumExpressionNode) {
+                    if (((BinaryExpressionNode) lhs).lhs.equals(((BinaryExpressionNode) rhs).rhs)) {
                         if (op == BinaryExpressionNode.binaryOp.ADD)
                             return new BinaryExpressionNode(BinaryExpressionNode.binaryOp.MUL,
-                                    ((BinaryExpressionNode) lhs).getLhs(),
-                                    new NumExpressionNode(((NumExpressionNode) ((BinaryExpressionNode) lhs).getRhs()).value
-                                            + ((NumExpressionNode) ((BinaryExpressionNode) rhs).getLhs()).value,
+                                    ((BinaryExpressionNode) lhs).lhs,
+                                    new NumExpressionNode(((NumExpressionNode) ((BinaryExpressionNode) lhs).rhs).value
+                                            + ((NumExpressionNode) ((BinaryExpressionNode) rhs).lhs).value,
                                             ctx.start.getLine()), ctx.start.getLine());
                         else return new BinaryExpressionNode(BinaryExpressionNode.binaryOp.MUL,
-                                ((BinaryExpressionNode) lhs).getLhs(),
-                                new NumExpressionNode(((NumExpressionNode) ((BinaryExpressionNode) lhs).getRhs()).value
-                                        - ((NumExpressionNode) ((BinaryExpressionNode) rhs).getLhs()).value,
+                                ((BinaryExpressionNode) lhs).lhs,
+                                new NumExpressionNode(((NumExpressionNode) ((BinaryExpressionNode) lhs).rhs).value
+                                        - ((NumExpressionNode) ((BinaryExpressionNode) rhs).lhs).value,
                                         ctx.start.getLine()), ctx.start.getLine());
                     }
-                } else if (((BinaryExpressionNode) lhs).getRhs() instanceof NumExpressionNode
-                        && ((BinaryExpressionNode) rhs).getRhs() instanceof NumExpressionNode) {
-                    if (((BinaryExpressionNode) lhs).getLhs().equals(((BinaryExpressionNode) rhs).getLhs())) {
+                } else if (((BinaryExpressionNode) lhs).rhs instanceof NumExpressionNode
+                        && ((BinaryExpressionNode) rhs).rhs instanceof NumExpressionNode) {
+                    if (((BinaryExpressionNode) lhs).lhs.equals(((BinaryExpressionNode) rhs).lhs)) {
                         if (op == BinaryExpressionNode.binaryOp.ADD)
                             return new BinaryExpressionNode(BinaryExpressionNode.binaryOp.MUL,
-                                    ((BinaryExpressionNode) lhs).getLhs(),
-                                    new NumExpressionNode(((NumExpressionNode) ((BinaryExpressionNode) lhs).getRhs()).value
-                                            + ((NumExpressionNode) ((BinaryExpressionNode) rhs).getRhs()).value,
+                                    ((BinaryExpressionNode) lhs).lhs,
+                                    new NumExpressionNode(((NumExpressionNode) ((BinaryExpressionNode) lhs).rhs).value
+                                            + ((NumExpressionNode) ((BinaryExpressionNode) rhs).rhs).value,
                                             ctx.start.getLine()), ctx.start.getLine());
                         else return new BinaryExpressionNode(BinaryExpressionNode.binaryOp.MUL,
-                                ((BinaryExpressionNode) lhs).getLhs(),
-                                new NumExpressionNode(((NumExpressionNode) ((BinaryExpressionNode) lhs).getRhs()).value
-                                        - ((NumExpressionNode) ((BinaryExpressionNode) rhs).getRhs()).value,
+                                ((BinaryExpressionNode) lhs).lhs,
+                                new NumExpressionNode(((NumExpressionNode) ((BinaryExpressionNode) lhs).rhs).value
+                                        - ((NumExpressionNode) ((BinaryExpressionNode) rhs).rhs).value,
                                         ctx.start.getLine()), ctx.start.getLine());
                     }
                 }
@@ -455,14 +455,14 @@ public class ASTBuilder extends MStarTreeBaseVisitor<ASTNode>
     {
         ExpressionNode expr = (ExpressionNode) visit(ctx.expression());
         String name = ctx.ID().getText();
-        return new MethodExpressionNode(expr, name, ctx.start.getLine());
+        return new MemberExpressionNode(expr, name, ctx.start.getLine());
     }
 
     @Override
     public ASTNode visitFuncCallExpr(MStarTreeParser.FuncCallExprContext ctx)
     {
         ExpressionNode expr = (ExpressionNode) visit(ctx.expression());
-        List<ExpressionNode> paraList = new ArrayList<>();
+        LinkedList<ExpressionNode> paraList = new LinkedList<>();
         if (ctx.parameterList() != null) {
             for (ParserRuleContext parameter : ctx.parameterList().expression()) {
                 ExpressionNode para = (ExpressionNode) visit(parameter);
@@ -557,7 +557,7 @@ public class ASTBuilder extends MStarTreeBaseVisitor<ASTNode>
     public ASTNode visitArrayCreator(MStarTreeParser.ArrayCreatorContext ctx)
     {
         TypeNode type = (TypeNode) visit(ctx.basicType());
-        List<ExpressionNode> exprList = new ArrayList<>();
+        LinkedList<ExpressionNode> exprList = new LinkedList<>();
         int cnt = 0;
         for (ParserRuleContext ExprList : ctx.expression()) {
             ExpressionNode expr = (ExpressionNode) visit(ExprList);

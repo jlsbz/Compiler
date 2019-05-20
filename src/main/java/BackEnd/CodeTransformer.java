@@ -1,13 +1,11 @@
 package BackEnd;
 
 import IR.*;
-import Register.NASMRegisterSet;
-import Register.PhysicalRegister;
-import Register.RegValue;
+import Register.*;
 
 import java.util.*;
 
-public class NASMTransformer
+public class CodeTransformer
 {
     private class FuncInfo
     {
@@ -21,7 +19,7 @@ public class NASMTransformer
     private IRRoot irRoot;
     private Map<IRFunction, FuncInfo> funcInfoMap = new HashMap<>();
 
-    public NASMTransformer(IRRoot irRoot)
+    public CodeTransformer(IRRoot irRoot)
     {
         this.irRoot = irRoot;
     }
@@ -62,7 +60,7 @@ public class NASMTransformer
             BasicBlock startBB = irFunction.getStartBB();
             Instruction head = startBB.getHead();
             for (PhysicalRegister pr : funcInfo.usedCalleeSaveRegs) head.prepend(new Push(startBB, pr));
-            if (funcInfo.stackSlotNum > 0) head.prepend(new BinaryOp(startBB, NASMRegisterSet.rsp, BinaryOp.binaryOp.SUB, NASMRegisterSet.rsp, new ImmediateInt(funcInfo.stackSlotNum * 8)));
+            if (funcInfo.stackSlotNum > 0) head.prepend(new Binary(startBB, NASMRegisterSet.rsp, Binary.binaryOp.SUB, NASMRegisterSet.rsp, new ImmediateInt(funcInfo.stackSlotNum * 8)));
             head.prepend(new Move(startBB, NASMRegisterSet.rbp, NASMRegisterSet.rsp));
             for (BasicBlock bb : irFunction.getReversePostOrder()) {
                 for (Instruction inst = bb.getHead(), nextInst; inst != null; inst = nextInst) {
@@ -119,7 +117,7 @@ public class NASMTransformer
                             }
                             else inst.prepend(new Load(bb, NASMRegisterSet.argRegs.get(i), 8, NASMRegisterSet.rsp, (backOffset - argsBackOffset.get(i) - 1) * 8));
                         }
-                        if (backOffset > 0) inst.prepend(new BinaryOp(bb, NASMRegisterSet.rsp, BinaryOp.binaryOp.ADD, NASMRegisterSet.rsp, new ImmediateInt(backOffset * 8)));
+                        if (backOffset > 0) inst.prepend(new Binary(bb, NASMRegisterSet.rsp, Binary.binaryOp.ADD, NASMRegisterSet.rsp, new ImmediateInt(backOffset * 8)));
 
                         if (((FunctionCall) inst).getDestination() != null) inst.append(new Move(bb, ((FunctionCall) inst).getDestination(), NASMRegisterSet.rax));
                         for (PhysicalRegister pr : funcInfo.usedCallerSaveRegs) {
@@ -128,7 +126,7 @@ public class NASMTransformer
                         for (int i = 0; i < pushArg6RegsNum; ++i) inst.append(new Pop(bb, NASMRegisterSet.argRegs.get(i)));
                         if (extraPush || calleeFuncInfo.extraArgsNum > 0) {
                             int pushArgNum = extraPush ? calleeFuncInfo.extraArgsNum + 1 : calleeFuncInfo.extraArgsNum;
-                            inst.append(new BinaryOp(bb, NASMRegisterSet.rsp, BinaryOp.binaryOp.ADD, NASMRegisterSet.rsp, new ImmediateInt(pushArgNum * 8)));
+                            inst.append(new Binary(bb, NASMRegisterSet.rsp, Binary.binaryOp.ADD, NASMRegisterSet.rsp, new ImmediateInt(pushArgNum * 8)));
                         }
                     }
                     else if (inst instanceof HeapAlloc) {
@@ -145,7 +143,7 @@ public class NASMTransformer
                         inst.append(new Move(bb, ((HeapAlloc) inst).getDestination(), NASMRegisterSet.rax));
                         for (PhysicalRegister pr : funcInfo.usedCallerSaveRegs) inst.append(new Pop(bb, pr));
                         for (int i = 0; i < arg6Num; ++i) inst.append(new Pop(bb, NASMRegisterSet.argRegs.get(i)));
-                        if (pushCallerSaveRegsNum % 2 == 1) inst.append(new BinaryOp(bb, NASMRegisterSet.rsp, BinaryOp.binaryOp.ADD, NASMRegisterSet.rsp, new ImmediateInt(8)));
+                        if (pushCallerSaveRegsNum % 2 == 1) inst.append(new Binary(bb, NASMRegisterSet.rsp, Binary.binaryOp.ADD, NASMRegisterSet.rsp, new ImmediateInt(8)));
                     }
                     else if (inst instanceof Load) {
                         if (((Load) inst).getAddress() instanceof StackSlot) {
@@ -169,7 +167,7 @@ public class NASMTransformer
             if (returnInst.getRetValue() != null) returnInst.prepend(new Move(returnInst.getParentBB(), NASMRegisterSet.rax, returnInst.getRetValue()));
             BasicBlock endBB = irFunction.getEndBB();
             Instruction tail = endBB.getTail();
-            if (funcInfo.stackSlotNum > 0) tail.prepend(new BinaryOp(endBB, NASMRegisterSet.rsp, BinaryOp.binaryOp.ADD, NASMRegisterSet.rsp, new ImmediateInt(funcInfo.stackSlotNum * 8)));
+            if (funcInfo.stackSlotNum > 0) tail.prepend(new Binary(endBB, NASMRegisterSet.rsp, Binary.binaryOp.ADD, NASMRegisterSet.rsp, new ImmediateInt(funcInfo.stackSlotNum * 8)));
             for (int i = funcInfo.usedCalleeSaveRegs.size() - 1; i >= 0; --i) tail.prepend(new Pop(endBB, funcInfo.usedCalleeSaveRegs.get(i)));
         }
     }

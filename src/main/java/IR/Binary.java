@@ -3,7 +3,7 @@ package IR;
 import Register.*;
 import java.util.Map;
 
-public class BinaryOp extends Instruction
+public class Binary extends Instruction
 {
     public enum binaryOp {
         ADD, SUB, MUL, DIV, MOD, SHL, SHR, BITWISE_AND, BITWISE_OR, BITWISE_XOR
@@ -13,7 +13,7 @@ public class BinaryOp extends Instruction
     private binaryOp op;
     private RegValue lhs, rhs;
 
-    public BinaryOp(BasicBlock parentBB, Register destination, binaryOp op, RegValue lhs, RegValue rhs)
+    public Binary(BasicBlock parentBB, Register destination, binaryOp op, RegValue lhs, RegValue rhs)
     {
         super(parentBB);
         this.destination = destination;
@@ -104,6 +104,6 @@ public class BinaryOp extends Instruction
     @Override
     public Instruction copyRename(Map<Object, Object> renameMap)
     {
-        return new BinaryOp((BasicBlock) renameMap.getOrDefault(getParentBB(), getParentBB()), (Register) renameMap.getOrDefault(destination, destination), op, (RegValue) renameMap.getOrDefault(lhs, lhs), (RegValue) renameMap.getOrDefault(rhs, rhs));
+        return new Binary((BasicBlock) renameMap.getOrDefault(getParentBB(), getParentBB()), (Register) renameMap.getOrDefault(destination, destination), op, (RegValue) renameMap.getOrDefault(lhs, lhs), (RegValue) renameMap.getOrDefault(rhs, rhs));
     }
 }

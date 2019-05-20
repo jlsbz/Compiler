@@ -1,18 +1,23 @@
 package ASTNode;
 
+import static Util.Print.*;
 import FrontEnd.ASTVisitor;
 
 public class StringExpressionNode extends ExpressionNode
 {
     public String str;
 
+    public StringExpressionNode(int line)
+    {
+        this.str = null;
+        this.line = line;
+    }
+
     public StringExpressionNode(String str, int line)
     {
         this.str = str;
         this.line = line;
     }
-
-    //public String getStr(){return str;}
 
     @Override
     public void accept(ASTVisitor visitor)
@@ -26,4 +31,10 @@ public class StringExpressionNode extends ExpressionNode
         if (!(obj instanceof StringExpressionNode)) return false;
         return str == ((StringExpressionNode) obj).str;
     }
+
+    @Override public void printInformation(int line) {
+        super.printInformation(line);
+        printStr(str);
+    }
+
 }

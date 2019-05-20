@@ -3,7 +3,7 @@ package IR;
 import Register.*;
 import java.util.Map;
 
-public class UnaryOp extends Instruction
+public class Unary extends Instruction
 {
     public enum unaryOp {
         BITWISE_NOT, NEG
@@ -13,7 +13,7 @@ public class UnaryOp extends Instruction
     private unaryOp op;
     private RegValue rhs;
 
-    public UnaryOp(BasicBlock parentBB, Register destination, unaryOp op, RegValue rhs)
+    public Unary(BasicBlock parentBB, Register destination, unaryOp op, RegValue rhs)
     {
         super(parentBB);
         this.destination = destination;
@@ -71,7 +71,7 @@ public class UnaryOp extends Instruction
     }
 
     @Override
-    public UnaryOp copyRename(Map<Object, Object> renameMap) {
-        return new UnaryOp((BasicBlock) renameMap.getOrDefault(getParentBB(), getParentBB()), (Register) renameMap.getOrDefault(destination, destination), op, (RegValue) renameMap.getOrDefault(rhs, rhs));
+    public Unary copyRename(Map<Object, Object> renameMap) {
+        return new Unary((BasicBlock) renameMap.getOrDefault(getParentBB(), getParentBB()), (Register) renameMap.getOrDefault(destination, destination), op, (RegValue) renameMap.getOrDefault(rhs, rhs));
     }
 }

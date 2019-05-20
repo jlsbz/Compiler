@@ -4,7 +4,7 @@ import Register.Register;
 
 import java.util.Map;
 
-public class Jump extends JumpInstruction
+public class Jump extends TransInst
 {
     private BasicBlock destBB;
 

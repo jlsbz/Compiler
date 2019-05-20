@@ -1,5 +1,7 @@
-package IR;
+package Register;
 
+import IR.IRFunction;
+import IR.IRVisitor;
 import Register.*;
 
 public class StackSlot extends Register

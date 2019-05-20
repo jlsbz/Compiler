@@ -12,7 +12,7 @@ public abstract class Instruction
     protected List<Register> usedRegisters = new ArrayList<>();
     protected List<RegValue> usedRegValues = new ArrayList<>();
     private boolean isRemoved = false;
-    private Set<VirtualRegister> liveIn = new HashSet<>(), liveOut = new HashSet<>();
+    public Set<VirtualRegister> liveIn = new HashSet<>(), liveOut = new HashSet<>();
 
     public Instruction(BasicBlock parentBB)
     {
@@ -76,7 +76,7 @@ public abstract class Instruction
         isRemoved = true;
         if (prev != null) prev.setNext(next);
         if (next != null) next.setPrev(prev);
-        if (this instanceof JumpInstruction) parentBB.removeJumpInstruction();
+        if (this instanceof TransInst) parentBB.removeJumpInstruction();
         if (this == parentBB.getHead()) parentBB.setHead(next);
         if (this == parentBB.getTail()) parentBB.setTail(prev);
     }
@@ -91,16 +91,6 @@ public abstract class Instruction
     public abstract void setDefinedRegister(Register register);
 
     public abstract void setUsedRegisters(Map<Register, Register> renameMap);
-
-    public Set<VirtualRegister> getLiveIn()
-    {
-        return liveIn;
-    }
-
-    public Set<VirtualRegister> getLiveOut()
-    {
-        return liveOut;
-    }
 
     public abstract Instruction copyRename(Map<Object, Object> renameMap);
 

@@ -1,10 +1,10 @@
 package IR;
-
+//jump branch return
 import java.util.Map;
 
-public abstract class JumpInstruction extends Instruction
+public abstract class TransInst extends Instruction
 {
-    public JumpInstruction(BasicBlock parentBB)
+    public TransInst(BasicBlock parentBB)
     {
         super(parentBB);
     }

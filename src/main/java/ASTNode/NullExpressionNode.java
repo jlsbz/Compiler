@@ -1,5 +1,6 @@
 package ASTNode;
 
+import static Util.Print.*;
 import FrontEnd.ASTVisitor;
 
 public class NullExpressionNode extends ExpressionNode
@@ -19,6 +20,12 @@ public class NullExpressionNode extends ExpressionNode
     public boolean equals(Object obj)
     {
         return obj instanceof NullExpressionNode;
+    }
+
+    @Override
+    public void printInformation(int line) {
+        super.printInformation(line);
+        printStrWtihSpace(line, "null");
     }
 
 }
